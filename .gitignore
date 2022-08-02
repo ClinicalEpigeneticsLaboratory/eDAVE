@@ -6,6 +6,17 @@ __pycache__/
 # C extensions
 *.so
 
+# Cache
+*.save
+.idea/
+
+# data
+data-processing-pipeline/data
+
+# Notebooks
+notebooks/
+*.ipynb
+
 # Distribution / packaging
 .Python
 build/
@@ -26,6 +37,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+*.lock
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
