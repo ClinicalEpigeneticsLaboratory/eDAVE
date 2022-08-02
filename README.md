@@ -42,15 +42,15 @@ www.www.www
 This script builds data repository required to run Dash app. 
 And it is based on [GDC API](https://gdc.cancer.gov/developers/gdc-application-programming-interface-api) 
 and [GDC data transfer tool](https://docs.gdc.cancer.gov/Data_Transfer_Tool/Users_Guide/Getting_Started/).
-Please note that ```fields```, ```filters```, ```number of samples``` as well as ```data transfer tool executable path```  
-are declared in ```config.py``` file.
+Please note that ```fields```, ```filters```, ```number of samples``` as well as ```data transfer tool executable path```
+are declared in ```data-processing-pipeline/config.py``` file.
 
     cd data-processing-pipeline/
     poetry run python run.py
 
 
 #### Run dash app
-To start data exploration. Please note that to run app in production mode set ```debug: false``` in ```config.yaml```
+To start data exploration. Please note that to run app in production mode set ```debug: false``` in ```config.json```
 file.
 
     cd app/
@@ -58,12 +58,14 @@ file.
 
 
 #### Code quality
-To ensure the code quality level we use: black, lint and bandit. To run those tools
+To ensure the code quality level we use: *black*, *lint* and *bandit*. To run those tools:
 
     make
 
-or specifically
+or specifically:
 
     make black
     make pylint
     make bandit
+
+
