@@ -1,26 +1,24 @@
-import json
-
 import dash
 
 dash.register_page(__name__)
 
+import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.graph_objects as go
-import dash_bootstrap_components as dbc
-from dash import dcc, html, Input, Output, callback, callback_context
-
+from dash import Input, Output, callback, callback_context, dcc, html
 from src.basics import FrameOperations
 from src.regression import Model
-
+from src.utils import load_config
 
 emptyFig = go.Figure()
-config = json.load(open("../config.json"))
+
+config = load_config()
 available_sample_types = pd.read_pickle(config["global_metadata"])
 available_sample_types = available_sample_types[
     "Methylation_expression_files_with_common_samples_present"
 ]
 
-layout = html.Div(
+layout = dbc.Container(
     [
         dbc.Row(
             [
@@ -40,13 +38,12 @@ layout = html.Div(
                 dbc.Col(
                     [
                         html.Label("Input gene"),
-                        html.Br(),
-                        dcc.Input(
+                        dbc.Input(
                             id="gene-met-exp-explorer",
-                            style={"width": "95%"},
                             placeholder="Firstly select sample type",
                             disabled=True,
                             maxLength=10,
+                            type="text",
                         ),
                     ],
                     width=4,
@@ -55,13 +52,12 @@ layout = html.Div(
                 dbc.Col(
                     [
                         html.Label("Input probe ID"),
-                        html.Br(),
-                        dcc.Input(
+                        dbc.Input(
                             id="probe-met-exp-explorer",
-                            style={"width": "95%"},
                             placeholder="Firstly select sample type",
                             disabled=True,
                             maxLength=10,
+                            type="text",
                         ),
                     ],
                     width=4,
@@ -73,13 +69,7 @@ layout = html.Div(
             dbc.Col([html.Br(), dbc.Button("Submit", id="submit-met-exp-explorer")]),
         ),
         dbc.Row(
-            [
-                dbc.Col(
-                    dbc.Spinner(
-                        html.Div(id="progress-met-exp-explorer"), color="danger"
-                    )
-                )
-            ],
+            [dbc.Col(dbc.Spinner(html.Div(id="progress-met-exp-explorer"), color="danger"))],
             style={"padding": "10px", "marginBottom": "10px", "marginTop": "10px"},
         ),
         dbc.Row(
@@ -87,7 +77,7 @@ layout = html.Div(
                 dbc.Row(
                     [
                         dbc.Col(
-                            dbc.Card(id="result-met-exp-explorer"),
+                            dbc.Container(id="result-met-exp-explorer"),
                         ),
                         dbc.Col(
                             dcc.Graph(id="plot-met-exp-explorer"),
@@ -98,7 +88,8 @@ layout = html.Div(
                 is_open=False,
             )
         ),
-    ]
+    ],
+    fluid=True,
 )
 
 

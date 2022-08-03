@@ -1,5 +1,5 @@
-from os.path import join
-from os.path import exists
+import json
+from os.path import exists, join
 
 import pandas as pd
 
@@ -15,3 +15,10 @@ def response_multidim(variables: list, frame: pd.DataFrame) -> str:
 def check_if_exists(data_path, sample_type: str, file_type: str) -> bool:
     path = join(data_path, sample_type, file_type)
     return exists(path)
+
+
+def load_config() -> dict:
+    with open("config.json", "r", encoding="utf-8") as config_file:
+        config = json.load(config_file)
+
+    return config

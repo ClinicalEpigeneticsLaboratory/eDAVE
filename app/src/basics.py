@@ -1,11 +1,12 @@
-import json
+import typing as t
 from os.path import join
 
-import typing as t
 import numpy as np
 import pandas as pd
 
-config = json.load(open("../config.json", "r"))
+from .utils import load_config
+
+config = load_config()
 
 
 class FrameOperations:
@@ -19,13 +20,6 @@ class FrameOperations:
         self.basic_path = config["base_path"]
         self.frame = None
 
-    @staticmethod
-    def __check_if_in_index(frame: t.Union[pd.DataFrame, pd.Series], variable: str):
-        if variable not in set(frame.index):
-            return False
-
-        return True
-
     def load_1d(self, variable: str) -> pd.DataFrame:
         frame = []
 
@@ -37,17 +31,13 @@ class FrameOperations:
                 if variable not in metadata["genes"]:
                     return pd.DataFrame()
 
-                temporary_frame = pd.read_parquet(
-                    join(self.basic_path, sample_type, "Exp.parquet")
-                )
+                temporary_frame = pd.read_parquet(join(self.basic_path, sample_type, "Exp.parquet"))
 
             elif self.data_type == "Methylation [450K/EPIC]":
                 if variable not in metadata["probes"]:
                     return pd.DataFrame()
 
-                temporary_frame = pd.read_parquet(
-                    join(self.basic_path, sample_type, "Met.parquet")
-                )
+                temporary_frame = pd.read_parquet(join(self.basic_path, sample_type, "Met.parquet"))
 
             else:
                 temporary_frame = pd.DataFrame()
@@ -66,13 +56,9 @@ class FrameOperations:
 
         for sample_type in self.sample_types:
             if self.data_type == "Expression [RNA-seq]":
-                temporary_frame = pd.read_parquet(
-                    join(self.basic_path, sample_type, "Exp.parquet")
-                )
+                temporary_frame = pd.read_parquet(join(self.basic_path, sample_type, "Exp.parquet"))
             else:
-                temporary_frame = pd.read_parquet(
-                    join(self.basic_path, sample_type, "Met.parquet")
-                )
+                temporary_frame = pd.read_parquet(join(self.basic_path, sample_type, "Met.parquet"))
 
             temporary_frame = temporary_frame.loc[
                 list(variables.intersection(set(temporary_frame.index)))
@@ -95,14 +81,10 @@ class FrameOperations:
 
         if gene in meta["genes"] and probe in meta["probes"]:
 
-            exp_frame = pd.read_parquet(
-                join(self.basic_path, self.sample_types, "Exp.parquet")
-            )
+            exp_frame = pd.read_parquet(join(self.basic_path, self.sample_types, "Exp.parquet"))
             exp_frame = exp_frame.loc[gene, list(meta["commonBetween"])]
 
-            met_frame = pd.read_parquet(
-                join(self.basic_path, self.sample_types, "Met.parquet")
-            )
+            met_frame = pd.read_parquet(join(self.basic_path, self.sample_types, "Met.parquet"))
             met_frame = met_frame.loc[probe, list(meta["commonBetween"])]
 
             frame = pd.concat((exp_frame, met_frame), axis=1)
@@ -123,19 +105,18 @@ class FrameOperations:
         if method == "Log10":
             return values.apply(np.log10)
 
-        elif method == "Log2":
+        if method == "Log2":
             return values.apply(np.log2)
 
-        elif method == "Ln":
+        if method == "Ln":
             return values.apply(np.log)
 
-        elif method == "Standard scaling":
+        if method == "Standard scaling":
             mean = np.mean(values)
             std = np.std(values)
             return (values - mean) / std
 
-        else:
-            return values
+        return values
 
     @staticmethod
     def scale_many(data: pd.DataFrame, method: str, factor: str) -> pd.DataFrame:

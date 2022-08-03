@@ -1,24 +1,23 @@
-import json
 import typing as t
 
 import dash
 
 dash.register_page(__name__)
 
+import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.graph_objects as go
-import dash_bootstrap_components as dbc
-from dash import dcc, html, Input, Output, callback, callback_context
-
-from src.plots import Plot
+from dash import Input, Output, callback, callback_context, dcc, html
 from src.basics import FrameOperations
+from src.plots import Plot
 from src.statistics import Stats
+from src.utils import load_config
 
 emptyFig = go.Figure()
-config = json.load(open("../config.json", "r"))
+config = load_config()
 global_metadata = pd.read_pickle(config["global_metadata"])
 
-layout = html.Div(
+layout = dbc.Container(
     [
         dbc.Row(
             [
@@ -42,6 +41,7 @@ layout = html.Div(
                             id="sample-types-1d-explorer",
                             options=[],
                             clearable=True,
+                            placeholder="Firstly select data type",
                             multi=True,
                             disabled=True,
                         ),
@@ -52,12 +52,12 @@ layout = html.Div(
                 dbc.Col(
                     [
                         html.Label("Input variable"),
-                        html.Br(),
-                        dcc.Input(
+                        dbc.Input(
                             id="variable-1d-explorer",
                             disabled=True,
                             placeholder="Firstly select data type",
                             maxLength=10,
+                            type="text",
                         ),
                     ],
                     width=4,
@@ -102,35 +102,34 @@ layout = html.Div(
         dbc.Row(
             dbc.Collapse(
                 [
-                    dbc.Card(id="msg-1d-explorer"),
-                    dbc.Card(dcc.Graph(id="plot-1d-explorer")),
-                    dbc.Card(
+                    dbc.Row(dbc.Container(id="msg-1d-explorer")),
+                    dbc.Row(dcc.Graph(id="plot-1d-explorer")),
+                    dbc.Row(
                         [
                             html.Label("Sample count"),
-                            dbc.Card(id="count-table-1d-explorer"),
+                            dbc.Container(id="count-table-1d-explorer"),
                         ]
                     ),
-                    dbc.Card(
-                        [html.Label("Post-hoc"), dbc.Card(id="post-hoc-1d-explorer")]
-                    ),
+                    dbc.Row([html.Label("Post-hoc"), dbc.Container(id="post-hoc-1d-explorer")]),
                 ],
                 id="result-section-1d-explorer",
                 is_open=False,
             ),
-            style={"padding": 1},
         ),
-    ]
+    ],
+    fluid=True,
 )
 
 
 @callback(
     Output("sample-types-1d-explorer", "options"),
+    Output("sample-types-1d-explorer", "placeholder"),
     Output("sample-types-1d-explorer", "disabled"),
     Input("data-type-1d-explorer", "value"),
 )
 def update_sample_type_options(
     sample_types: t.Union[t.List[str], str]
-) -> t.Tuple[t.List[str], bool]:
+) -> t.Tuple[t.List[str], str, bool]:
     """
     Function to update possible sample types for selected data type.
     """
@@ -142,9 +141,9 @@ def update_sample_type_options(
         else:
             options = []
 
-        return options, False
+        return options, "Select...", False
     else:
-        return [], True
+        return [], "Firstly select data type", True
 
 
 @callback(
@@ -162,7 +161,7 @@ def update_input_field(data_type: str) -> t.Tuple[bool, str]:
     elif data_type == "Methylation [450K/EPIC]":
         return False, "Eg. cg07779434"
     else:
-        return True, ""
+        return True, "Firstly select data type"
 
 
 @callback(

@@ -1,13 +1,12 @@
-import json
-
 import dash
+import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import dash_bootstrap_components as dbc
 from dash import dcc, html
+from src.utils import load_config
 
-config = json.load(open("../config.json"))
+config = load_config()
 repository_summary = pd.read_pickle(config["summary_metafile"])
 
 
@@ -39,12 +38,17 @@ layout = dbc.Container(
             dbc.Col(
                 dcc.Markdown(
                     f"""
+                    ### Data repository details
+                    
+                    ----
+
                     ###### Repository last update: {repository_summary["last_update"]}
                     ###### Number of samples in repository: {repository_summary["number_of_samples"]} 
                     ###### Number of samples groups in repository: {repository_summary["number_of_samples_groups"]} 
+
+                    ----
                     """
                 ),
-                width=6,
             )
         ),
         html.Br(),
@@ -52,20 +56,14 @@ layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        dbc.Label("Tissue or organ of origin [TOP15]"),
-                        dcc.Graph(
-                            figure=plot(repository_summary["tissue_origin_cnt"], "bar")
-                        ),
+                        dbc.Label("TOP15 sample types by tissue or organ of origin"),
+                        dcc.Graph(figure=plot(repository_summary["tissue_origin_cnt"], "bar")),
                     ]
                 ),
                 dbc.Col(
                     [
-                        dbc.Label("Primary diagnosis [TOP15]"),
-                        dcc.Graph(
-                            figure=plot(
-                                repository_summary["primary_diagnosis_cnt"], "bar"
-                            )
-                        ),
+                        dbc.Label("TOP15 sample types by primary diagnosis"),
+                        dcc.Graph(figure=plot(repository_summary["primary_diagnosis_cnt"], "bar")),
                     ]
                 ),
             ]
@@ -75,13 +73,13 @@ layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        dbc.Label("Sample type"),
+                        dbc.Label("Samples by tissue type"),
                         dcc.Graph(figure=plot(repository_summary["sample_type_cnt"])),
                     ]
                 ),
                 dbc.Col(
                     [
-                        dbc.Label("Technology"),
+                        dbc.Label("Samples by technology"),
                         dcc.Graph(figure=plot(repository_summary["exp_strategy_cnt"])),
                     ]
                 ),

@@ -1,25 +1,24 @@
-import json
 import typing as t
 
 import dash
 
 dash.register_page(__name__)
 
+import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.graph_objects as go
-import dash_bootstrap_components as dbc
-from dash import dcc, html, Input, Output, callback, callback_context
-from src.statistics import Stats
-from src.plots import MultiDimPlot
+from dash import Input, Output, callback, callback_context, dcc, html
 from src.basics import FrameOperations
-from src.utils import response_multidim
-
+from src.plots import MultiDimPlot
+from src.statistics import Stats
+from src.utils import load_config, response_multidim
 
 emptyFig = go.Figure()
-config = json.load(open("../config.json", "r"))
+config = load_config()
+
 global_metadata = pd.read_pickle(config["global_metadata"])
 
-layout = html.Div(
+layout = dbc.Container(
     [
         dbc.Row(
             [
@@ -107,34 +106,26 @@ layout = html.Div(
                         ),
                     ]
                 ),
-                dbc.Col(
-                    [html.Br(), dbc.Button("Submit", id="submit-multidim-explorer")]
-                ),
+                dbc.Col([html.Br(), dbc.Button("Submit", id="submit-multidim-explorer")]),
             ]
         ),
         dbc.Row(
-            [
-                dbc.Col(
-                    dbc.Spinner(
-                        html.Div(id="progress-multidim-explorer"), color="danger"
-                    )
-                )
-            ],
+            [dbc.Col(dbc.Spinner(html.Div(id="progress-multidim-explorer"), color="danger"))],
             style={"padding": "10px", "marginBottom": "10px", "marginTop": "10px"},
         ),
         dbc.Row(
             dbc.Collapse(
                 [
-                    dbc.Card(dcc.Textarea(id="msg-multidim-explorer", readOnly=True)),
-                    dbc.Card(dcc.Graph(id="plot-multidim-explorer")),
-                    dbc.Card(id="sample-count-multidim-explorer"),
+                    dbc.Container(id="msg-multidim-explorer", fluid=True),
+                    dcc.Graph(id="plot-multidim-explorer"),
+                    dbc.Container(id="sample-count-multidim-explorer", fluid=True),
                 ],
                 id="result-section-multidim-explorer",
                 is_open=False,
             ),
-            style={"padding": 1, "background-color": "blue"},
         ),
-    ]
+    ],
+    fluid=True,
 )
 
 
@@ -170,7 +161,7 @@ def update_sample_type_options(
 def update_input_section(data_type):
 
     if data_type == "Expression [RNA-seq]":
-        return False, "Eg. PAX3, PAX6, PARP9, AIM2, MX1, ITF-2"
+        return False, "Eg. PAX3, PAX6, PARP9, AIM2, MX1"
 
     elif data_type == "Methylation [450K/EPIC]":
         return False, "Eg. cg07703401, cg03390211, cg15001381, cg16245339, cg25672287"
@@ -182,7 +173,7 @@ def update_input_section(data_type):
 @callback(
     Output("plot-multidim-explorer", "figure"),
     Output("result-section-multidim-explorer", "is_open"),
-    Output("msg-multidim-explorer", "value"),
+    Output("msg-multidim-explorer", "children"),
     Output("progress-multidim-explorer", "children"),
     Output("sample-count-multidim-explorer", "children"),
     Input("sample-types-multidim-explorer", "value"),
@@ -204,12 +195,7 @@ def update_figure(
 ):
     button = [p["prop_id"] for p in callback_context.triggered][0]
 
-    if (
-        "submit-multidim-explorer" in button
-        and sample_types
-        and data_type
-        and variables
-    ):
+    if "submit-multidim-explorer" in button and sample_types and data_type and variables:
         variables = FrameOperations.clean_sequence(variables)
 
         if len(variables) < 5:

@@ -1,6 +1,6 @@
 import dash
-from dash import html, dcc
 import dash_bootstrap_components as dbc
+from dash import dcc, html
 
 dash.register_page(__name__, path="/")
 
@@ -44,9 +44,7 @@ card_3_content = [
                  various sample types.",
                 className="card-text",
             ),
-            dbc.Button(
-                "Go", href="/methylation-expresion-browser", className="mt-auto"
-            ),
+            dbc.Button("Go", href="/methylation-expresion-browser", className="mt-auto"),
         ]
     ),
 ]
@@ -65,26 +63,31 @@ card_4_content = [
     ),
 ]
 
-layout = html.Div(
+layout = dbc.Container(
     [
         html.Br(),
         html.Div(
-            html.H4(
-                "eDAVE: extension of GDC Data Analysis, Visualization, and Exploration Tools"
-            ),
+            html.H4("eDAVE: extension of GDC Data Analysis, Visualization, and Exploration Tools"),
             style={"display": "flex", "justifyContent": "center"},
         ),
         html.Br(),
-        html.Div(
+        dbc.Container(
             dcc.Markdown(
                 """
-                This tools is an extension of 
-                [GDC Data Analysis, Visualization, and Exploration (DAVE) Tools](https://gdc.cancer.gov/analyze-data/gdc-dave-tools).
-                \n
-                ... some text here ...
+                This app is an extension of 
+                GDC Data Analysis, Visualization, and Exploration [[DAVE]] 
+                (https://gdc.cancer.gov/analyze-data/gdc-dave-tools) tools
+                for quantitative traits such as DNA methylation and gene expression. 
+                                 
+                Importantly all data records in current repository are coming from **Genome Data common** 
+                [database](https://gdc.cancer.gov/) and were obtained using the most prominent technologies 
+                such as **Illumina microarrays** and **RNA-seq** and processed in one way 
+                (raw data processing pipelines described in 
+                detail [here](https://docs.gdc.cancer.gov/Data/Introduction/)). 
+                Thus downstream analysis should be free of unwanted technical variance.
                 """
             ),
-            style={"display": "flex", "justifyContent": "center"},
+            style={"justifyContent": "center"},
         ),
         html.Br(),
         dbc.Row(
@@ -101,5 +104,6 @@ layout = html.Div(
                 width={"size": 4, "offset": 4},
             ),
         ),
-    ]
+    ],
+    fluid=True,
 )

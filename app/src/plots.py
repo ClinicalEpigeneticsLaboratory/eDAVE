@@ -1,8 +1,8 @@
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 
 Figure = go.Figure
 
@@ -31,9 +31,7 @@ class Plot:
         return f"units: TPM, scaling: {self.scaling_method}"
 
     def boxplot(self) -> Figure:
-        fig = px.box(
-            data_frame=self.data, x=self.x_axis, y=self.y_axis, color=self.x_axis
-        )
+        fig = px.box(data_frame=self.data, x=self.x_axis, y=self.y_axis, color=self.x_axis)
         fig.update_layout(
             showlegend=False,
             yaxis=dict(title=self.__yaxis_title()),
@@ -44,9 +42,7 @@ class Plot:
         return fig
 
     def violinplot(self) -> Figure:
-        fig = px.violin(
-            data_frame=self.data, x=self.x_axis, y=self.y_axis, color=self.x_axis
-        )
+        fig = px.violin(data_frame=self.data, x=self.x_axis, y=self.y_axis, color=self.x_axis)
         fig.update_layout(
             showlegend=False,
             yaxis=dict(title=self.__yaxis_title()),
@@ -89,9 +85,7 @@ class MultiDimPlot:
         if self.n_dimension == 2:
             fig = px.scatter(deco_data, x="t-SNE 1", y="t-SNE 2", color=self.factor)
         else:
-            fig = px.scatter_3d(
-                deco_data, x="t-SNE 1", y="t-SNE 2", z="t-SNE 3", color=self.factor
-            )
+            fig = px.scatter_3d(deco_data, x="t-SNE 1", y="t-SNE 2", z="t-SNE 3", color=self.factor)
 
         fig.update_layout(font=dict(size=self.font_size), width=1800, height=800)
 

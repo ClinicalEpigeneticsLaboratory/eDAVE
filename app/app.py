@@ -1,8 +1,18 @@
 import json
+
 import dash
 import dash_bootstrap_components as dbc
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], use_pages=True)
+with open("config.json", "r", encoding="UTF-8") as config_file:
+    config = json.load(config_file)
+
+# TODO add notyfication if data repository not found ...
+
+debug = config["debug"]
+version = config["version"]
+
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY], use_pages=True)
+
 pages = [
     dbc.ListGroupItem(page["name"], href=page["path"])
     for page in dash.page_registry.values()
@@ -19,14 +29,13 @@ navbar = dbc.NavbarSimple(
             label="More",
         ),
     ],
-    brand="eDAVE v. 0.0.0.0",
+    brand=f"eDAVE v{version}",
     brand_href="/",
     color="primary",
     dark=True,
 )
 
 app.layout = dbc.Container([navbar, dash.page_container], fluid=True)
-config = json.load(open("../config.json", "r"))
 
 if __name__ == "__main__":
-    app.run_server(debug=config["debug"])
+    app.run_server(debug=debug)

@@ -1,7 +1,8 @@
 from io import StringIO
+
 import pandas as pd
-from statsmodels.stats.multicomp import pairwise_tukeyhsd
 from dash import dash_table
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
 
 class Stats:
