@@ -11,9 +11,8 @@ import pandas as pd
 import requests
 from prefect import flow, get_run_logger, task
 from src.exceptions import RepositoryExistsError
-from tqdm import tqdm
-
 from src.utils import load_config
+from tqdm import tqdm
 
 config = load_config()
 
