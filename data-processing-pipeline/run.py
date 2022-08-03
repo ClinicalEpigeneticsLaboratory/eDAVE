@@ -1,48 +1,58 @@
 import json
 import pickle
-from os import makedirs
-from os.path import exists
-from os.path import join
-from subprocess import call
 from datetime import datetime
-
-from prefect import flow, task, get_run_logger
-from pathlib import Path
 from glob import glob
-from tqdm import tqdm
+from os import makedirs
+from os.path import exists, join
+from pathlib import Path
+from subprocess import call
+
 import pandas as pd
 import requests
+from prefect import flow, get_run_logger, task
+from src.exceptions import RepositoryExistsError
+from tqdm import tqdm
 
-from config import files_limit
-from config import fields_config
-from config import filters_config
-from config import directory_tree
-from config import gdc_transfer_tool_executable
-from config import n_process
-from config import gdc_raw_response_file
-from config import sample_sheet_file
-from config import min_samples_per_sample_group
-from config import manifest_base_path
-from config import processed_dir
-from config import min_common_samples
-from config import metadata_global_file
-from config import summary_metafile
+from src.utils import load_config
+
+config = load_config()
+
+GDC_TRANSFER_TOOL_EXECUTABLE = config["GDC_TRANSFER_TOOL_EXECUTABLE"]
+MIN_SAMPLES_PER_SAMPLE_GROUP = config["MIN_SAMPLES_PER_SAMPLE_GROUP"]
+GDC_RAW_RESPONSE_FILE = config["GDC_RAW_RESPONSE_FILE"]
+METADATA_GLOBAL_FILE = config["METADATA_GLOBAL_FILE"]
+MANIFEST_BASE_PATH = config["MANIFEST_BASE_PATH"]
+MIN_COMMON_SAMPLES = config["MIN_COMMON_SAMPLES"]
+SAMPLE_SHEET_FILE = config["SAMPLE_SHEET_FILE"]
+SUMMARY_METAFILE = config["SUMMARY_METAFILE"]
+FILTERS_CONFIG = config["FILTERS_CONFIG"]
+DIRECTORY_TREE = config["DIRECTORY_TREE"]
+FIELDS_CONFIG = config["FIELDS_CONFIG"]
+PROCESSED_DIR = config["PROCESSED_DIR"]
+FILES_LIMIT = config["FILES_LIMIT"]
+N_PROCESS = config["N_PROCESS"]
+
+
+@task
+def check_if_repository_exists() -> None:
+    if exists("data/"):
+        raise RepositoryExistsError("The local repository already exists!")
 
 
 @task
 def build_directory_tree() -> None:
     logger = get_run_logger()
-    for directory in directory_tree:
-        makedirs(directory, exist_ok=True)
+    for directory in DIRECTORY_TREE:
+        makedirs(directory)
         logger.info(f"Building dir: {directory}.")
 
 
 @task(retries=3)
-def request_GDC(
-    fields: dict = fields_config,
-    filters: dict = filters_config,
-    n_records: int = files_limit,
-    output_file: str = gdc_raw_response_file,
+def request_gdc_service(
+    fields: dict = FIELDS_CONFIG,
+    filters: dict = FILTERS_CONFIG,
+    n_records: int = FILES_LIMIT,
+    output_file: str = GDC_RAW_RESPONSE_FILE,
 ) -> None:
     """
     Function to request GDC, as response it returns df with files.
@@ -56,64 +66,67 @@ def request_GDC(
     params = {"filters": filters, "fields": fields, "format": "TSV", "size": n_records}
 
     resp = requests.post(endpoint, json=params)
-    with open(output_file, "w") as file:
-        file.write(resp.text)
+    with open(output_file, "w", encoding="utf-8") as response_file:
+        response_file.write(resp.text)
 
     logger.info("Exporting raw GDC response.")
 
 
 @task
 def build_sample_sheet(
-    input_file: str = gdc_raw_response_file, output: str = sample_sheet_file
+    input_file: str = GDC_RAW_RESPONSE_FILE, output: str = SAMPLE_SHEET_FILE
 ) -> None:
     """
     Function build sample sheet based on raw GDC response.
     """
-    df = pd.read_table(input_file)
+    frame = pd.read_table(input_file)
 
     # fill nans in platform field
-    df.platform = df.platform.fillna("RNA-seq [platform - unknown]")
+    frame.platform = frame.platform.fillna("RNA-seq [platform - unknown]")
 
     # drop 27K records
-    df = df[df["platform"] != "Illumina Human Methylation 27"]
+    frame = frame[frame["platform"] != "Illumina Human Methylation 27"]
 
     # set index as case id
-    df = df.set_index("cases.0.case_id")
-    df.index.name = ""
+    frame = frame.set_index("cases.0.case_id")
+    frame.index.name = ""
 
     # rename columns
-    df.columns = [name.split(".")[-1] if "." in name else name for name in df.columns]
+    frame.columns = [name.split(".")[-1] if "." in name else name for name in frame.columns]
 
     # drop duplicated columns [sometimes from one case is multiple samples]
-    df = df.loc[:, ~df.columns.duplicated(keep="first")]
+    frame = frame.loc[:, ~frame.columns.duplicated(keep="first")]
 
     # drop records without diagnosis or origin tissue
-    df = df[
-        (~df["primary_diagnosis"].isna()) & (~df["tissue_or_organ_of_origin"].isna())
+    frame = frame[
+        (~frame["primary_diagnosis"].isna()) & (~frame["tissue_or_organ_of_origin"].isna())
     ]
 
+    # Remove redundant NOS preffix
+    frame["tissue_or_organ_of_origin"] = frame["tissue_or_organ_of_origin"].str.replace(", NOS", "")
+
     # add SampleCharacteristic field
-    df["SampleCharacteristic"] = (
-        df["sample_type"]
+    frame["SampleCharacteristic"] = (
+        frame["tissue_type"]
         + "_"
-        + df["tissue_or_organ_of_origin"]
+        + frame["tissue_or_organ_of_origin"]
         + "_"
-        + df["primary_diagnosis"]
+        + frame["primary_diagnosis"]
     )
 
-    df.to_csv(output)
+    frame.to_csv(output)
 
 
 @task(retries=3)
 def build_manifest(
-    sample_sheet: str = sample_sheet_file,
-    min_samples: int = min_samples_per_sample_group,
-    base_path: str = manifest_base_path,
+    sample_sheet: str = SAMPLE_SHEET_FILE,
+    min_samples: int = MIN_SAMPLES_PER_SAMPLE_GROUP,
+    base_path: str = MANIFEST_BASE_PATH,
 ) -> None:
     """
     Function to build manifest for each specific group_of_samples present in SampleCharacteristic field.
     Only sample groups containing > min_samples_per_sample_group are processed to further steps.
-    Manifest files are exported to location: <base_path / sample group / fileType [Met / Exp] / manifest.txt>.
+    Manifest files are exported to location: <base_path / sample group / file_type [Met / Exp] / manifest.txt>.
     Manifest file is an input for GDC download tool.
     """
 
@@ -145,10 +158,10 @@ def build_manifest(
         # prepare data to request
         to_request = zip(["Exp", "Met"], [expression_files, methylation_files])
 
-        for fileType, files in to_request:
+        for file_type, files in to_request:
             if len(files) > min_samples:
                 # make dir for specific sample group
-                makedirs(join(base_path, group_of_samples, fileType), exist_ok=True)
+                makedirs(join(base_path, group_of_samples, file_type), exist_ok=True)
 
                 # build manifest file
                 params = {"ids": files}
@@ -160,17 +173,19 @@ def build_manifest(
                 resp = resp.text
 
                 with open(
-                    join(base_path, group_of_samples, fileType, "manifest.txt"), "w"
-                ) as file:
-                    file.write(resp)
+                    join(base_path, group_of_samples, file_type, "manifest.txt"),
+                    "w",
+                    encoding="utf-8",
+                ) as manifest_file:
+                    manifest_file.write(resp)
 
                 logger.info(
-                    f"Exporting manifest for: {group_of_samples}:{fileType} n samples: {len(files)}"
+                    f"Exporting manifest for: {group_of_samples}:{file_type} n samples: {len(files)}"
                 )
 
 
 @task()
-def download_methylation_files(base_path: str = manifest_base_path) -> None:
+def download_methylation_files(base_path: str = MANIFEST_BASE_PATH) -> None:
     """
     Function to download methylation files specified in manifest file.
     """
@@ -181,12 +196,12 @@ def download_methylation_files(base_path: str = manifest_base_path) -> None:
         logger.info(f"Downloading: {manifest}")
         out_dir = str(Path(manifest).parent)
 
-        command = f"{gdc_transfer_tool_executable} download -n {n_process} -m '{manifest}' -d '{out_dir}/'"
+        command = f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}/'"
         call(command, shell=True)
 
 
 @task()
-def download_expression_files(base_path: str = manifest_base_path) -> None:
+def download_expression_files(base_path: str = MANIFEST_BASE_PATH) -> None:
     """
     Function to download expression files specified in manifest file.
     """
@@ -197,16 +212,16 @@ def download_expression_files(base_path: str = manifest_base_path) -> None:
         logger.info(f"Downloading: {manifest}")
         out_dir = str(Path(manifest).parent)
 
-        command = f"{gdc_transfer_tool_executable} download -n {n_process} -m '{manifest}' -d '{out_dir}/'"
+        command = f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}/'"
         call(command, shell=True)
 
 
 @task
 def build_frames(
     ftype: str,
-    sample_sheet: str = sample_sheet_file,
-    base_path: str = manifest_base_path,
-    out_dir: str = processed_dir,
+    sample_sheet: str = SAMPLE_SHEET_FILE,
+    base_path: str = MANIFEST_BASE_PATH,
+    out_dir: str = PROCESSED_DIR,
 ) -> None:
     """
     Function to concatenate methylation files into dataframe.
@@ -223,27 +238,21 @@ def build_frames(
         frame = []
 
         if ftype == "Met":
-            files_in = glob(
-                join(base_path, sample_group, ftype, "*/", "*level3betas.txt")
-            )
+            files_in = glob(join(base_path, sample_group, ftype, "*/", "*level3betas.txt"))
         else:
-            files_in = glob(
-                join(base_path, sample_group, ftype, "*/", "*_star_gene_counts.tsv")
-            )
+            files_in = glob(join(base_path, sample_group, ftype, "*/", "*_star_gene_counts.tsv"))
 
         if files_in:
-            for file in files_in:
-                file_id = str(Path(file).parent.name)
+            for data_file in files_in:
+                file_id = str(Path(data_file).parent.name)
 
                 sample_id = sample_sheet[sample_sheet["id"] == file_id].index[0]
 
                 if ftype == "Met":
-                    sample = pd.read_table(file, header=None, index_col=0)
+                    sample = pd.read_table(data_file, header=None, index_col=0)
 
                 else:
-                    sample = pd.read_table(file, comment="#")[
-                        ["gene_name", "tpm_unstranded"]
-                    ]
+                    sample = pd.read_table(data_file, comment="#")[["gene_name", "tpm_unstranded"]]
                     sample = sample.set_index("gene_name")
                     sample = sample[~sample.index.isna()]
 
@@ -251,18 +260,16 @@ def build_frames(
                 sample.index.name = ""
                 frame.append(sample)
 
-            makedirs(join(out_dir, sample_group), exist_ok=True)
+            makedirs(join(out_dir, sample_group))
             frame = pd.concat(frame, axis=1)
             frame = frame.loc[:, ~frame.columns.duplicated(keep="first")]
 
-            frame.to_parquet(
-                join(out_dir, sample_group, f"{ftype}.parquet"), index=True
-            )
+            frame.to_parquet(join(out_dir, sample_group, f"{ftype}.parquet"), index=True)
             logger.info(f"Exporting {ftype} frame for {sample_group}: {frame.shape}")
 
 
 @task
-def metadata(final_dir: str = processed_dir) -> None:
+def metadata(final_dir: str = PROCESSED_DIR) -> None:
     """
     Function to export metadata file per sample group, it contains information about creation time, frames dimensions
     and samples common between Met and Exp files.
@@ -353,9 +360,9 @@ def metadata(final_dir: str = processed_dir) -> None:
 
 @task
 def global_metadata(
-    final_dir: str = processed_dir,
-    min_samples: int = min_common_samples,
-    metadata_global_path: str = metadata_global_file,
+    final_dir: str = PROCESSED_DIR,
+    min_samples: int = MIN_COMMON_SAMPLES,
+    metadata_global_path: str = METADATA_GLOBAL_FILE,
 ) -> None:
     """
     Function to export global metafile it contains general information about whole repository.
@@ -397,14 +404,14 @@ def global_metadata(
     with open(metadata_global_path, "wb") as meta_file:
         pickle.dump(meta, meta_file)
 
-    logger.info(f"Exporting global metadata for whole repository")
+    logger.info("Exporting global metadata for whole repository")
 
 
 @task
 def create_repo_summary(
-    output_file: str = summary_metafile,
-    sample_sheet_path: str = sample_sheet_file,
-    metadata_path: str = metadata_global_file,
+    output_file: str = SUMMARY_METAFILE,
+    sample_sheet_path: str = SAMPLE_SHEET_FILE,
+    metadata_path: str = METADATA_GLOBAL_FILE,
 ):
     logger = get_run_logger()
     sample_sheet = pd.read_csv(sample_sheet_path, index_col=0)
@@ -436,13 +443,14 @@ def create_repo_summary(
     with open(output_file, "wb") as meta_file:
         pickle.dump(meta, meta_file)
 
-    logger.info(f"Exporting summary meta file for local repository")
+    logger.info("Exporting summary meta file for local repository")
 
 
 @flow(name="Building data repository")
 def run():
+    check_if_repository_exists()
     build_directory_tree()
-    request_GDC()
+    request_gdc_service()
 
     build_sample_sheet()
     build_manifest()
