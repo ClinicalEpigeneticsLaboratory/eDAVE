@@ -1,8 +1,6 @@
-
 {
   "debug": true,
   "global_metadata": "../data-processing-pipeline/data/processed/metadataGlobal",
   "summary_metafile": "../data-processing-pipeline/data/processed/summaryMetaFile",
   "base_path": "../data-processing-pipeline/data/processed"
 }
-
