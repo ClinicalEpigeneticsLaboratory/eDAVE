@@ -1,7 +1,5 @@
-all: black pylint bandit
+all: black isort pylint bandit
 
-app_repo="app/"
-pipeline_repo="data-processing-pipeline/"
 
 set_up:
 	@echo "Setting up project"
@@ -11,11 +9,15 @@ black:
 	@echo "Code formatting"
 	poetry run black .
 
+isort:
+	#echo "Imports sorting"
+	poetry run isort .
+
 pylint:
 	@echo "Code QC"
-	poetry run pylint $(app_repo) $(pipeline_repo)
+	poetry run pylint *
 
 bandit:
 	@echo "Security check"
-	poetry run bandit -r $(app_repo)
+	poetry run bandit -r app/
 
