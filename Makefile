@@ -4,6 +4,8 @@ all: black isort pylint bandit
 set_up:
 	@echo "Setting up project"
 	poetry install
+	poetry run pre-commit install
+
 
 black:
 	@echo "Code formatting"
@@ -20,4 +22,3 @@ pylint:
 bandit:
 	@echo "Security check"
 	poetry run bandit -r app/
-
