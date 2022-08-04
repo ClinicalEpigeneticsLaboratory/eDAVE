@@ -26,21 +26,26 @@ www.www.www
 #### How to start
 1. make sure that You have python >= 3.8 installed
 2. install [poetry](https://python-poetry.org/) dependency manager
-        
+
         pip install poetry
-   
+
 3. clone repository
-        
+
         git clone https://github.com/ClinicalEpigeneticsLaboratory/eDAVE.git
-   
-4. open project directory and install required dependencies 
-   
+
+4. open project directory and install required dependencies
+
         poetry install
+
+5. install pre-commit [optional]
+
+        poetry run pre-commit install
+
 
 
 #### Build local repository
-This script builds data repository required to run Dash app. 
-And it is based on [GDC API](https://gdc.cancer.gov/developers/gdc-application-programming-interface-api) 
+This script builds data repository required to run Dash app.
+And it is based on [GDC API](https://gdc.cancer.gov/developers/gdc-application-programming-interface-api)
 and [GDC data transfer tool](https://docs.gdc.cancer.gov/Data_Transfer_Tool/Users_Guide/Getting_Started/).
 Please note that ```fields```, ```filters```, ```number of samples``` as well as ```data transfer tool executable path```
 are declared in ```data-processing-pipeline/config.json``` file.
@@ -68,5 +73,3 @@ or specifically:
     make isort
     make pylint
     make bandit
-
-
