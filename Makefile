@@ -11,7 +11,7 @@ black:
 	poetry run black .
 
 isort:
-	echo "Imports sorting"
+	@echo "Imports sorting"
 	poetry run isort .
 
 pylint:
