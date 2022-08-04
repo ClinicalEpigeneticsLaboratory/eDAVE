@@ -1,3 +1,4 @@
+import typing as t
 from io import StringIO
 
 import pandas as pd
@@ -38,7 +39,7 @@ class Model:
 
         return fig
 
-    def export_frame(self) -> dash_table:
+    def export_frame(self) -> t.Tuple[dash_table]:
         html = self.model_summary.as_html()
         frames = pd.read_html(StringIO(html))
         frame1, frame2 = frames[0], frames[1]
