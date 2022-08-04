@@ -195,7 +195,9 @@ def download_methylation_files(base_path: str = MANIFEST_BASE_PATH) -> None:
         logger.info(f"Downloading: {manifest}")
         out_dir = str(Path(manifest).parent)
 
-        command = f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}/'"
+        command = (
+            f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}'"
+        )
         call(command, shell=True)
 
 
@@ -211,7 +213,9 @@ def download_expression_files(base_path: str = MANIFEST_BASE_PATH) -> None:
         logger.info(f"Downloading: {manifest}")
         out_dir = str(Path(manifest).parent)
 
-        command = f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}/'"
+        command = (
+            f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}'"
+        )
         call(command, shell=True)
 
 
