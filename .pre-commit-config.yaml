@@ -6,6 +6,7 @@ repos:
       - id: check-merge-conflict
       - id: check-yaml
       - id: check-json
+        args: ["app/", "data-processing-pipeline/"]
       - id: end-of-file-fixer
       - id: check-added-large-files
       - id: check-toml
