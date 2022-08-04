@@ -1,4 +1,4 @@
-all: black isort pylint bandit
+all: black isort bandit pylint
 
 
 set_up:
