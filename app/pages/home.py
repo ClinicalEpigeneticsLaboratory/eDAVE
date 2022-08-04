@@ -67,24 +67,31 @@ layout = dbc.Container(
     [
         html.Br(),
         html.Div(
-            html.H4("eDAVE: extension of GDC Data Analysis, Visualization, and Exploration Tools"),
+            dcc.Markdown(
+                "### eDAVE - extension of GDC Data Analysis, Visualization, and Exploration Tools"
+            ),
             style={"display": "flex", "justifyContent": "center"},
         ),
         html.Br(),
         dbc.Container(
             dcc.Markdown(
                 """
-                This app is an extension of 
-                GDC Data Analysis, Visualization, and Exploration [[DAVE]] 
+                 ----
+
+                This app is an extension of
+                GDC Data Analysis, Visualization, and Exploration [[DAVE]]
                 (https://gdc.cancer.gov/analyze-data/gdc-dave-tools) tools
-                for quantitative traits such as DNA methylation and gene expression. 
-                                 
-                Importantly all data records in current repository are coming from **Genome Data common** 
-                [database](https://gdc.cancer.gov/) and were obtained using the most prominent technologies 
-                such as **Illumina microarrays** and **RNA-seq** and processed in one way 
-                (raw data processing pipelines described in 
-                detail [here](https://docs.gdc.cancer.gov/Data/Introduction/)). 
+                for quantitative measurements such as DNA methylation and gene expression.
+
+                Importantly all data records in current repository are coming from **Genome Data common**
+                [database](https://gdc.cancer.gov/) and were obtained using the most prominent technologies
+                such as **Illumina microarrays** and **RNA-seq** and processed in one, standardized way
+                (raw data processing pipelines described in
+                detail [here](https://docs.gdc.cancer.gov/Data/Introduction/)).
                 Thus downstream analysis should be free of unwanted technical variance.
+
+                 ----
+
                 """
             ),
             style={"justifyContent": "center"},
