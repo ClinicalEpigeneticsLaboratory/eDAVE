@@ -39,12 +39,12 @@ layout = dbc.Container(
                 dcc.Markdown(
                     f"""
                     ### Data repository details
-                    
+
                     ----
 
                     ###### Repository last update: {repository_summary["last_update"]}
-                    ###### Number of samples in repository: {repository_summary["number_of_samples"]} 
-                    ###### Number of samples groups in repository: {repository_summary["number_of_samples_groups"]} 
+                    ###### Number of samples in repository: {repository_summary["number_of_samples"]}
+                    ###### Number of sample groups in repository: {repository_summary["number_of_samples_groups"]}
 
                     ----
                     """
