@@ -34,6 +34,7 @@ class Model:
             marginal_x="box",
             marginal_y="box",
             trendline="ols",
+            labels={x_axis: f"{x_axis} [β-value]", y_axis: f"{y_axis} [TPM]"},
         )
         fig.update_layout(font=dict(size=14))
 
