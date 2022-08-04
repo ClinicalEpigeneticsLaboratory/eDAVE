@@ -6,7 +6,6 @@ repos:
       - id: check-merge-conflict
       - id: check-yaml
       - id: check-json
-        args: ["app/", "data-processing-pipeline/"]
       - id: end-of-file-fixer
       - id: check-added-large-files
       - id: check-toml
@@ -15,7 +14,7 @@ repos:
     rev: 5.10.1
     hooks:
       - id: isort
-        args: ["app/", "data-processing-pipeline/"]
+        args: ["*"]
 
   - repo: https://github.com/ambv/black
     rev: 21.12b0
