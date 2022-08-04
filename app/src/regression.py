@@ -7,6 +7,8 @@ import plotly.graph_objects as go
 import statsmodels.api as sm
 from dash import dash_table
 
+dashTable = t.TypeVar("dashTable")
+
 
 class Model:
     def __init__(self, data: pd.DataFrame, response_variable: str):
@@ -39,7 +41,7 @@ class Model:
 
         return fig
 
-    def export_frame(self) -> t.Tuple[dash_table]:
+    def export_frame(self) -> t.Tuple[dashTable]:
         html = self.model_summary.as_html()
         frames = pd.read_html(StringIO(html))
         frame1, frame2 = frames[0], frames[1]
