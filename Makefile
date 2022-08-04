@@ -6,13 +6,12 @@ set_up:
 	poetry install
 	poetry run pre-commit install
 
-
 black:
 	@echo "Code formatting"
 	poetry run black .
 
 isort:
-	#echo "Imports sorting"
+	echo "Imports sorting"
 	poetry run isort .
 
 pylint:
