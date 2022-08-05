@@ -9,8 +9,8 @@
 
 
 #### Goal
-The goal of this project is to provide GUI to analyse, visualize and explore datasets from **GDC** (Genomic Data Commons).
-This project contains two components:
+The goal of this project is to provide a highly efficient GUI to analyse, visualize and explore datasets from **GDC** (Genomic Data Commons).
+This project contains two main components:
 
 ```
 - data-processing-pipeline/ -> implements data processing pipeline to build local data repository.
