@@ -27,20 +27,23 @@ www.www.www
 1. make sure that You have python >= 3.8 installed
 2. install [poetry](https://python-poetry.org/) dependency manager
 
-        pip install poetry
+         pip install poetry
 
 3. clone repository
 
-        git clone https://github.com/ClinicalEpigeneticsLaboratory/eDAVE.git
+         git clone https://github.com/ClinicalEpigeneticsLaboratory/eDAVE.git
 
 4. open project directory and install required dependencies
 
-        poetry install
+         poetry install
 
 5. install pre-commit [optional]
 
-        poetry run pre-commit install
+         poetry run pre-commit install
 
+6. steps 4 and 5 are also implemented in `Makefile` [instead of steps 4 and 5]
+
+         make set_up
 
 
 #### Build local repository
@@ -59,7 +62,7 @@ be a relatively small number e.g. 100 (default). However, in production mode, it
 
 
 #### Run dash app
-To start data exploration. Please note that to run app in production mode set ```debug: false``` in ```app/config.json```
+To start data exploration. Please note that to run app in production mode set `debug: false` in `app/config.json`
 file.
 
     cd app/
