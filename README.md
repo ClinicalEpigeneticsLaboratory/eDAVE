@@ -53,7 +53,7 @@ and [GDC data transfer tool](https://docs.gdc.cancer.gov/Data_Transfer_Tool/User
 Please note that `FIELDS`, `FILTERS`, `FILES_LIMIT` as well as `GDC TRANSFER TOOL EXECUTABLE`
 are declared in `data-processing-pipeline/config.json` file.
 
-Please note that GDC API requires a maximum `FILES_LIMIT` parameter, to test purposes this parameter should
+Additionally, GDC API requires a maximum `FILES_LIMIT` parameter, to test purposes this parameter should
 be a relatively small number e.g. 100 (default). However, in production mode, it should be 100000.
 
       cd data-processing-pipeline/
