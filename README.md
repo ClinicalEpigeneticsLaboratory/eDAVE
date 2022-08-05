@@ -61,7 +61,8 @@ be a relatively small number e.g. 100 (default). However, in production mode, it
 
 
 #### Run dash app
-Please note that to run app in production mode set `debug: false` in `app/config.json` file.
+Please note that to run app in production mode set `debug: false` in `app/config.json` file. Moreover,
+the app requires an existing local data repository.
 
       cd app/
       poetry run python app.py
