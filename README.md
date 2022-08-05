@@ -41,7 +41,7 @@ www.www.www
 
          poetry run pre-commit install
 
-6. steps 4 and 5 are also implemented in `Makefile` [instead of steps 4 and 5]
+6. steps `4` and `5` are also implemented in `Makefile` [instead of steps 4 and 5]
 
          make set_up
 
