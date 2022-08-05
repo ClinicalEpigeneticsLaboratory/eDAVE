@@ -27,23 +27,23 @@ www.www.www
 1. make sure that You have python >= 3.8 installed
 2. install [poetry](https://python-poetry.org/) dependency manager
 
-         pip install poetry
+       pip install poetry
 
 3. clone repository
 
-         git clone https://github.com/ClinicalEpigeneticsLaboratory/eDAVE.git
+       git clone https://github.com/ClinicalEpigeneticsLaboratory/eDAVE.git
 
 4. open project directory and install required dependencies
 
-         poetry install
+       poetry install
 
 5. install pre-commit [optional]
 
-         poetry run pre-commit install
+       poetry run pre-commit install
 
 6. steps `4` and `5` are also implemented in `Makefile` [optional]
 
-         make set_up
+       make set_up
 
 
 #### Build local repository
@@ -56,22 +56,22 @@ are declared in `data-processing-pipeline/config.json` file.
 Additionally, GDC API requires a maximum `FILES_LIMIT` parameter, to test purposes this parameter should
 be a relatively small number e.g. 100 (default). However, in production mode, it should be 100000.
 
-      cd data-processing-pipeline/
-      poetry run python run.py
+    cd data-processing-pipeline/
+    poetry run python run.py
 
 
 #### Run dash app
 Please note that to run app in production mode set `debug: false` in `app/config.json` file. Moreover,
 the app requires an existing local data repository.
 
-      cd app/
-      poetry run python app.py
+    cd app/
+    poetry run python app.py
 
 
 #### Code quality
 To ensure the code quality level we use: *black*, *isort*, *lint* and *bandit*. To run those tools:
 
-      make
+    make
 
 
 or specifically:
