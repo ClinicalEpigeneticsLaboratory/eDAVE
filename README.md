@@ -56,23 +56,23 @@ are declared in `data-processing-pipeline/config.json` file.
 Please note that GDC API requires a maximum `FILES_LIMIT` parameter, to test purposes this parameter should
 be a relatively small number e.g. 100 (default). However, in production mode, it should be 100000.
 
-
-    cd data-processing-pipeline/
-    poetry run python run.py
+      cd data-processing-pipeline/
+      poetry run python run.py
 
 
 #### Run dash app
 To start data exploration. Please note that to run app in production mode set `debug: false` in `app/config.json`
 file.
 
-    cd app/
-    poetry run python app.py
+      cd app/
+      poetry run python app.py
 
 
 #### Code quality
 To ensure the code quality level we use: *black*, *isort*, *lint* and *bandit*. To run those tools:
 
-    make
+      make
+
 
 or specifically:
 
