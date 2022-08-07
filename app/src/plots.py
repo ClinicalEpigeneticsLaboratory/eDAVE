@@ -1,8 +1,11 @@
+import typing as t
+
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+from sklearn.preprocessing import StandardScaler
 
 Figure = go.Figure
 
@@ -54,18 +57,23 @@ class Plot:
 
 
 class MultiDimPlot:
-    def __init__(self, data: pd.DataFrame, factor: str, n_dimension: int):
+    def __init__(
+        self, data: pd.DataFrame, factor: str, n_dimension: int, perplexity: t.Optional[int]
+    ):
         self.data = data
         self.factor = factor
         self.n_dimension = n_dimension
+        self.perplexity = perplexity
         self.font_size = 14
         self.random_state = 101
 
     def tsne_plot(self) -> Figure:
         data_to_deco = self.data.drop(self.factor, axis=1)
+        scaled_data_to_deco = StandardScaler().fit_transform(data_to_deco)
+
         tsne = TSNE(
             n_components=self.n_dimension,
-            perplexity=5,
+            perplexity=self.perplexity,
             learning_rate="auto",
             n_iter=500,
             n_iter_without_progress=50,
@@ -73,7 +81,7 @@ class MultiDimPlot:
             random_state=self.random_state,
         )
 
-        deco_data = tsne.fit_transform(data_to_deco)
+        deco_data = tsne.fit_transform(scaled_data_to_deco)
         deco_data = pd.DataFrame(
             deco_data,
             index=data_to_deco.index,
@@ -93,9 +101,11 @@ class MultiDimPlot:
 
     def pca_plot(self) -> Figure:
         data_to_deco = self.data.drop(self.factor, axis=1)
+        scaled_data_to_deco = StandardScaler().fit_transform(data_to_deco)
+
         pca = PCA(n_components=self.n_dimension, random_state=self.random_state)
 
-        deco_data = pca.fit_transform(data_to_deco)
+        deco_data = pca.fit_transform(scaled_data_to_deco)
         exp = [round(val * 100, 2) for val in pca.explained_variance_ratio_]
 
         deco_data = pd.DataFrame(
