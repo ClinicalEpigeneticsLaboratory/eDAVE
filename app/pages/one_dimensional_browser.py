@@ -1,16 +1,16 @@
 import typing as t
 
 import dash
+from src.basics import FrameOperations
+from src.plots import Plot
+from src.statistics import Stats
+from src.utils import load_config
 
 dash.register_page(__name__)
 
 import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import Input, Output, callback, callback_context, dcc, html
-from src.basics import FrameOperations
-from src.plots import Plot
-from src.statistics import Stats
-from src.utils import load_config
 
 EmptyFig = {}
 config = load_config()
@@ -253,5 +253,4 @@ def main_1d_browser(
 
         return True, fig, True, msg, "Applicable only for > 1 sample groups", count, ""
 
-    else:
-        return False, EmptyFig, False, "", "", "", ""
+    return False, EmptyFig, False, "", "", "", ""
