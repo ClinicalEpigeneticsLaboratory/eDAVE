@@ -12,7 +12,7 @@ black:
 
 isort:
 	@echo "Imports sorting"
-	poetry run isort .
+	poetry run isort *
 
 pylint:
 	@echo "Code QC"
