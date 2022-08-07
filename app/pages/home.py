@@ -14,7 +14,7 @@ card_1_content = [
                 methylation across various sample types.",
                 className="card-text",
             ),
-            dbc.Button("Go", href="/1d-browser", className="mt-auto"),
+            dbc.Button("Go", href="/one-dimensional-browser", className="mt-auto"),
         ]
     ),
 ]
@@ -29,7 +29,7 @@ card_2_content = [
                 methylation across various sample types.",
                 className="card-text",
             ),
-            dbc.Button("Go", href="/multidimensional-browser", className="mt-auto"),
+            dbc.Button("Go", href="/multi-dimensional-browser", className="mt-auto"),
         ]
     ),
 ]
@@ -44,7 +44,7 @@ card_3_content = [
                  various sample types.",
                 className="card-text",
             ),
-            dbc.Button("Go", href="/methylation-expresion-browser", className="mt-auto"),
+            dbc.Button("Go", href="/methylation-expression-browser", className="mt-auto"),
         ]
     ),
 ]
