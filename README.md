@@ -50,7 +50,7 @@ www.www.www
 This script builds the data repository required to run Dash app, and it is
 based on [GDC API](https://gdc.cancer.gov/developers/gdc-application-programming-interface-api)
 and [GDC data transfer tool](https://docs.gdc.cancer.gov/Data_Transfer_Tool/Users_Guide/Getting_Started/).
-Please note that `FIELDS`, `FILTERS`, `FILES_LIMIT` as well as `GDC TRANSFER TOOL EXECUTABLE`
+Please note that `FIELDS`, `FILTERS` as well as `GDC TRANSFER TOOL EXECUTABLE`
 are declared in `data-processing-pipeline/config.json` file.
 
 Additionally, GDC API requires a maximum `FILES_LIMIT` parameter, to test purposes this parameter should
