@@ -6,14 +6,13 @@ dash.register_page(__name__)
 
 import dash_bootstrap_components as dbc
 import pandas as pd
-import plotly.graph_objects as go
 from dash import Input, Output, callback, callback_context, dcc, html
 from src.basics import FrameOperations
 from src.plots import Plot
 from src.statistics import Stats
 from src.utils import load_config
 
-emptyFig = go.Figure()
+EmptyFig = {}
 config = load_config()
 global_metadata = pd.read_pickle(config["global_metadata"])
 
@@ -23,12 +22,13 @@ layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.Label("Select data type"),
+                        html.Label("Select data type", htmlFor="data-type-1d-browser"),
                         dcc.Dropdown(
-                            id="data-type-1d-explorer",
+                            id="data-type-1d-browser",
                             options=["Methylation [450K/EPIC]", "Expression [RNA-seq]"],
                             clearable=True,
                             multi=False,
+                            value="",
                         ),
                     ],
                     width=4,
@@ -36,28 +36,30 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        html.Label("Select sample type/s"),
+                        html.Label("Select sample type/s", htmlFor="sample-types-1d-browser"),
                         dcc.Dropdown(
-                            id="sample-types-1d-explorer",
+                            id="sample-types-1d-browser",
                             options=[],
                             clearable=True,
                             placeholder="Firstly select data type",
                             multi=True,
                             disabled=True,
                         ),
+                        dbc.FormText("maximum number of sample types is 5"),
                     ],
                     width=4,
                     style={"padding": "10px"},
                 ),
                 dbc.Col(
                     [
-                        html.Label("Input variable"),
+                        html.Label("Input variable", htmlFor="variable-1d-browser"),
                         dbc.Input(
-                            id="variable-1d-explorer",
+                            id="variable-1d-browser",
                             disabled=True,
                             placeholder="Firstly select data type",
                             maxLength=10,
                             type="text",
+                            value="",
                         ),
                     ],
                     width=4,
@@ -69,9 +71,9 @@ layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.Label("Select scaling method"),
+                        html.Label("Select scaling method", htmlFor="scaling-method-1d-browser"),
                         dcc.Dropdown(
-                            id="scaling-method-1d-explorer",
+                            id="scaling-method-1d-browser",
                             options=["None", "Log10", "Log2", "Ln", "Standard scaling"],
                             clearable=True,
                             multi=False,
@@ -82,9 +84,9 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        html.Label("Select plot type"),
+                        html.Label("Select plot type", htmlFor="plot-type-1d-browser"),
                         dcc.Dropdown(
-                            id="plot-type-1d-explorer",
+                            id="plot-type-1d-browser",
                             options=["Box", "Violin"],
                             value="Box",
                             multi=False,
@@ -92,27 +94,41 @@ layout = dbc.Container(
                         ),
                     ]
                 ),
-                dbc.Col([html.Br(), dbc.Button("Submit", id="submit-1d-explorer")]),
+                dbc.Col([html.Br(), dbc.Button("Submit", id="submit-1d-browser")]),
             ]
         ),
         dbc.Row(
-            dbc.Col([dbc.Spinner(html.Div(id="progress-1d-explorer"), color="danger")]),
+            dbc.Col(dbc.Spinner(html.Div(id="progress-1d-browser"), color="danger")),
             style={"padding": "10px", "marginBottom": "10px", "marginTop": "10px"},
         ),
         dbc.Row(
             dbc.Collapse(
+                dbc.Card(
+                    dbc.CardBody(html.P(id="msg-1d-browser", className="card-text")),
+                    color="danger",
+                    outline=True,
+                ),
+                id="msg-section-1d-browser",
+            )
+        ),
+        dbc.Row(
+            dbc.Collapse(
                 [
-                    dbc.Row(dbc.Container(id="msg-1d-explorer")),
-                    dbc.Row(dcc.Graph(id="plot-1d-explorer")),
+                    dbc.Row(dcc.Graph(id="plot-1d-browser")),
                     dbc.Row(
                         [
-                            html.Label("Sample count"),
-                            dbc.Container(id="count-table-1d-explorer"),
+                            html.Label("Sample count", htmlFor="count-table-1d-browser"),
+                            dbc.Container(id="count-table-1d-browser"),
                         ]
                     ),
-                    dbc.Row([html.Label("Post-hoc"), dbc.Container(id="post-hoc-1d-explorer")]),
+                    dbc.Row(
+                        [
+                            html.Label("Post-hoc", htmlFor="post-hoc-1d-browser"),
+                            dbc.Container(id="post-hoc-1d-browser"),
+                        ]
+                    ),
                 ],
-                id="result-section-1d-explorer",
+                id="result-section-1d-browser",
                 is_open=False,
             ),
         ),
@@ -122,14 +138,14 @@ layout = dbc.Container(
 
 
 @callback(
-    Output("sample-types-1d-explorer", "options"),
-    Output("sample-types-1d-explorer", "placeholder"),
-    Output("sample-types-1d-explorer", "disabled"),
-    Input("data-type-1d-explorer", "value"),
+    Output("sample-types-1d-browser", "options"),
+    Output("sample-types-1d-browser", "disabled"),
+    Output("sample-types-1d-browser", "value"),
+    Input("data-type-1d-browser", "value"),
 )
 def update_sample_type_options(
     sample_types: t.Union[t.List[str], str]
-) -> t.Tuple[t.List[str], str, bool]:
+) -> t.Tuple[t.List[str], bool, str]:
     """
     Function to update possible sample types for selected data type.
     """
@@ -141,67 +157,76 @@ def update_sample_type_options(
         else:
             options = []
 
-        return options, "Select...", False
-    else:
-        return [], "Firstly select data type", True
+        return options, False, ""
+
+    return [], True, ""
 
 
 @callback(
-    Output("variable-1d-explorer", "disabled"),
-    Output("variable-1d-explorer", "placeholder"),
-    Input("data-type-1d-explorer", "value"),
+    Output("variable-1d-browser", "disabled"),
+    Output("variable-1d-browser", "placeholder"),
+    Input("data-type-1d-browser", "value"),
 )
 def update_input_field(data_type: str) -> t.Tuple[bool, str]:
     """
     Function to update input field.
     """
-
     if data_type == "Expression [RNA-seq]":
         return False, "Eg. PAX3"
-    elif data_type == "Methylation [450K/EPIC]":
+    if data_type == "Methylation [450K/EPIC]":
         return False, "Eg. cg07779434"
-    else:
-        return True, "Firstly select data type"
+
+    return True, "Firstly select data type"
 
 
 @callback(
-    Output("result-section-1d-explorer", "is_open"),
-    Output("plot-1d-explorer", "figure"),
-    Output("msg-1d-explorer", "children"),
-    Output("post-hoc-1d-explorer", "children"),
-    Output("count-table-1d-explorer", "children"),
-    Output("progress-1d-explorer", "children"),
-    Input("sample-types-1d-explorer", "value"),
-    Input("data-type-1d-explorer", "value"),
-    Input("variable-1d-explorer", "value"),
-    Input("scaling-method-1d-explorer", "value"),
-    Input("plot-type-1d-explorer", "value"),
-    Input("submit-1d-explorer", "n_clicks"),
+    Output("result-section-1d-browser", "is_open"),
+    Output("plot-1d-browser", "figure"),
+    Output("msg-section-1d-browser", "is_open"),
+    Output("msg-1d-browser", "children"),
+    Output("post-hoc-1d-browser", "children"),
+    Output("count-table-1d-browser", "children"),
+    Output("progress-1d-browser", "children"),
+    Input("sample-types-1d-browser", "value"),
+    Input("data-type-1d-browser", "value"),
+    Input("variable-1d-browser", "value"),
+    Input("scaling-method-1d-browser", "value"),
+    Input("plot-type-1d-browser", "value"),
+    Input("submit-1d-browser", "n_clicks"),
 )
-def update_figure(
+def main_1d_browser(
     sample_types: t.Union[t.List[str], str],
     data_type: str,
     variable: str,
     scaling_method: str,
     plot_type: str,
-    submit: int,
+    *args,
 ):
+    """
+    Main function of current dashboard, returns plot for selected variable and sample types.txt
+    Return empty figure if:
+    a) len(sample_types) > 5
+    b) variable is not in repository
+    """
     button = [p["prop_id"] for p in callback_context.triggered][0]
-    if "submit-1d-explorer" in button and data_type and variable:
+    if "submit-1d-browser" in button and data_type and variable:
 
-        loader = FrameOperations(data_type, sample_types)
-        data = loader.load_1d(variable)
-        data = data.dropna()
-
-        if data.empty:
+        if len(sample_types) > 5:
             return (
+                False,
+                EmptyFig,
                 True,
-                emptyFig,
-                f"Variable {variable} not found in requested repository",
+                "Exceeded maximum number of sample types [n>5]",
                 "",
                 "",
                 "",
             )
+
+        loader = FrameOperations(data_type, sample_types)
+        data, msg = loader.load_1d(variable)
+
+        if data.empty:
+            return False, EmptyFig, True, msg, "", "", ""
 
         data[variable] = loader.scale(data[variable], scaling_method)
         figureGenerator = Plot(
@@ -224,16 +249,9 @@ def update_figure(
             stats.post_hoc()
             post_hoc_frame = stats.export_frame()
 
-            return True, fig, "Status: done", post_hoc_frame, count, ""
+            return True, fig, True, msg, post_hoc_frame, count, ""
 
-        return (
-            True,
-            fig,
-            "Status: done",
-            "Applicable only for > 1 sample groups.",
-            stats.get_factor_count,
-            "",
-        )
+        return True, fig, True, msg, "Applicable only for > 1 sample groups", count, ""
 
     else:
-        return False, emptyFig, "", "", "", ""
+        return False, EmptyFig, False, "", "", "", ""
