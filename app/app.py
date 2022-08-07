@@ -38,6 +38,7 @@ footer = dash.html.Footer(
                 dash.html.A(
                     "The Independent Clinical Epigenetics Laboratory",
                     href=link,
+                    target="blank",
                     className="alert-link",
                 ),
             ],
