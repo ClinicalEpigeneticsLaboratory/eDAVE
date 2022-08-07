@@ -8,6 +8,7 @@ with open("config.json", "r", encoding="UTF-8") as config_file:
 
 debug = config["debug"]
 version = config["version"]
+link = config["footer_link"]
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY], use_pages=True)
 
@@ -29,8 +30,24 @@ navbar = dbc.NavbarSimple(
     dark=True,
 )
 
-app.layout = dbc.Container([navbar, dash.page_container], fluid=True)
+footer = dash.html.Footer(
+    [
+        dbc.Alert(
+            [
+                "Powered by: ",
+                dash.html.A(
+                    "The Independent Clinical Epigenetics Laboratory",
+                    href=link,
+                    className="alert-link",
+                ),
+            ],
+            color="dark",
+        ),
+    ],
+    style={"bottom": "0", "width": "98%", "position": "fixed"},
+)
 
+app.layout = dbc.Container([navbar, dash.page_container, footer], fluid=True)
 
 if __name__ == "__main__":
     app.run_server(debug=debug)
