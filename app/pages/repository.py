@@ -3,7 +3,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from dash import dcc, html
+from dash import Input, Output, callback, dcc, html
 from src.utils import load_config
 
 config = load_config()
@@ -49,9 +49,16 @@ layout = dbc.Container(
                     ----
                     """
                 ),
-            )
+            ),
         ),
-        html.Br(),
+        dbc.Row(
+            [
+                dbc.Col(dcc.Markdown("**Sample sheet** frame: ")),
+                dbc.Col(dbc.Button("download CSV file", id="download-sample-sheet-button")),
+                dcc.Download(id="download-sample-sheet-frame"),
+            ]
+        ),
+        html.Hr(),
         dbc.Row(
             [
                 dbc.Col(
@@ -87,3 +94,15 @@ layout = dbc.Container(
         ),
     ]
 )
+
+
+@callback(
+    Output("download-sample-sheet-frame", "data"),
+    Input("download-sample-sheet-button", "n_clicks"),
+    prevent_initial_call=True,
+)
+def func(n_clicks: int, sample_sheet_path: str = config["sample_sheet"]):
+    sample_sheet = pd.read_csv(sample_sheet_path, index_col=0)
+    sample_sheet.index.name = "Case_ID"
+
+    return dcc.send_data_frame(sample_sheet.to_csv, "sample_sheet.csv")
