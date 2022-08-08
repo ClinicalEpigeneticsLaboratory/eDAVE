@@ -6,7 +6,7 @@ dash.register_page(__name__)
 
 import dash_bootstrap_components as dbc
 import pandas as pd
-from dash import Input, Output, callback, callback_context, dcc, html
+from dash import Input, Output, State, callback, dcc, html
 from src.basics import FrameOperations
 from src.plots import MultiDimPlot
 from src.statistics import Stats
@@ -206,12 +206,12 @@ def update_slider(method: str):
     Output("msg-section-multidim-browser", "is_open"),
     Output("progress-multidim-browser", "children"),
     Output("sample-count-multidim-browser", "children"),
-    Input("data-type-multidim-browser", "value"),
-    Input("sample-types-multidim-browser", "value"),
-    Input("n-dimension-multidim-browser", "value"),
-    Input("input-multidim-browser", "value"),
-    Input("perplexity-multidim-browser", "value"),
-    Input("method-multidim-browser", "value"),
+    State("data-type-multidim-browser", "value"),
+    State("sample-types-multidim-browser", "value"),
+    State("n-dimension-multidim-browser", "value"),
+    State("input-multidim-browser", "value"),
+    State("perplexity-multidim-browser", "value"),
+    State("method-multidim-browser", "value"),
     Input("submit-multidim-browser", "n_clicks"),
 )
 def main_multidim_browser(
@@ -221,11 +221,9 @@ def main_multidim_browser(
     variables: str,
     perplexity: int,
     method: str,
-    *args
+    n_clicks: int,
 ):
-    button = [p["prop_id"] for p in callback_context.triggered][0]
-
-    if "submit-multidim-browser" in button and sample_types and data_type and variables:
+    if sample_types and data_type and variables:
         variables = FrameOperations.clean_sequence(variables)
 
         if len(variables) < 10:

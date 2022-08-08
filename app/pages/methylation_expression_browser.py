@@ -4,7 +4,7 @@ dash.register_page(__name__)
 
 import dash_bootstrap_components as dbc
 import pandas as pd
-from dash import Input, Output, callback, callback_context, dcc, html
+from dash import Input, Output, State, callback, dcc, html
 from src.basics import FrameOperations
 from src.regression import Model
 from src.utils import load_config
@@ -119,15 +119,14 @@ def update_inputs_fields(sample_type):
     Output("result-met-exp-browser", "children"),
     Output("msg-section-met-exp-browser", "is_open"),
     Output("msg-met-exp-browser", "children"),
-    Input("sample-types-met-exp-browser", "value"),
-    Input("gene-met-exp-browser", "value"),
-    Input("probe-met-exp-browser", "value"),
+    State("sample-types-met-exp-browser", "value"),
+    State("gene-met-exp-browser", "value"),
+    State("probe-met-exp-browser", "value"),
     Input("submit-met-exp-browser", "n_clicks"),
 )
-def update_model(sample_type, gene_id, probe_id, *args):
-    button = [p["prop_id"] for p in callback_context.triggered][0]
+def update_model(sample_type, gene_id, probe_id, n_clicks: int):
 
-    if "submit-met-exp-browser" in button and sample_type and gene_id and probe_id:
+    if sample_type and gene_id and probe_id:
         loader = FrameOperations("", sample_type)
         frame, msg = loader.load_met_exp_frame(gene_id, probe_id)
 

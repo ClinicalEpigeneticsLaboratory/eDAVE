@@ -10,7 +10,7 @@ dash.register_page(__name__)
 
 import dash_bootstrap_components as dbc
 import pandas as pd
-from dash import Input, Output, callback, callback_context, dcc, html
+from dash import Input, Output, State, callback, dcc, html
 
 EmptyFig = {}
 config = load_config()
@@ -187,11 +187,11 @@ def update_input_field(data_type: str) -> t.Tuple[bool, str]:
     Output("post-hoc-1d-browser", "children"),
     Output("count-table-1d-browser", "children"),
     Output("progress-1d-browser", "children"),
-    Input("sample-types-1d-browser", "value"),
-    Input("data-type-1d-browser", "value"),
-    Input("variable-1d-browser", "value"),
-    Input("scaling-method-1d-browser", "value"),
-    Input("plot-type-1d-browser", "value"),
+    State("sample-types-1d-browser", "value"),
+    State("data-type-1d-browser", "value"),
+    State("variable-1d-browser", "value"),
+    State("scaling-method-1d-browser", "value"),
+    State("plot-type-1d-browser", "value"),
     Input("submit-1d-browser", "n_clicks"),
 )
 def main_1d_browser(
@@ -200,7 +200,7 @@ def main_1d_browser(
     variable: str,
     scaling_method: str,
     plot_type: str,
-    *args,
+    n_clicks: int,
 ):
     """
     Main function of current dashboard, returns plot for selected variable and sample types.txt
@@ -208,8 +208,8 @@ def main_1d_browser(
     a) len(sample_types) > 5
     b) variable is not in repository
     """
-    button = [p["prop_id"] for p in callback_context.triggered][0]
-    if "submit-1d-browser" in button and data_type and variable:
+
+    if data_type and variable:
 
         if len(sample_types) > 5:
             return (
