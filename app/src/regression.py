@@ -27,6 +27,9 @@ class Model:
         self.predictions = model.predict(self.data.drop(self.response_variable, axis=1))
 
     def plot(self, x_axis: str, y_axis: str) -> go.Figure:
+        names = self.data.index
+        names.name = "Case_ID"
+
         fig = px.scatter(
             data_frame=self.data,
             x=x_axis,
@@ -34,6 +37,7 @@ class Model:
             marginal_x="box",
             marginal_y="box",
             trendline="ols",
+            hover_data=[names],
             labels={x_axis: f"{x_axis} [β-value]", y_axis: f"{y_axis} [TPM]"},
         )
         fig.update_layout(font=dict(size=14))

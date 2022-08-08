@@ -115,6 +115,8 @@ class MultiDimPlot:
         )
 
         deco_data = pd.concat((deco_data, self.data[self.factor]), axis=1)
+        names = deco_data.index
+        names.name = "Case_ID"
 
         if self.n_dimension == 2:
             fig = px.scatter(
@@ -122,6 +124,7 @@ class MultiDimPlot:
                 x="PC 1",
                 y="PC 2",
                 color=self.factor,
+                hover_data=[names],
                 labels={"PC 1": f"PC 1 {exp[0]}%", "PC 2": f"PC 2 {exp[1]}%"},
             )
         else:
@@ -131,6 +134,7 @@ class MultiDimPlot:
                 y="PC 2",
                 z="PC 3",
                 color=self.factor,
+                hover_data=[names],
                 labels={
                     "PC 1": f"PC 1 {exp[0]}%",
                     "PC 2": f"PC 2 {exp[1]}%",
