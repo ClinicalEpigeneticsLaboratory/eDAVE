@@ -95,7 +95,7 @@ class MultiDimPlot:
         else:
             fig = px.scatter_3d(deco_data, x="t-SNE 1", y="t-SNE 2", z="t-SNE 3", color=self.factor)
 
-        fig.update_layout(font=dict(size=self.font_size), width=1800, height=800)
+        fig.update_layout(font=dict(size=self.font_size), width=2000, height=800)
 
         return fig
 
@@ -142,6 +142,6 @@ class MultiDimPlot:
                 },
             )
 
-        fig.update_layout(font=dict(size=self.font_size), width=1800, height=800)
+        fig.update_layout(font=dict(size=self.font_size), width=2000, height=800)
 
         return fig
