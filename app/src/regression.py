@@ -44,15 +44,16 @@ class Model:
 
         return fig
 
-    def export_frame(self) -> t.Collection[dash_table.DataTable]:
-        html = self.model_summary.as_html()
-        frames = pd.read_html(StringIO(html))
+    def export_frame(self) -> t.Tuple[dash_table.DataTable, dash_table.DataTable]:
+        table = self.model_summary.as_html()
+        frames = pd.read_html(StringIO(table))
         frame1, frame2 = frames[0], frames[1]
 
         frame1 = dash_table.DataTable(
             data=frame1.to_dict("records"),
             columns=[{"name": "", "id": str(i)} for i in frame1.columns],
         )
+
         frame2 = dash_table.DataTable(
             data=frame2.to_dict("records"),
             columns=[{"name": "", "id": str(i)} for i in frame2.columns],
