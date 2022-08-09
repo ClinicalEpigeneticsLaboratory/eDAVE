@@ -32,8 +32,7 @@ def plot(cnt: pd.Series, plot_type: str = None) -> go.Figure:
 dash.register_page(__name__)
 
 layout = dbc.Container(
-    children=[
-        html.H1(),
+    [
         dbc.Row(
             dbc.Col(
                 dcc.Markdown(
@@ -56,7 +55,7 @@ layout = dbc.Container(
                 dbc.Col(
                     "Sample sheet frame containing a brief description of the data repository: "
                 ),
-                dbc.Col(dbc.Button("download CSV file", id="download-sample-sheet-button")),
+                dbc.Col(dbc.Button("download CSV", id="download-sample-sheet-button")),
                 dcc.Download(id="download-sample-sheet-frame"),
             ]
         ),
@@ -77,7 +76,7 @@ layout = dbc.Container(
                 ),
             ]
         ),
-        dbc.Row(),
+        html.Br(),
         dbc.Row(
             [
                 dbc.Col(
@@ -94,7 +93,8 @@ layout = dbc.Container(
                 ),
             ]
         ),
-    ]
+    ],
+    fluid=True,
 )
 
 

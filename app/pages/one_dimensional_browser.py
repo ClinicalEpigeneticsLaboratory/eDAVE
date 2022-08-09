@@ -22,7 +22,7 @@ layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.Label("Select data type", htmlFor="data-type-1d-browser"),
+                        html.Label("Data type", htmlFor="data-type-1d-browser"),
                         dcc.Dropdown(
                             id="data-type-1d-browser",
                             options=["Methylation [450K/EPIC]", "Expression [RNA-seq]"],
@@ -31,12 +31,10 @@ layout = dbc.Container(
                             value="",
                         ),
                     ],
-                    width=4,
-                    style={"padding": "10px"},
                 ),
                 dbc.Col(
                     [
-                        html.Label("Select sample type/s", htmlFor="sample-types-1d-browser"),
+                        html.Label("Sample type/s", htmlFor="sample-types-1d-browser"),
                         dcc.Dropdown(
                             id="sample-types-1d-browser",
                             options=[],
@@ -47,12 +45,10 @@ layout = dbc.Container(
                         ),
                         dbc.FormText("maximum number of sample types is 5"),
                     ],
-                    width=4,
-                    style={"padding": "10px"},
                 ),
                 dbc.Col(
                     [
-                        html.Label("Input variable", htmlFor="variable-1d-browser"),
+                        html.Label("CpG/Gene", htmlFor="variable-1d-browser"),
                         dbc.Input(
                             id="variable-1d-browser",
                             disabled=True,
@@ -62,8 +58,6 @@ layout = dbc.Container(
                             value="",
                         ),
                     ],
-                    width=4,
-                    style={"padding": "10px"},
                 ),
             ]
         ),
@@ -71,7 +65,7 @@ layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.Label("Select scaling method", htmlFor="scaling-method-1d-browser"),
+                        html.Label("Scaling method", htmlFor="scaling-method-1d-browser"),
                         dcc.Dropdown(
                             id="scaling-method-1d-browser",
                             options=["None", "Log10", "Log2", "Ln", "Standard scaling"],
@@ -84,7 +78,7 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        html.Label("Select plot type", htmlFor="plot-type-1d-browser"),
+                        html.Label("Plot type", htmlFor="plot-type-1d-browser"),
                         dcc.Dropdown(
                             id="plot-type-1d-browser",
                             options=["Box", "Violin"],
@@ -94,13 +88,12 @@ layout = dbc.Container(
                         ),
                     ]
                 ),
-                dbc.Col([html.Br(), dbc.Button("Submit", id="submit-1d-browser")]),
+                dbc.Col(dbc.Button("Submit", id="submit-1d-browser")),
             ]
         ),
-        dbc.Row(
-            dbc.Col(dbc.Spinner(html.Div(id="progress-1d-browser"), color="danger")),
-            style={"padding": "10px", "marginBottom": "10px", "marginTop": "10px"},
-        ),
+        html.Br(),
+        dbc.Row(dbc.Col(dbc.Spinner(html.Div(id="progress-1d-browser"), color="danger"))),
+        html.Br(),
         dbc.Row(
             dbc.Collapse(
                 dbc.Card(

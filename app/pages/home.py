@@ -5,12 +5,12 @@ from dash import dcc, html
 dash.register_page(__name__, path="/")
 
 card_1_content = [
-    dbc.CardHeader("Module 1"),
+    dbc.CardHeader("Tool"),
     dbc.CardBody(
         [
             html.H5("1-D browser", className="card-title"),
             html.P(
-                "This tool allows to 1D visualisation and statistical analysis of gene expression or CpG \
+                "1-dimensional visualisation and statistical analysis of gene expression or CpG \
                 methylation across various sample types.",
                 className="card-text",
             ),
@@ -20,12 +20,12 @@ card_1_content = [
 ]
 
 card_2_content = [
-    dbc.CardHeader("Module 2"),
+    dbc.CardHeader("Tool"),
     dbc.CardBody(
         [
             html.H5("M-D browser", className="card-title"),
             html.P(
-                "This tool allows to multidimensional visualisation of gene expression or CpG \
+                "Multidimensional visualisation of gene expression or CpG \
                 methylation across various sample types.",
                 className="card-text",
             ),
@@ -35,12 +35,12 @@ card_2_content = [
 ]
 
 card_3_content = [
-    dbc.CardHeader("Module 3"),
+    dbc.CardHeader("Tool"),
     dbc.CardBody(
         [
             html.H5("Association browser", className="card-title"),
             html.P(
-                "This tool allows to analyse association between CpG methylation and gene expression across\
+                "Analysis of association between CpG methylation and gene expression across\
                  various sample types.",
                 className="card-text",
             ),
@@ -50,10 +50,10 @@ card_3_content = [
 ]
 
 card_4_content = [
-    dbc.CardHeader("Module 4"),
+    dbc.CardHeader("Info"),
     dbc.CardBody(
         [
-            html.H5("Repository", className="card-title"),
+            html.H5("About repository", className="card-title"),
             html.P(
                 "Details about current repository, number of samples, last update etc.",
                 className="card-text",
@@ -77,7 +77,6 @@ layout = dbc.Container(
             dcc.Markdown(
                 """
                  ----
-
                 This app is an extension of
                 GDC Data Analysis, Visualization, and Exploration [[DAVE]]
                 (https://gdc.cancer.gov/analyze-data/gdc-dave-tools) tools
@@ -91,25 +90,31 @@ layout = dbc.Container(
                 Thus downstream analysis should be free of unwanted technical variance.
 
                  ----
-
                 """
             ),
             style={"justifyContent": "center"},
         ),
+        dbc.Row(html.Br()),
+        dbc.Row(
+            dbc.CardGroup(
+                [
+                    dbc.Card(card_1_content, color="danger", outline=True),
+                    dbc.Card(card_2_content, color="danger", outline=True),
+                ],
+                style={"width": "75%"},
+            ),
+            justify="center",
+        ),
         html.Br(),
         dbc.Row(
-            [
-                dbc.Col(dbc.Card(card_1_content, color="danger", outline=True)),
-                dbc.Col(dbc.Card(card_2_content, color="danger", outline=True)),
-                dbc.Col(dbc.Card(card_3_content, color="danger", outline=True)),
-            ],
-            className="mb-4",
-        ),
-        dbc.Row(
-            dbc.Col(
-                dbc.Card(card_4_content, color="info", outline=True),
-                width={"size": 4, "offset": 4},
+            dbc.CardGroup(
+                [
+                    dbc.Card(card_3_content, color="danger", outline=True),
+                    dbc.Card(card_4_content, color="info", outline=True),
+                ],
+                style={"width": "75%"},
             ),
+            justify="center",
         ),
     ],
     fluid=True,

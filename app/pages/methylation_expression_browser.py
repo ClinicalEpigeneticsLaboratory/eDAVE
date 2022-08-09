@@ -23,7 +23,7 @@ layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.Label("Select sample type", htmlFor="sample-types-met-exp-browser"),
+                        html.Label("Sample type", htmlFor="sample-types-met-exp-browser"),
                         dcc.Dropdown(
                             id="sample-types-met-exp-browser",
                             options=available_sample_types,
@@ -31,11 +31,10 @@ layout = dbc.Container(
                             multi=False,
                         ),
                     ],
-                    width=4,
                 ),
                 dbc.Col(
                     [
-                        html.Label("Input gene", htmlFor="gene-met-exp-browser"),
+                        html.Label("Gene name", htmlFor="gene-met-exp-browser"),
                         dbc.Input(
                             id="gene-met-exp-browser",
                             placeholder="Firstly select sample type",
@@ -44,11 +43,10 @@ layout = dbc.Container(
                             type="text",
                         ),
                     ],
-                    width=4,
                 ),
                 dbc.Col(
                     [
-                        html.Label("Input probe ID", htmlFor="probe-met-exp-browser"),
+                        html.Label("Probe ID", htmlFor="probe-met-exp-browser"),
                         dbc.Input(
                             id="probe-met-exp-browser",
                             placeholder="Firstly select sample type",
@@ -57,17 +55,18 @@ layout = dbc.Container(
                             type="text",
                         ),
                     ],
-                    width=4,
                 ),
             ]
         ),
+        html.Br(),
         dbc.Row(
-            dbc.Col([html.Br(), dbc.Button("Submit", id="submit-met-exp-browser")]),
+            dbc.Col([dbc.Button("Submit", id="submit-met-exp-browser")]),
         ),
+        html.Br(),
         dbc.Row(
-            [dbc.Col(dbc.Spinner(html.Div(id="progress-met-exp-browser"), color="danger"))],
-            style={"padding": "10px", "marginBottom": "10px", "marginTop": "10px"},
+            dbc.Col(dbc.Spinner(html.Div(id="progress-met-exp-browser"), color="danger")),
         ),
+        html.Br(),
         dbc.Row(
             dbc.Collapse(
                 dbc.Card(
@@ -75,18 +74,16 @@ layout = dbc.Container(
                     color="danger",
                     outline=True,
                 ),
-                style={"bottomMargin": "10px"},
                 id="msg-section-met-exp-browser",
             )
         ),
+        html.Br(),
         dbc.Row(
             dbc.Collapse(
                 dbc.Row(
                     [
-                        dbc.Col([html.Br(), dbc.Container(id="result-met-exp-browser")]),
-                        dbc.Col(
-                            dcc.Graph(id="plot-met-exp-browser"),
-                        ),
+                        dbc.Col(dbc.Container(id="result-met-exp-browser"), style={"width": "45%"}),
+                        dbc.Col(dcc.Graph(id="plot-met-exp-browser"), style={"width": "45%"}),
                     ]
                 ),
                 id="result-section-met-exp-browser",

@@ -30,8 +30,6 @@ layout = dbc.Container(
                             multi=False,
                         ),
                     ],
-                    width=4,
-                    style={"padding": "10px"},
                 ),
                 dbc.Col(
                     [
@@ -46,8 +44,6 @@ layout = dbc.Container(
                         ),
                         dbc.FormText("maximum number of sample types is 5"),
                     ],
-                    width=4,
-                    style={"padding": "10px"},
                 ),
                 dbc.Col(
                     [
@@ -62,7 +58,6 @@ layout = dbc.Container(
                             value=2,
                         ),
                     ],
-                    style={"padding": "10px"},
                 ),
             ]
         ),
@@ -74,13 +69,11 @@ layout = dbc.Container(
                     id="input-multidim-browser",
                     placeholder="Firstly select data type",
                     disabled=True,
-                    style={
-                        "width": "98%",
-                        "margin-left": "10px",
-                    },
+                    style={"width": "98%"},
                 ),
                 dbc.FormText("Number of inputted variables must be >= 10 and <= 100"),
-            ]
+            ],
+            justify="center",
         ),
         dbc.Row(
             [
@@ -112,13 +105,14 @@ layout = dbc.Container(
                         dbc.FormText("Parameter available only for t-SNE method"),
                     ]
                 ),
-                dbc.Col([html.Br(), dbc.Button("Submit", id="submit-multidim-browser")]),
+                dbc.Col(dbc.Button("Submit", id="submit-multidim-browser")),
             ]
         ),
+        html.Br(),
         dbc.Row(
-            [dbc.Col(dbc.Spinner(html.Div(id="progress-multidim-browser"), color="danger"))],
-            style={"padding": "10px", "marginBottom": "10px", "marginTop": "10px"},
+            dbc.Col(dbc.Spinner(html.Div(id="progress-multidim-browser"), color="danger")),
         ),
+        html.Br(),
         dbc.Row(
             dbc.Collapse(
                 dbc.Card(
