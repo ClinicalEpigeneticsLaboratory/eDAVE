@@ -82,7 +82,14 @@ layout = dbc.Container(
             dbc.Collapse(
                 dbc.Row(
                     [
-                        dbc.Col(dbc.Container(id="result-met-exp-browser"), style={"width": "45%"}),
+                        dbc.Col(
+                            [
+                                dbc.Container(id="result-1-met-exp-browser"),
+                                html.Br(),
+                                dbc.Container(id="result-2-met-exp-browser"),
+                            ],
+                            style={"width": "45%"},
+                        ),
                         dbc.Col(dcc.Graph(id="plot-met-exp-browser"), style={"width": "45%"}),
                     ]
                 ),
@@ -113,7 +120,8 @@ def update_inputs_fields(sample_type):
     Output("plot-met-exp-browser", "figure"),
     Output("progress-met-exp-browser", "children"),
     Output("result-section-met-exp-browser", "is_open"),
-    Output("result-met-exp-browser", "children"),
+    Output("result-1-met-exp-browser", "children"),
+    Output("result-2-met-exp-browser", "children"),
     Output("msg-section-met-exp-browser", "is_open"),
     Output("msg-met-exp-browser", "children"),
     State("sample-types-met-exp-browser", "value"),
@@ -128,14 +136,14 @@ def update_model(sample_type, gene_id, probe_id, n_clicks: int):
         frame, msg = loader.load_met_exp_frame(gene_id, probe_id)
 
         if frame.empty:
-            return EmptyFig, "", False, "", True, msg
+            return EmptyFig, "", False, "", "", True, msg
 
         model = Model(frame, gene_id)
         model.fit_model()
-        frames = model.export_frame()
+        frame1, frame2 = model.export_frame()
 
         fig = model.plot(x_axis=probe_id, y_axis=gene_id)
 
-        return fig, "", True, frames, True, msg
+        return fig, "", True, frame1, frame2, True, msg
 
-    return EmptyFig, "", False, "", False, ""
+    return EmptyFig, "", False, "", "", False, ""
