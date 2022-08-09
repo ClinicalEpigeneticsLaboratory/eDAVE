@@ -44,7 +44,7 @@ card_3_content = [
                  various sample types.",
                 className="card-text",
             ),
-            dbc.Button("Go", href="/methylation-expression-browser", className="mt-auto"),
+            dbc.Button("Go", href="/association-browser", className="mt-auto"),
         ]
     ),
 ]
