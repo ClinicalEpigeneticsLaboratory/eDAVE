@@ -21,6 +21,7 @@ dash-labs = "^1.1.0"
 lxml = "^4.9.1"
 prefect = "^2.0.0"
 python-dotenv = "^0.20.0"
+gunicorn = "^20.1.0"
 
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.4.4"
