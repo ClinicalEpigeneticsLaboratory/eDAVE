@@ -65,7 +65,8 @@ Please note that to run app in production mode set `debug: false` in `app/config
 the app requires an existing local data repository.
 
     cd app/
-    poetry run python app.py
+    poetry run python app.py  # development mode
+    poetry run gunicorn app:server  # production mode
 
 
 #### Code quality
