@@ -133,6 +133,7 @@ layout = dbc.Container(
                 is_open=False,
             ),
         ),
+        dbc.Row(style={"height": "10vh"}),
     ],
     fluid=True,
 )
