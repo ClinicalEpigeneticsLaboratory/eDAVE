@@ -35,15 +35,16 @@ footer = dash.html.Footer(
     [
         dbc.Alert(
             [
-                "Powered by: ",
+                "Powered by ",
                 dash.html.A(
                     "The Independent Clinical Epigenetics Laboratory",
                     href=link,
                     target="blank",
                     className="alert-link",
                 ),
+                ", for research use only.",
             ],
-            color="dark",
+            color="primary",
         ),
     ],
     style={"bottom": "0", "width": "98%", "position": "fixed"},
