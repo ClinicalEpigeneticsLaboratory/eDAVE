@@ -118,7 +118,7 @@ class FrameOperations:
         Function to parse raw input from text area.
         """
         sequence_of_variables = str(sequence_of_variables)
-        sequence_of_variables = sequence_of_variables.replace("Eg.", "")
+        sequence_of_variables = sequence_of_variables.replace("E.g.", "")
         variables = [var.strip() for var in sequence_of_variables.split(",")]
         variables = list(set(variables))
 

@@ -166,9 +166,9 @@ def update_input_field(data_type: str) -> t.Tuple[bool, str]:
     Function to update input field.
     """
     if data_type == "Expression [RNA-seq]":
-        return False, "Eg. PAX3"
+        return False, "E.g. PAX3"
     if data_type == "Methylation [450K/EPIC]":
-        return False, "Eg. cg07779434"
+        return False, "E.g. cg07779434"
 
     return True, "Firstly select data type"
 

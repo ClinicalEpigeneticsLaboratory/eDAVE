@@ -171,12 +171,12 @@ def update_sample_type_options(
 )
 def update_input_section(data_type):
     if data_type == "Expression [RNA-seq]":
-        genes = "Eg. PAX3, SOX8, PARP9, AIM2, MX1, TSPAN6, DPM1, SCYL3, NIPAL3, LAS1L"
+        genes = "E.g. PAX3, SOX8, PARP9, AIM2, MX1, TSPAN6, DPM1, SCYL3, NIPAL3, LAS1L"
         return False, genes
 
     if data_type == "Methylation [450K/EPIC]":
         cpgs = (
-            "Eg. cg25221254, cg24973901, cg13788537, cg00713005, cg13755159, cg19588519, cg12438044, cg15006101, "
+            "E.g. cg25221254, cg24973901, cg13788537, cg00713005, cg13755159, cg19588519, cg12438044, cg15006101, "
             "cg22071194, cg19834855"
         )
         return False, cpgs
