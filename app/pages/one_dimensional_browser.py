@@ -247,4 +247,4 @@ def main_1d_browser(
 
         return True, fig, True, msg, "Applicable only for > 1 sample groups", count, ""
 
-    return False, EmptyFig, False, "", "", "", ""
+    return dash.no_update

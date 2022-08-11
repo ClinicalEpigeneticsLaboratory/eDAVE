@@ -146,4 +146,4 @@ def update_model(sample_type, gene_id, probe_id, n_clicks: int):
 
         return fig, "", True, frame1, frame2, True, msg
 
-    return EmptyFig, "", False, "", "", False, ""
+    return dash.no_update

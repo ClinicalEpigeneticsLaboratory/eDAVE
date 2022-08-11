@@ -272,4 +272,4 @@ def main_multidim_browser(
 
         return fig, True, response_multidim(variables, data), True, "", count
 
-    return EmptyFig, False, "", False, "", ""
+    return dash.no_update
