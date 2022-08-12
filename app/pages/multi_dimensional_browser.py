@@ -37,7 +37,7 @@ layout = dbc.Container(
                         dcc.Dropdown(
                             id="sample-types-multidim-browser",
                             options=[],
-                            placeholder="Firstly select sample type",
+                            placeholder="Firstly select data type",
                             clearable=True,
                             multi=True,
                             disabled=True,
@@ -146,15 +146,15 @@ layout = dbc.Container(
     Input("data-type-multidim-browser", "value"),
 )
 def update_sample_type_options(
-    sample_types: t.Union[t.List[str], str]
+    data_type: t.Union[t.List[str], str]
 ) -> t.Tuple[t.List[str], bool, str]:
     """
     Function to update possible sample types for selected data type.
     """
-    if sample_types:
-        if sample_types == "Expression [RNA-seq]":
+    if data_type:
+        if data_type == "Expression [RNA-seq]":
             options = global_metadata["Expression_files_present"]
-        elif sample_types == "Methylation [450K/EPIC]":
+        elif data_type == "Methylation [450K/EPIC]":
             options = global_metadata["Methylation_files_present"]
         else:
             options = []
