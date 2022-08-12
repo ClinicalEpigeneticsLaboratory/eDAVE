@@ -16,6 +16,7 @@ from tqdm import tqdm
 
 config = load_config()
 
+MIN_SAMPLES_WITH_CLINICAL_DATA = config["MIN_SAMPLES_WITH_CLINICAL_DATA"]
 GDC_TRANSFER_TOOL_EXECUTABLE = config["GDC_TRANSFER_TOOL_EXECUTABLE"]
 MIN_SAMPLES_PER_SAMPLE_GROUP = config["MIN_SAMPLES_PER_SAMPLE_GROUP"]
 GDC_RAW_RESPONSE_FILE = config["GDC_RAW_RESPONSE_FILE"]
@@ -24,6 +25,8 @@ MANIFEST_BASE_PATH = config["MANIFEST_BASE_PATH"]
 MIN_COMMON_SAMPLES = config["MIN_COMMON_SAMPLES"]
 SAMPLE_SHEET_FILE = config["SAMPLE_SHEET_FILE"]
 SUMMARY_METAFILE = config["SUMMARY_METAFILE"]
+CLINICAL_FIELDS = config["CLINICAL_FIELDS"]
+SAMPLE_GROUP_ID = config["SAMPLE_GROUP_ID"]
 FILTERS_CONFIG = config["FILTERS_CONFIG"]
 DIRECTORY_TREE = config["DIRECTORY_TREE"]
 FIELDS_CONFIG = config["FIELDS_CONFIG"]
@@ -73,7 +76,9 @@ def request_gdc_service(
 
 @task
 def build_sample_sheet(
-    input_file: str = GDC_RAW_RESPONSE_FILE, output: str = SAMPLE_SHEET_FILE
+    input_file: str = GDC_RAW_RESPONSE_FILE,
+    output: str = SAMPLE_SHEET_FILE,
+    sample_group_id: str = SAMPLE_GROUP_ID,
 ) -> None:
     """
     Function build sample sheet based on raw GDC response.
@@ -82,9 +87,6 @@ def build_sample_sheet(
 
     # fill nans in platform field
     frame.platform = frame.platform.fillna("RNA-seq [platform - unknown]")
-
-    # drop 27K records
-    frame = frame[frame["platform"] != "Illumina Human Methylation 27"]
 
     # set index as case id
     frame = frame.set_index("cases.0.case_id")
@@ -101,11 +103,11 @@ def build_sample_sheet(
         (~frame["primary_diagnosis"].isna()) & (~frame["tissue_or_organ_of_origin"].isna())
     ]
 
-    # Remove redundant NOS preffix
+    # Remove redundant NOS prefix
     frame["tissue_or_organ_of_origin"] = frame["tissue_or_organ_of_origin"].str.replace(", NOS", "")
 
-    # add SampleCharacteristic field
-    frame["SampleCharacteristic"] = (
+    # add <sample_group_id> field
+    frame[sample_group_id] = (
         frame["tissue_type"]
         + "_"
         + frame["tissue_or_organ_of_origin"]
@@ -113,7 +115,7 @@ def build_sample_sheet(
         + frame["primary_diagnosis"]
     )
 
-    frame.to_csv(output)
+    frame.to_parquet(output)
 
 
 @task(retries=3)
@@ -121,26 +123,26 @@ def build_manifest(
     sample_sheet: str = SAMPLE_SHEET_FILE,
     min_samples: int = MIN_SAMPLES_PER_SAMPLE_GROUP,
     base_path: str = MANIFEST_BASE_PATH,
+    sample_group_id: str = SAMPLE_GROUP_ID,
 ) -> None:
     """
-    Function to build manifest for each specific group_of_samples present in SampleCharacteristic field.
+    Function to build manifest for each specific group_of_samples present in sample_group_id field.
     Only sample groups containing > min_samples_per_sample_group are processed to further steps.
     Manifest files are exported to location: <base_path / sample group / file_type [Met / Exp] / manifest.txt>.
     Manifest file is an input for GDC download tool.
     """
 
     logger = get_run_logger()
-    sample_sheet = pd.read_csv(sample_sheet)[
-        ["id", "experimental_strategy", "SampleCharacteristic"]
-    ]
+    sample_sheet = pd.read_parquet(
+        sample_sheet, columns=["id", "experimental_strategy", sample_group_id]
+    )
+
     endpoint = "https://api.gdc.cancer.gov/manifest/"
 
-    for group_of_samples in sample_sheet.SampleCharacteristic.unique():
+    for group_of_samples in sample_sheet[sample_group_id].unique():
 
         # get cases in specific group_of_samples
-        partial_sample_sheet = sample_sheet[
-            sample_sheet["SampleCharacteristic"] == group_of_samples
-        ]
+        partial_sample_sheet = sample_sheet[sample_sheet[sample_group_id] == group_of_samples]
 
         # get RNA seq files ids
         expression_files = partial_sample_sheet[
@@ -195,9 +197,7 @@ def download_methylation_files(base_path: str = MANIFEST_BASE_PATH) -> None:
         logger.info(f"Downloading: {manifest}")
         out_dir = str(Path(manifest).parent)
 
-        command = (
-            f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}'"
-        )
+        command = f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}' --retry-amount 10"
         call(command, shell=True)
 
 
@@ -213,9 +213,7 @@ def download_expression_files(base_path: str = MANIFEST_BASE_PATH) -> None:
         logger.info(f"Downloading: {manifest}")
         out_dir = str(Path(manifest).parent)
 
-        command = (
-            f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}'"
-        )
+        command = f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}' --retry-amount 10"
         call(command, shell=True)
 
 
@@ -235,7 +233,7 @@ def build_frames(
 
     sample_groups = glob(join(base_path, "*/"))
     sample_groups = [str(Path(name).name) for name in sample_groups]
-    sample_sheet = pd.read_csv(sample_sheet, index_col=0)
+    sample_sheet = pd.read_parquet(sample_sheet)
 
     for sample_group in sample_groups:
         frame = []
@@ -263,7 +261,7 @@ def build_frames(
                 sample.index.name = ""
                 frame.append(sample)
 
-            makedirs(join(out_dir, sample_group))
+            makedirs(join(out_dir, sample_group), exist_ok=True)
             frame = pd.concat(frame, axis=1)
             frame = frame.loc[:, ~frame.columns.duplicated(keep="first")]
 
@@ -417,7 +415,7 @@ def create_repo_summary(
     metadata_path: str = METADATA_GLOBAL_FILE,
 ):
     logger = get_run_logger()
-    sample_sheet = pd.read_csv(sample_sheet_path, index_col=0)
+    sample_sheet = pd.read_parquet(sample_sheet_path)
     sample_sheet = sample_sheet[
         ["primary_diagnosis", "tissue_or_organ_of_origin", "sample_type", "platform"]
     ]
