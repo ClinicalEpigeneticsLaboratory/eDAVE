@@ -10,7 +10,7 @@ config = load_config()
 
 
 class FrameOperations:
-    def __init__(self, data_type: str, sample_types: t.Union[t.Collection[str], str]):
+    def __init__(self, data_type: str, sample_types: t.Collection[str]):
         self.data_type = data_type
         self.sample_types = sample_types
         self.basic_path = config["base_path"]
