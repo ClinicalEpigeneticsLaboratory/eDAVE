@@ -134,14 +134,13 @@ def build_manifest(
     sample_sheet = pd.read_parquet(
         sample_sheet, columns=["id", "experimental_strategy", sample_group_id]
     )
-
     endpoint = "https://api.gdc.cancer.gov/manifest/"
 
     for group_of_samples in sample_sheet[sample_group_id].unique():
 
         # get cases in specific group_of_samples
         partial_sample_sheet = sample_sheet[sample_sheet[sample_group_id] == group_of_samples]
-
+        print(partial_sample_sheet)
         # get RNA seq files ids
         expression_files = partial_sample_sheet[
             partial_sample_sheet["experimental_strategy"] == "RNA-Seq"
@@ -195,10 +194,7 @@ def download_methylation_files(base_path: str = MANIFEST_BASE_PATH) -> None:
         logger.info(f"Downloading: {manifest}")
         out_dir = str(Path(manifest).parent)
 
-        command = (
-            f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}' --retry"
-            f"-amount 10 "
-        )
+        command = f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}' --retry-amount 10"
         call(command, shell=True)
 
 
@@ -214,10 +210,7 @@ def download_expression_files(base_path: str = MANIFEST_BASE_PATH) -> None:
         logger.info(f"Downloading: {manifest}")
         out_dir = str(Path(manifest).parent)
 
-        command = (
-            f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}' --retry"
-            f"-amount 10 "
-        )
+        command = f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}' --retry-amount 10"
         call(command, shell=True)
 
 
