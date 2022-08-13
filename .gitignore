@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# external tools
+gdc-client
+
 # C extensions
 *.so
 

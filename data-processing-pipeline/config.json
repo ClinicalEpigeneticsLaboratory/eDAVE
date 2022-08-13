@@ -4,7 +4,7 @@
     "MIN_COMMON_SAMPLES": 25,
     "MIN_SAMPLES_PER_SAMPLE_GROUP": 25,
     "SAMPLE_GROUP_ID":  "SAMPLE_GROUP_ID",
-    "GDC_TRANSFER_TOOL_EXECUTABLE": "/home/janbinkowski/Desktop/Soft/gdc-client_v1.6.1_Ubuntu_x64/gdc-client",
+    "GDC_TRANSFER_TOOL_EXECUTABLE": "./gdc-client",
     "DIRECTORY_TREE": ["data/raw/", "data/meta/", "data/processed/", "data/interim/"],
     "GDC_RAW_RESPONSE_FILE": "data/raw/gdc_raw_response.tsv",
     "SAMPLE_SHEET_FILE": "data/meta/sample_sheet.parquet",
