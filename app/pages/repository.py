@@ -105,7 +105,7 @@ layout = dbc.Container(
     prevent_initial_call=True,
 )
 def func(n_clicks: int, sample_sheet_path: str = config["sample_sheet"]):
-    sample_sheet = pd.read_csv(sample_sheet_path, index_col=0)
+    sample_sheet = pd.read_parquet(sample_sheet_path)
     sample_sheet.index.name = "Case_ID"
 
     return dcc.send_data_frame(sample_sheet.to_csv, "sample_sheet.csv")
