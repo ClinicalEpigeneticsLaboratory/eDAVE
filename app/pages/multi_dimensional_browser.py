@@ -18,6 +18,7 @@ global_metadata = pd.read_pickle(config["global_metadata"])
 
 layout = dbc.Container(
     [
+        dbc.Row([html.Br(), html.H3("Multidimensional browser"), html.Hr()]),
         dbc.Row(
             [
                 dbc.Col(

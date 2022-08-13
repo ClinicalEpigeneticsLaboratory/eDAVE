@@ -19,6 +19,7 @@ available_sample_types = available_sample_types[
 
 layout = dbc.Container(
     [
+        dbc.Row([html.Br(), html.H3("Association browser"), html.Hr()]),
         dbc.Row(
             [
                 dbc.Col(
