@@ -140,7 +140,7 @@ def build_manifest(
 
         # get cases in specific group_of_samples
         partial_sample_sheet = sample_sheet[sample_sheet[sample_group_id] == group_of_samples]
-        print(partial_sample_sheet)
+
         # get RNA seq files ids
         expression_files = partial_sample_sheet[
             partial_sample_sheet["experimental_strategy"] == "RNA-Seq"
