@@ -40,8 +40,8 @@ card_3_content = [
         [
             html.H5("Association browser", className="card-title"),
             html.P(
-                "Analysis of association between CpG methylation and gene expression across\
-                 various sample types.",
+                "Analysis of association between CpG methylation and gene expression\
+                 in specific sample type.",
                 className="card-text",
             ),
             dbc.Button("Go", href="/association-browser", className="mt-auto"),
@@ -55,7 +55,7 @@ card_4_content = [
         [
             html.H5("About repository", className="card-title"),
             html.P(
-                "Details about current repository, number of samples, last update etc.",
+                "Details about repository, number of samples, last update etc.",
                 className="card-text",
             ),
             dbc.Button("Go", href="/repository", className="mt-auto"),
@@ -79,15 +79,15 @@ layout = dbc.Container(
                  ----
                 This app is an extension of
                 GDC Data Analysis, Visualization, and Exploration [[DAVE]]
-                (https://gdc.cancer.gov/analyze-data/gdc-dave-tools) tools
-                for quantitative measurements such as DNA methylation and gene expression.
+                (https://gdc.cancer.gov/analyze-data/gdc-dave-tools) tools.
+                Dedicated to analysing quantitative datasets such as DNA methylation and/or gene expression.
 
-                Importantly all data records in current repository are coming from **Genome Data common**
+                Importantly all data records in the current repository are coming from **Genome Data common**
                 [database](https://gdc.cancer.gov/) and were obtained using the most prominent technologies
-                such as **Illumina microarrays** and **RNA-seq** and processed in one, standardized way
+                such as **Illumina microarrays** and **RNA-seq**. All records were processed in one, standardized way
                 (raw data processing pipelines described in
-                detail [here](https://docs.gdc.cancer.gov/Data/Introduction/)).
-                Thus downstream analysis should be free of unwanted technical variance.
+                detail [here](https://docs.gdc.cancer.gov/Data/Introduction/)),
+                thus downstream analysis should be free of unwanted technical variance.
 
                  ----
                 """

@@ -53,7 +53,8 @@ layout = dbc.Container(
         dbc.Row(
             [
                 dbc.Col(
-                    "Sample sheet frame containing a brief description of the data repository: "
+                    "Sample sheet comprising a characterization of samples  in the current release of the data "
+                    "repository: "
                 ),
                 dbc.Col(dbc.Button("download CSV", id="download-sample-sheet-button")),
                 dcc.Download(id="download-sample-sheet-frame"),
