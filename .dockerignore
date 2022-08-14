@@ -1,0 +1,12 @@
+# data
+data-processing-pipeline/data
+
+# config files
+.git
+.idea
+.gitignore
+.pylintrc
+
+# Additional files which are not necessary in the container
+LICENCE
+README.md

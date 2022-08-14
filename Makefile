@@ -3,6 +3,7 @@ all: black isort bandit pylint
 
 set_up:
 	@echo "Setting up project"
+	pip install poetry
 	poetry install
 	poetry run pre-commit install
 

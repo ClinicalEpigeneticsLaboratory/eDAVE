@@ -41,7 +41,7 @@ www.www.www
 
        poetry run pre-commit install
 
-6. steps `4` and `5` are also implemented in `Makefile` [optional]
+6. Alternative for steps *2*, *4* and *5* using `Makefile`
 
        make set_up
 
@@ -68,6 +68,12 @@ the app requires an existing local data repository.
     poetry run python app.py  # development mode
     poetry run gunicorn app:server  # production mode
 
+
+#### Run in Docker container
+Alternatively, a user may want to run the app in Docker container. This solution comprises all above-mentioned steps.
+
+    docker build . -t edave # build an image
+    sudo docker run -p 8000:8000 edave # run container
 
 #### Code quality
 To ensure the code quality level we use: *black*, *isort*, *lint* and *bandit*. To run those tools:
