@@ -136,11 +136,12 @@ layout = dbc.Container(
     Output("sample-types-1d-browser", "options"),
     Output("sample-types-1d-browser", "disabled"),
     Output("sample-types-1d-browser", "value"),
+    Output("variable-1d-browser", "value"),
     Input("data-type-1d-browser", "value"),
 )
 def update_sample_type_options(
     data_type: t.Union[t.List[str], str]
-) -> t.Tuple[t.List[str], bool, str]:
+) -> t.Tuple[t.List[str], bool, str, str]:
     """
     Function to update possible sample types for selected data type.
     """
@@ -152,9 +153,9 @@ def update_sample_type_options(
         else:
             options = []
 
-        return options, False, ""
+        return options, False, "", ""
 
-    return [], True, ""
+    return [], True, "", ""
 
 
 @callback(
