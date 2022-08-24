@@ -154,7 +154,7 @@ def build_manifest(
             expression_files = []
 
         if len(expression_files) > max_samples:
-            expression_files = np.random.choice(expression_files, max_samples)
+            expression_files = np.random.choice(expression_files, max_samples, False)
 
         # get methylation files ids
         methylation_files = partial_sample_sheet[
@@ -165,7 +165,7 @@ def build_manifest(
             methylation_files = []
 
         if len(methylation_files) > max_samples:
-            methylation_files = np.random.choice(methylation_files, max_samples)
+            methylation_files = np.random.choice(methylation_files, max_samples, False)
 
         # prepare data to request
         to_request = zip(["Exp", "Met"], [expression_files, methylation_files])
