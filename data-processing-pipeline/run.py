@@ -7,6 +7,7 @@ from os.path import exists, join
 from pathlib import Path
 from subprocess import call
 
+import numpy as np
 import pandas as pd
 import requests
 from prefect import flow, get_run_logger, task
@@ -14,10 +15,12 @@ from src.exceptions import RepositoryExistsError
 from src.utils import load_config
 from tqdm import tqdm
 
+np.random.seed(101)
 config = load_config()
 
 GDC_TRANSFER_TOOL_EXECUTABLE = config["GDC_TRANSFER_TOOL_EXECUTABLE"]
 MIN_SAMPLES_PER_SAMPLE_GROUP = config["MIN_SAMPLES_PER_SAMPLE_GROUP"]
+MAX_SAMPLES_PER_SAMPLE_GROUP = config["MAX_SAMPLES_PER_SAMPLE_GROUP"]
 GDC_RAW_RESPONSE_FILE = config["GDC_RAW_RESPONSE_FILE"]
 METADATA_GLOBAL_FILE = config["METADATA_GLOBAL_FILE"]
 MANIFEST_BASE_PATH = config["MANIFEST_BASE_PATH"]
@@ -119,9 +122,10 @@ def build_sample_sheet(
 @task(retries=3)
 def build_manifest(
     sample_sheet: str = SAMPLE_SHEET_FILE,
-    min_samples: int = MIN_SAMPLES_PER_SAMPLE_GROUP,
     base_path: str = MANIFEST_BASE_PATH,
     sample_group_id: str = SAMPLE_GROUP_ID,
+    max_samples: int = MAX_SAMPLES_PER_SAMPLE_GROUP,
+    min_samples: int = MIN_SAMPLES_PER_SAMPLE_GROUP,
 ) -> None:
     """
     Function to build manifest for each specific group_of_samples present in sample_group_id field.
@@ -146,18 +150,28 @@ def build_manifest(
             partial_sample_sheet["experimental_strategy"] == "RNA-Seq"
         ]
         expression_files = expression_files["id"].tolist()
+        if len(expression_files) < min_samples:
+            expression_files = []
+
+        if len(expression_files) > max_samples:
+            expression_files = np.random.choice(expression_files, max_samples)
 
         # get methylation files ids
         methylation_files = partial_sample_sheet[
             partial_sample_sheet["experimental_strategy"] == "Methylation Array"
         ]
         methylation_files = methylation_files["id"].tolist()
+        if len(methylation_files) < min_samples:
+            methylation_files = []
+
+        if len(methylation_files) > max_samples:
+            methylation_files = np.random.choice(methylation_files, max_samples)
 
         # prepare data to request
         to_request = zip(["Exp", "Met"], [expression_files, methylation_files])
 
         for file_type, files in to_request:
-            if len(files) > min_samples:
+            if files:
                 # make dir for specific sample group
                 makedirs(join(base_path, group_of_samples, file_type), exist_ok=True)
 
@@ -194,7 +208,10 @@ def download_methylation_files(base_path: str = MANIFEST_BASE_PATH) -> None:
         logger.info(f"Downloading: {manifest}")
         out_dir = str(Path(manifest).parent)
 
-        command = f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}' --retry-amount 10"
+        command = (
+            f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}' --retry"
+            f"-amount 10 "
+        )
         call(command, shell=True)
 
 
@@ -210,7 +227,10 @@ def download_expression_files(base_path: str = MANIFEST_BASE_PATH) -> None:
         logger.info(f"Downloading: {manifest}")
         out_dir = str(Path(manifest).parent)
 
-        command = f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}' --retry-amount 10"
+        command = (
+            f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}' --retry"
+            f"-amount 10 "
+        )
         call(command, shell=True)
 
 
