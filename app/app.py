@@ -43,6 +43,9 @@ footer = dash.html.Footer(
                     className="alert-link",
                 ),
                 ", for research use only.",
+                dbc.Container(
+                    "Contact pearson: Jan Bińkowski, e-mail: jan.binkowski [at] pum.edu.pl"
+                ),
             ],
             color="primary",
         ),
