@@ -119,9 +119,9 @@ def build_sample_sheet(
     frame.to_parquet(output)
 
 
-@task(retries=3)
+@task
 def build_manifest(
-    sample_sheet: str = SAMPLE_SHEET_FILE,
+    sample_sheet_path: str = SAMPLE_SHEET_FILE,
     base_path: str = MANIFEST_BASE_PATH,
     sample_group_id: str = SAMPLE_GROUP_ID,
     max_samples: int = MAX_SAMPLES_PER_SAMPLE_GROUP,
@@ -129,74 +129,73 @@ def build_manifest(
 ) -> None:
     """
     Function to build manifest for each specific group_of_samples present in sample_group_id field.
-    Only sample groups containing > min_samples_per_sample_group are processed to further steps.
+    > Only sample groups containing > MIN_SAMPLES_PER_SAMPLE_GROUP are processed to further steps.
+    > If number of samples > MAX_SAMPLES_PER_SAMPLE_GROUP, random subset
+    [equal to MAX_SAMPLES_PER_SAMPLE_GROUP]  is used.
     Manifest files are exported to location: <base_path / sample group / file_type [Met / Exp] / manifest.txt>.
     Manifest file is an input for GDC download tool.
     """
 
     logger = get_run_logger()
-    sample_sheet = pd.read_parquet(
-        sample_sheet, columns=["id", "experimental_strategy", sample_group_id]
-    )
+    sample_sheet = pd.read_parquet(sample_sheet_path)
+    final_list_of_samples = []
+
     endpoint = "https://api.gdc.cancer.gov/manifest/"
+    end_file = {"RNA-Seq": "Exp", "Methylation Array": "Met"}
 
-    for group_of_samples in sample_sheet[sample_group_id].unique():
+    for strategy in sample_sheet["experimental_strategy"].unique():
+        temporary_sample_sheet = sample_sheet[sample_sheet["experimental_strategy"] == strategy]
 
-        # get cases in specific group_of_samples
-        partial_sample_sheet = sample_sheet[sample_sheet[sample_group_id] == group_of_samples]
+        for group_of_samples in temporary_sample_sheet[sample_group_id].unique():
 
-        # get RNA seq files ids
-        expression_files = partial_sample_sheet[
-            partial_sample_sheet["experimental_strategy"] == "RNA-Seq"
-        ]
-        expression_files = expression_files["id"].tolist()
-        if len(expression_files) < min_samples:
-            expression_files = []
+            # get cases in specific group_of_samples
+            files = temporary_sample_sheet[
+                temporary_sample_sheet[sample_group_id] == group_of_samples
+            ]
+            files = files["id"].tolist()
 
-        if len(expression_files) > max_samples:
-            expression_files = np.random.choice(expression_files, max_samples, False)
-
-        # get methylation files ids
-        methylation_files = partial_sample_sheet[
-            partial_sample_sheet["experimental_strategy"] == "Methylation Array"
-        ]
-        methylation_files = methylation_files["id"].tolist()
-        if len(methylation_files) < min_samples:
-            methylation_files = []
-
-        if len(methylation_files) > max_samples:
-            methylation_files = np.random.choice(methylation_files, max_samples, False)
-
-        # prepare data to request
-        to_request = zip(["Exp", "Met"], [expression_files, methylation_files])
-
-        for file_type, files in to_request:
-            if files:
-                # make dir for specific sample group
-                makedirs(join(base_path, group_of_samples, file_type), exist_ok=True)
-
-                # build manifest file
-                params = {"ids": files}
-                resp = requests.post(
-                    endpoint,
-                    data=json.dumps(params),
-                    headers={"Content-Type": "application/json"},
-                )
-                resp = resp.text
-
-                with open(
-                    join(base_path, group_of_samples, file_type, "manifest.txt"),
-                    "w",
-                    encoding="utf-8",
-                ) as manifest_file:
-                    manifest_file.write(resp)
-
+            if len(files) < min_samples:
                 logger.info(
-                    f"Exporting manifest for: {group_of_samples}:{file_type} n samples: {len(files)}"
+                    f"Skipping: {strategy} - {group_of_samples}, n < MIN_SAMPLES_PER_SAMPLE_GROUP"
                 )
+                continue
+
+            if len(files) > max_samples:
+                logger.info(
+                    f"Sampling from: {strategy} - {group_of_samples}, n > MAX_SAMPLES_PER_SAMPLE_GROUP"
+                )
+                files = np.random.choice(files, max_samples, False)
+
+            final_list_of_samples.extend(files)
+
+            # make dir for specific sample group
+            makedirs(join(base_path, group_of_samples, end_file[strategy]), exist_ok=True)
+
+            # build manifest file
+            params = {"ids": files}
+            resp = requests.post(
+                endpoint,
+                data=json.dumps(params),
+                headers={"Content-Type": "application/json"},
+            ).text
+
+            with open(
+                join(base_path, group_of_samples, end_file[strategy], "manifest.txt"),
+                "w",
+                encoding="utf-8",
+            ) as manifest_file:
+                manifest_file.write(resp)
+
+            logger.info(
+                f"Exporting manifest for: {group_of_samples}:{end_file[strategy]} n samples: {len(files)}"
+            )
+
+    sample_sheet = sample_sheet[sample_sheet["id"].isin(final_list_of_samples)]
+    sample_sheet.to_parquet(sample_sheet_path)
+    logger.info("Exporting corrected sample sheet")
 
 
-@task()
+@task
 def download_methylation_files(base_path: str = MANIFEST_BASE_PATH) -> None:
     """
     Function to download methylation files specified in manifest file.
@@ -215,7 +214,7 @@ def download_methylation_files(base_path: str = MANIFEST_BASE_PATH) -> None:
         call(command, shell=True)
 
 
-@task()
+@task
 def download_expression_files(base_path: str = MANIFEST_BASE_PATH) -> None:
     """
     Function to download expression files specified in manifest file.
