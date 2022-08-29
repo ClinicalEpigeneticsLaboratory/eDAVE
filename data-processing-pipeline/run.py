@@ -1,17 +1,18 @@
 import json
 import pickle
-from datetime import datetime
 from glob import glob
 from os import makedirs
 from os.path import exists, join
 from pathlib import Path
 from subprocess import call
+from typing import List
 
 import numpy as np
 import pandas as pd
 import requests
 from prefect import flow, get_run_logger, task
 from src.exceptions import RepositoryExistsError
+from src.records import GlobalMetaRecord, MetaRecord, RepositorySummary
 from src.utils import load_config
 from tqdm import tqdm
 
@@ -23,12 +24,13 @@ MIN_SAMPLES_PER_SAMPLE_GROUP = config["MIN_SAMPLES_PER_SAMPLE_GROUP"]
 MAX_SAMPLES_PER_SAMPLE_GROUP = config["MAX_SAMPLES_PER_SAMPLE_GROUP"]
 GDC_RAW_RESPONSE_FILE = config["GDC_RAW_RESPONSE_FILE"]
 METADATA_GLOBAL_FILE = config["METADATA_GLOBAL_FILE"]
-MANIFEST_BASE_PATH = config["MANIFEST_BASE_PATH"]
 MIN_COMMON_SAMPLES = config["MIN_COMMON_SAMPLES"]
+INTERIM_BASE_PATH = config["INTERIM_BASE_PATH"]
 SAMPLE_SHEET_FILE = config["SAMPLE_SHEET_FILE"]
 SUMMARY_METAFILE = config["SUMMARY_METAFILE"]
 SAMPLE_GROUP_ID = config["SAMPLE_GROUP_ID"]
 FILTERS_CONFIG = config["FILTERS_CONFIG"]
+BASE_DATA_PATH = config["BASE_DATA_PATH"]
 DIRECTORY_TREE = config["DIRECTORY_TREE"]
 FIELDS_CONFIG = config["FIELDS_CONFIG"]
 PROCESSED_DIR = config["PROCESSED_DIR"]
@@ -38,7 +40,7 @@ N_PROCESS = config["N_PROCESS"]
 
 @task
 def check_if_repository_exists() -> None:
-    if exists("data/"):
+    if exists(BASE_DATA_PATH):
         raise RepositoryExistsError("The local repository already exists!")
 
 
@@ -122,11 +124,11 @@ def build_sample_sheet(
 @task
 def build_manifest(
     sample_sheet_path: str = SAMPLE_SHEET_FILE,
-    base_path: str = MANIFEST_BASE_PATH,
+    manifest_base_path: str = INTERIM_BASE_PATH,
     sample_group_id: str = SAMPLE_GROUP_ID,
     max_samples: int = MAX_SAMPLES_PER_SAMPLE_GROUP,
     min_samples: int = MIN_SAMPLES_PER_SAMPLE_GROUP,
-) -> None:
+) -> List[str]:
     """
     Function to build manifest for each specific group_of_samples present in sample_group_id field.
     > Only sample groups containing > MIN_SAMPLES_PER_SAMPLE_GROUP are processed to further steps.
@@ -169,7 +171,7 @@ def build_manifest(
             final_list_of_samples.extend(files)
 
             # make dir for specific sample group
-            makedirs(join(base_path, group_of_samples, end_file[strategy]), exist_ok=True)
+            makedirs(join(manifest_base_path, group_of_samples, end_file[strategy]), exist_ok=True)
 
             # build manifest file
             params = {"ids": files}
@@ -180,7 +182,7 @@ def build_manifest(
             ).text
 
             with open(
-                join(base_path, group_of_samples, end_file[strategy], "manifest.txt"),
+                join(manifest_base_path, group_of_samples, end_file[strategy], "manifest.txt"),
                 "w",
                 encoding="utf-8",
             ) as manifest_file:
@@ -190,54 +192,46 @@ def build_manifest(
                 f"Exporting manifest for: {group_of_samples}:{end_file[strategy]} n samples: {len(files)}"
             )
 
-    sample_sheet = sample_sheet[sample_sheet["id"].isin(final_list_of_samples)]
-    sample_sheet.to_parquet(sample_sheet_path)
-    logger.info("Exporting corrected sample sheet")
+    return final_list_of_samples
 
 
 @task
-def download_methylation_files(base_path: str = MANIFEST_BASE_PATH) -> None:
+def update_sample_sheet(
+    final_list_of_samples: List[str], sample_sheet_path: str = SAMPLE_SHEET_FILE
+) -> None:
+    logger = get_run_logger()
+    sample_sheet = pd.read_parquet(sample_sheet_path)
+
+    sample_sheet = sample_sheet[sample_sheet["id"].isin(final_list_of_samples)]
+    sample_sheet.to_parquet(sample_sheet_path)
+    logger.info("Exporting updated manifest")
+
+
+@task
+def download(manifest_base_path: str = INTERIM_BASE_PATH) -> None:
     """
     Function to download methylation files specified in manifest file.
     """
     logger = get_run_logger()
-    manifests_met = glob(join(base_path, "*", "Met/manifest.txt"))
+    for data_type in ["Met", "Exp"]:
+        manifests = glob(join(manifest_base_path, "*", f"{data_type}/manifest.txt"))
 
-    for manifest in manifests_met:
-        logger.info(f"Downloading: {manifest}")
-        out_dir = str(Path(manifest).parent)
+        for manifest in manifests:
+            logger.info(f"Downloading: {manifest}")
+            out_dir = str(Path(manifest).parent)
 
-        command = (
-            f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}' --retry"
-            f"-amount 10 "
-        )
-        call(command, shell=True)
-
-
-@task
-def download_expression_files(base_path: str = MANIFEST_BASE_PATH) -> None:
-    """
-    Function to download expression files specified in manifest file.
-    """
-    logger = get_run_logger()
-    manifests_exp = glob(join(base_path, "*", "Exp/manifest.txt"))
-
-    for manifest in manifests_exp:
-        logger.info(f"Downloading: {manifest}")
-        out_dir = str(Path(manifest).parent)
-
-        command = (
-            f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}' --retry"
-            f"-amount 10 "
-        )
-        call(command, shell=True)
+            command = (
+                f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}' --retry"
+                f"-amount 10 "
+            )
+            call(command, shell=True)
 
 
 @task
 def build_frames(
     ftype: str,
     sample_sheet: str = SAMPLE_SHEET_FILE,
-    base_path: str = MANIFEST_BASE_PATH,
+    base_path: str = INTERIM_BASE_PATH,
     out_dir: str = PROCESSED_DIR,
 ) -> None:
     """
@@ -311,66 +305,44 @@ def metadata(final_dir: str = PROCESSED_DIR) -> None:
             met_samples = set(met_file.columns)
             common = exp_samples.intersection(met_samples)
 
-            meta = {
-                "SampleGroup": sample_group,
-                "creationDate": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                "expressionFrame": exp_file.shape,
-                "methylationFrame": met_file.shape,
-                "genes": genes,
-                "probes": probes,
-                "expressionSamples": exp_samples,
-                "methylationSamples": met_samples,
-                "commonBetween": common,
-            }
+            record = MetaRecord(
+                sample_group,
+                exp_file.shape,
+                met_file.shape,
+                genes,
+                probes,
+                exp_samples,
+                met_samples,
+                common,
+            )
 
         elif exists(met_file):
             met_file = pd.read_parquet(met_file)
             probes = set(met_file.index)
             met_samples = set(met_file.columns)
-
-            meta = {
-                "SampleGroup": sample_group,
-                "creationDate": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                "expressionFrame": "",
-                "methylationFrame": met_file.shape,
-                "genes": "",
-                "probes": probes,
-                "expressionSamples": "",
-                "methylationSamples": met_samples,
-                "commonBetween": "",
-            }
+            record = MetaRecord(
+                sample_group,
+                methylation_frame=met_file.shape,
+                methylation_samples=met_samples,
+                probes=probes,
+            )
 
         elif exists(exp_file):
             exp_file = pd.read_parquet(exp_file)
             genes = set(exp_file.index)
             exp_samples = set(exp_file.columns)
-            meta = {
-                "SampleGroup": sample_group,
-                "creationDate": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                "expressionFrame": exp_file.shape,
-                "methylationFrame": "",
-                "genes": genes,
-                "probes": "",
-                "expressionSamples": exp_samples,
-                "methylationSamples": "",
-                "commonBetween": "",
-            }
+            record = MetaRecord(
+                sample_group,
+                expression_frame=exp_file.shape,
+                expression_samples=exp_samples,
+                genes=genes,
+            )
 
         else:
-            meta = {
-                "SampleGroup": sample_group,
-                "creationDate": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                "expressionFrame": "",
-                "methylationFrame": "",
-                "genes": "",
-                "probes": "",
-                "expressionSamples": "",
-                "methylationSamples": "",
-                "commonBetween": "",
-            }
+            record = MetaRecord(sample_group)
 
         with open(join(final_dir, sample_group, "metadata"), "wb") as meta_file:
-            pickle.dump(meta, meta_file)
+            pickle.dump(record.record, meta_file)
 
         logger.info(f"Exporting metadata for {sample_group}")
 
@@ -409,17 +381,16 @@ def global_metadata(
             if len(local_metadata["commonBetween"]) > min_samples:
                 met_exp_files_with_common_samples_present.append(sample_group)
 
-    meta = {
-        "Date": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-        "Number_of_sample_types": len(sample_groups),
-        "Expression_files_present": exp_files_present,
-        "Methylation_files_present": met_files_present,
-        "Methylation_expression_files_present": met_exp_files_present,
-        "Methylation_expression_files_with_common_samples_present": met_exp_files_with_common_samples_present,
-    }
+    record = GlobalMetaRecord(
+        len(sample_groups),
+        exp_files_present,
+        met_files_present,
+        met_exp_files_present,
+        met_exp_files_with_common_samples_present,
+    )
 
     with open(metadata_global_path, "wb") as meta_file:
-        pickle.dump(meta, meta_file)
+        pickle.dump(record.record, meta_file)
 
     logger.info("Exporting global metadata for whole repository")
 
@@ -438,7 +409,7 @@ def create_repo_summary(
 
     metafile = pd.read_pickle(metadata_path)
 
-    last_update = metafile["Date"]
+    last_update = metafile["creationDate"]
     number_of_groups = metafile["Number_of_sample_types"]
 
     number_of_samples = sample_sheet.shape[0]
@@ -447,18 +418,18 @@ def create_repo_summary(
     sample_type = sample_sheet["sample_type"].value_counts()
     exp_strategy = sample_sheet["platform"].value_counts()
 
-    meta = {
-        "last_update": last_update,
-        "number_of_samples_groups": number_of_groups,
-        "number_of_samples": number_of_samples,
-        "primary_diagnosis_cnt": primary_diagnosis,
-        "tissue_origin_cnt": tissue_origin,
-        "sample_type_cnt": sample_type,
-        "exp_strategy_cnt": exp_strategy,
-    }
+    record = RepositorySummary(
+        last_update,
+        number_of_groups,
+        number_of_samples,
+        primary_diagnosis,
+        tissue_origin,
+        sample_type,
+        exp_strategy,
+    )
 
     with open(output_file, "wb") as meta_file:
-        pickle.dump(meta, meta_file)
+        pickle.dump(record.record, meta_file)
 
     logger.info("Exporting summary meta file for local repository")
 
@@ -470,17 +441,15 @@ def run():
     request_gdc_service()
 
     build_sample_sheet()
-    build_manifest()
+    samples = build_manifest()
+    update_sample_sheet(samples)
 
-    download_methylation_files()
-    download_expression_files()
-
+    download()
     build_frames("Exp")
     build_frames("Met")
 
     metadata()
     global_metadata()
-
     create_repo_summary()
 
 
