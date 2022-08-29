@@ -151,7 +151,8 @@ disable=file-ignored,
         missing-function-docstring,
         missing-module-docstring,
         missing-class-docstring,
-        duplicate-code
+        duplicate-code,
+	line-too-long
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -219,10 +220,10 @@ exclude-too-few-public-methods=
 ignored-parents=
 
 # Maximum number of arguments for function / method.
-max-args=7
+max-args=8
 
 # Maximum number of attributes for a class (see R0902).
-max-attributes=7
+max-attributes=8
 
 # Maximum number of boolean expressions in an if statement (see R0916).
 max-bool-expr=5
