@@ -58,7 +58,7 @@ card_4_content = [
                 "Details about repository, number of samples, last update etc.",
                 className="card-text",
             ),
-            dbc.Button("Go", href="/repository", className="mt-auto"),
+            dbc.Button("Read more", href="/repository", className="mt-auto", color="info"),
         ]
     ),
 ]
