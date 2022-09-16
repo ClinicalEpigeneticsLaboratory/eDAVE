@@ -1,9 +1,9 @@
 ![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)
 ![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)
 ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)
-![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)
+![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)
 
-![Ubuntu 20.04](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
+![Ubuntu 22.04](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
 
 ### eDAVE - extension for [GDC Data Analysis, Visualization, and Exploration (DAVE) Tools](https://gdc.cancer.gov/analyze-data/gdc-dave-tools)
 
