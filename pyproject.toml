@@ -5,7 +5,7 @@ description = ""
 authors = ["jan.binkowski96 <jan.binkowski96@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8,<3.12"
 pandas = "^1.4.3"
 pyarrow = "^8.0.0"
 plotly = "^5.9.0"
