@@ -166,7 +166,7 @@ def build_manifest(
                 logger.info(
                     f"Sampling from: {strategy} - {group_of_samples}, n > MAX_SAMPLES_PER_SAMPLE_GROUP"
                 )
-                files = np.random.choice(files, max_samples, False)
+                files = list(np.random.choice(files, max_samples, False))
 
             final_list_of_samples.extend(files)
 
