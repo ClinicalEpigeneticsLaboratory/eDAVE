@@ -101,9 +101,12 @@ def build_sample_sheet(
     # drop duplicated columns [sometimes from one case is multiple samples]
     frame = frame.loc[:, ~frame.columns.duplicated(keep="first")]
 
-    # drop records without diagnosis or origin tissue
+    # drop Illumina Human Methylation 27
+    frame = frame[frame["platform"] != "Illumina Human Methylation 27"]
+
+    # drop records without diagnosis OR origin tissue
     frame = frame[
-        (~frame["primary_diagnosis"].isna()) & (~frame["tissue_or_organ_of_origin"].isna())
+        (~frame["primary_diagnosis"].isna()) | (~frame["tissue_or_organ_of_origin"].isna())
     ]
 
     # Remove redundant NOS prefix
