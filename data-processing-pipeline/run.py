@@ -114,7 +114,7 @@ def build_sample_sheet(
 
     # add <sample_group_id> field
     frame[sample_group_id] = (
-        frame["tissue_type"]
+        frame["sample_type"]
         + "_"
         + frame["tissue_or_organ_of_origin"]
         + "_"
