@@ -1,16 +1,18 @@
+import logging
 import typing as t
 
 import dash
-from src.basics import FrameOperations
-from src.plots import Plot
-from src.statistics import Stats
-from src.utils import load_config
 
+logger = logging.getLogger(__name__)
 dash.register_page(__name__)
 
 import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import Input, Output, State, callback, dcc, html
+from src.basics import FrameOperations
+from src.plots import Plot
+from src.statistics import Stats
+from src.utils import load_config
 
 EmptyFig = {}
 config = load_config()
@@ -208,6 +210,7 @@ def main_1d_browser(
     if data_type and variable:
 
         if len(sample_types) > 5:
+            logger.info("Aborted: exceeded maximum number of sample types > 5")
             return (
                 False,
                 EmptyFig,
@@ -222,6 +225,7 @@ def main_1d_browser(
         data, msg = loader.load_1d(variable)
 
         if data.empty:
+            logger.info("Aborted: no common data type")
             return False, EmptyFig, True, msg, "", "", ""
 
         data[variable] = loader.scale(data[variable], scaling_method)
@@ -245,8 +249,14 @@ def main_1d_browser(
             stats.post_hoc()
             post_hoc_frame = stats.export_frame()
 
+            logger.info(
+                f"Input: {sample_types} - {data_type} - {variable} - {scaling_method} - {plot_type}"
+            )
             return True, fig, True, msg, post_hoc_frame, count, ""
 
+        logger.info(
+            f"Input: {sample_types} - {data_type} - {variable} - {scaling_method} - {plot_type}"
+        )
         return True, fig, True, msg, "Applicable only for > 1 sample groups", count, ""
 
     return dash.no_update
