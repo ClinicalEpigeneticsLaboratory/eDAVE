@@ -1,7 +1,9 @@
+import logging
 import typing as t
 
 import dash
 
+logger = logging.getLogger(__name__)
 dash.register_page(__name__)
 
 import dash_bootstrap_components as dbc
@@ -223,9 +225,11 @@ def main_multidim_browser(
         variables = FrameOperations.clean_sequence(variables)
 
         if len(variables) < 10:
+            logger.info("Aborted: len(variables) < 10")
             return EmptyFig, False, "Less than 10 inputted variables", True, "", ""
 
         if len(variables) > 100:
+            logger.info("Aborted: len(variables) > 100")
             return (
                 EmptyFig,
                 False,
@@ -236,6 +240,7 @@ def main_multidim_browser(
             )
 
         if len(sample_types) > 5:
+            logger.info("Aborted: len(sample_types) > 5")
             return (
                 EmptyFig,
                 False,
@@ -249,9 +254,11 @@ def main_multidim_browser(
         data = loader.load_many(variables)
 
         if data.empty:
+            logger.info("Aborted: no common data in this set of s-types")
             return EmptyFig, False, "No common data in this set of sample types", True, "", ""
 
         if data.shape[1] - 1 < 5:
+            logger.info("Aborted: less than 5 variables")
             return (
                 EmptyFig,
                 False,
@@ -271,6 +278,9 @@ def main_multidim_browser(
         else:
             fig = figureGenerator.pca_plot()
 
+        logger.info(
+            f"Input: {sample_types} - {data_type} - {variables} - {method} - {n_dimensions}"
+        )
         return fig, True, response_multidim(variables, data), True, "", count
 
     return dash.no_update
