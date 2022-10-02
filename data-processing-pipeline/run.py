@@ -70,7 +70,7 @@ def request_gdc_service(
     fields = ",".join(fields)
     params = {"filters": filters, "fields": fields, "format": "TSV", "size": n_records}
 
-    resp = requests.post(endpoint, json=params)
+    resp = requests.post(endpoint, json=params, timeout=1000)
     with open(output_file, "w", encoding="utf-8") as response_file:
         response_file.write(resp.text)
 
@@ -182,6 +182,7 @@ def build_manifest(
                 endpoint,
                 data=json.dumps(params),
                 headers={"Content-Type": "application/json"},
+                timeout=1000,
             ).text
 
             with open(
