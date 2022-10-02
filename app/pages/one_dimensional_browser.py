@@ -225,7 +225,7 @@ def main_1d_browser(
         data, msg = loader.load_1d(variable)
 
         if data.empty:
-            logger.info("Aborted: no common data type")
+            logger.info("Aborted: no common data between selected sample types")
             return False, EmptyFig, True, msg, "", "", ""
 
         data[variable] = loader.scale(data[variable], scaling_method)
