@@ -1,5 +1,8 @@
+import logging
+
 import dash
 
+logger = logging.getLogger(__name__)
 dash.register_page(__name__)
 
 import dash_bootstrap_components as dbc
@@ -137,6 +140,7 @@ def update_model(sample_type, gene_id, probe_id, n_clicks: int):
         frame, msg = loader.load_met_exp_frame(gene_id, probe_id)
 
         if frame.empty:
+            logger.info("Aborted: no common data in selected set of sample types")
             return EmptyFig, "", False, "", "", True, msg
 
         model = Model(frame, gene_id)
@@ -145,6 +149,7 @@ def update_model(sample_type, gene_id, probe_id, n_clicks: int):
 
         fig = model.plot(x_axis=probe_id, y_axis=gene_id)
 
+        logger.info(f"Input: {sample_type} - {gene_id} - {probe_id}")
         return fig, "", True, frame1, frame2, True, msg
 
     return dash.no_update
