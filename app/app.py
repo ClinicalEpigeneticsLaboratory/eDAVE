@@ -1,4 +1,5 @@
 import json
+import logging
 
 import dash
 import dash_bootstrap_components as dbc
@@ -52,4 +53,10 @@ footer = dash.html.Footer(
 app.layout = dbc.Container([navbar, dash.page_container, footer], fluid=True)
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+        filename="log.log",
+        level=logging.INFO,
+        datefmt="%m/%d/%Y %I:%M:%S %p",
+    )
     app.run_server(debug=debug)
