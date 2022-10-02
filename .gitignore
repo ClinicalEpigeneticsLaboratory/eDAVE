@@ -9,6 +9,9 @@ gdc-client
 # C extensions
 *.so
 
+# Log
+log.log
+
 # Cache
 *.save
 .idea/
