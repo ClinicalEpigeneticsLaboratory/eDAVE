@@ -3,9 +3,6 @@ import logging
 
 import dash
 import dash_bootstrap_components as dbc
-from dotenv import dotenv_values
-
-app_config = dotenv_values()
 
 with open("config.json", "r", encoding="UTF-8") as config_file:
     config = json.load(config_file)
@@ -62,8 +59,4 @@ if __name__ == "__main__":
         level=logging.INFO,
         datefmt="%m/%d/%Y %I:%M:%S %p",
     )
-    if app_config["LOCAL_CRT"] and app_config["LOCAL_KEY"]:
-        context = (app_config["LOCAL_CRT"], app_config["LOCAL_KEY"])
-        app.run_server(debug=debug, ssl_context=context)
-    else:
-        app.run_server(debug=debug)
+    app.run_server(debug=debug)
