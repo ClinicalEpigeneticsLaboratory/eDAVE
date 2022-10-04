@@ -11,7 +11,12 @@ debug = config["debug"]
 version = config["version"]
 link = config["footer_link"]
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY], use_pages=True)
+app = dash.Dash(
+    __name__,
+    external_stylesheets=[dbc.themes.FLATLY],
+    use_pages=True,
+    meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
+)
 server = app.server
 
 pages = [dbc.ListGroupItem(page["name"], href=page["path"]) for page in dash.page_registry.values()]
@@ -51,12 +56,12 @@ footer = dash.html.Footer(
 )
 
 app.layout = dbc.Container([navbar, dash.page_container, footer], fluid=True)
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+    filename="log.log",
+    level=logging.INFO,
+    datefmt="%m/%d/%Y %I:%M:%S %p",
+)
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-        filename="log.log",
-        level=logging.INFO,
-        datefmt="%m/%d/%Y %I:%M:%S %p",
-    )
     app.run_server(debug=debug)
