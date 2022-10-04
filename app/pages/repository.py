@@ -47,7 +47,7 @@ layout = dbc.Container(
 
                     ----
                     """
-                ),
+                )
             ),
         ),
         dbc.Row(
@@ -56,6 +56,7 @@ layout = dbc.Container(
                     "Sample sheet comprising a characterization of samples  in the current release of the data "
                     "repository: "
                 ),
+                html.Br(),
                 dbc.Col(dbc.Button("download CSV", id="download-sample-sheet-button")),
                 dcc.Download(id="download-sample-sheet-frame"),
             ]
@@ -67,13 +68,23 @@ layout = dbc.Container(
                     [
                         dbc.Label("TOP15 sample types by tissue or organ of origin"),
                         dcc.Graph(figure=plot(repository_summary["tissue_origin_cnt"], "bar")),
-                    ]
+                    ],
+                    xs=11,
+                    sm=11,
+                    md=6,
+                    lg=5,
+                    xl=5,
                 ),
                 dbc.Col(
                     [
                         dbc.Label("TOP15 sample types by primary diagnosis"),
                         dcc.Graph(figure=plot(repository_summary["primary_diagnosis_cnt"], "bar")),
-                    ]
+                    ],
+                    xs=11,
+                    sm=11,
+                    md=6,
+                    lg=5,
+                    xl=5,
                 ),
             ]
         ),
@@ -84,13 +95,23 @@ layout = dbc.Container(
                     [
                         dbc.Label("Samples by tissue type"),
                         dcc.Graph(figure=plot(repository_summary["sample_type_cnt"])),
-                    ]
+                    ],
+                    xs=10,
+                    sm=10,
+                    md=6,
+                    lg=5,
+                    xl=5,
                 ),
                 dbc.Col(
                     [
                         dbc.Label("Samples by technology"),
                         dcc.Graph(figure=plot(repository_summary["exp_strategy_cnt"])),
-                    ]
+                    ],
+                    xs=10,
+                    sm=10,
+                    md=6,
+                    lg=5,
+                    xl=5,
                 ),
             ]
         ),

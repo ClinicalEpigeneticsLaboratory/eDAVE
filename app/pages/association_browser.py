@@ -35,6 +35,11 @@ layout = dbc.Container(
                             multi=False,
                         ),
                     ],
+                    xs=11,
+                    sm=11,
+                    md=4,
+                    lg=4,
+                    xl=4,
                 ),
                 dbc.Col(
                     [
@@ -47,6 +52,11 @@ layout = dbc.Container(
                             type="text",
                         ),
                     ],
+                    xs=11,
+                    sm=11,
+                    md=4,
+                    lg=4,
+                    xl=4,
                 ),
                 dbc.Col(
                     [
@@ -59,14 +69,17 @@ layout = dbc.Container(
                             type="text",
                         ),
                     ],
+                    xs=11,
+                    sm=11,
+                    md=4,
+                    lg=4,
+                    xl=4,
                 ),
             ]
         ),
-        html.Br(),
         dbc.Row(
-            dbc.Col([dbc.Button("Submit", id="submit-met-exp-browser")]),
+            dbc.Col([html.Br(), dbc.Button("Submit", id="submit-met-exp-browser")]),
         ),
-        html.Br(),
         dbc.Row(
             dbc.Col(dbc.Spinner(html.Div(id="progress-met-exp-browser"), color="danger")),
         ),
@@ -84,23 +97,39 @@ layout = dbc.Container(
         html.Br(),
         dbc.Row(
             dbc.Collapse(
-                dbc.Row(
-                    [
-                        dbc.Col(
-                            [
+                [
+                    dbc.Row(
+                        [
+                            dbc.Col(
                                 dbc.Container(id="result-1-met-exp-browser"),
-                                html.Br(),
+                                xs=12,
+                                sm=12,
+                                md=5,
+                                lg=5,
+                                xl=5,
+                            ),
+                            dbc.Col(html.Br()),
+                            dbc.Col(
                                 dbc.Container(id="result-2-met-exp-browser"),
-                            ],
-                            style={"width": "45%"},
-                        ),
-                        dbc.Col(dcc.Graph(id="plot-met-exp-browser"), style={"width": "45%"}),
-                    ]
-                ),
+                                xs=12,
+                                sm=12,
+                                md=5,
+                                lg=5,
+                                xl=5,
+                            ),
+                        ]
+                    ),
+                    dbc.Row(
+                        dbc.Col(
+                            dcc.Graph(id="plot-met-exp-browser"), xs=12, sm=12, md=12, lg=12, xl=12
+                        )
+                    ),
+                ],
                 id="result-section-met-exp-browser",
                 is_open=False,
-            )
+            ),
         ),
+        dbc.Row(style={"height": "15vh"}),
     ],
     fluid=True,
 )

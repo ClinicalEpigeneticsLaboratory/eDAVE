@@ -33,6 +33,11 @@ layout = dbc.Container(
                             multi=False,
                         ),
                     ],
+                    xs=10,
+                    sm=10,
+                    md=4,
+                    lg=4,
+                    xl=4,
                 ),
                 dbc.Col(
                     [
@@ -47,6 +52,11 @@ layout = dbc.Container(
                         ),
                         dbc.FormText("maximum number of sample types is 5"),
                     ],
+                    xs=10,
+                    sm=10,
+                    md=4,
+                    lg=4,
+                    xl=4,
                 ),
                 dbc.Col(
                     [
@@ -61,6 +71,11 @@ layout = dbc.Container(
                             value=2,
                         ),
                     ],
+                    xs=10,
+                    sm=10,
+                    md=4,
+                    lg=4,
+                    xl=4,
                 ),
             ]
         ),
@@ -92,7 +107,12 @@ layout = dbc.Container(
                             multi=False,
                             clearable=True,
                         ),
-                    ]
+                    ],
+                    xs=10,
+                    sm=10,
+                    md=5,
+                    lg=5,
+                    xl=5,
                 ),
                 dbc.Col(
                     [
@@ -106,7 +126,12 @@ layout = dbc.Container(
                             id="perplexity-multidim-browser",
                         ),
                         dbc.FormText("Parameter available only for t-SNE method"),
-                    ]
+                    ],
+                    xs=10,
+                    sm=10,
+                    md=5,
+                    lg=5,
+                    xl=5,
                 ),
                 dbc.Col(dbc.Button("Submit", id="submit-multidim-browser")),
             ]
@@ -136,7 +161,7 @@ layout = dbc.Container(
                 is_open=False,
             ),
         ),
-        dbc.Row(style={"height": "10vh"}),
+        dbc.Row(style={"height": "15vh"}),
     ],
     fluid=True,
 )

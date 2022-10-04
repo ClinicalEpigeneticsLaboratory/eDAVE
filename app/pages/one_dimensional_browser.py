@@ -34,6 +34,11 @@ layout = dbc.Container(
                             value="",
                         ),
                     ],
+                    xs=10,
+                    sm=10,
+                    md=4,
+                    lg=4,
+                    xl=4,
                 ),
                 dbc.Col(
                     [
@@ -48,6 +53,11 @@ layout = dbc.Container(
                         ),
                         dbc.FormText("maximum number of sample types is 5"),
                     ],
+                    xs=10,
+                    sm=10,
+                    md=4,
+                    lg=4,
+                    xl=4,
                 ),
                 dbc.Col(
                     [
@@ -61,6 +71,11 @@ layout = dbc.Container(
                             value="",
                         ),
                     ],
+                    xs=10,
+                    sm=10,
+                    md=4,
+                    lg=4,
+                    xl=4,
                 ),
             ]
         ),
@@ -77,7 +92,12 @@ layout = dbc.Container(
                             value="None",
                             placeholder="None (default)",
                         ),
-                    ]
+                    ],
+                    xs=10,
+                    sm=10,
+                    md=6,
+                    lg=6,
+                    xl=6,
                 ),
                 dbc.Col(
                     [
@@ -89,9 +109,21 @@ layout = dbc.Container(
                             multi=False,
                             clearable=True,
                         ),
-                    ]
+                    ],
+                    xs=10,
+                    sm=10,
+                    md=6,
+                    lg=6,
+                    xl=6,
                 ),
-                dbc.Col(dbc.Button("Submit", id="submit-1d-browser")),
+                dbc.Col(
+                    [html.Br(), dbc.Button("Submit", id="submit-1d-browser")],
+                    xs=10,
+                    sm=10,
+                    md=6,
+                    lg=6,
+                    xl=6,
+                ),
             ]
         ),
         html.Br(),
@@ -128,7 +160,7 @@ layout = dbc.Container(
                 is_open=False,
             ),
         ),
-        dbc.Row(style={"height": "10vh"}),
+        dbc.Row(style={"height": "15vh"}),
     ],
     fluid=True,
 )

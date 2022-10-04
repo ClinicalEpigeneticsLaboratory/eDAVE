@@ -105,7 +105,6 @@ layout = dbc.Container(
             ),
             justify="center",
         ),
-        html.Br(),
         dbc.Row(
             dbc.CardGroup(
                 [
@@ -116,6 +115,7 @@ layout = dbc.Container(
             ),
             justify="center",
         ),
+        dbc.Row(style={"height": "15vh"}),
     ],
     fluid=True,
 )
