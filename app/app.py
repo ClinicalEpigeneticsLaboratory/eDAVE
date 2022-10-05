@@ -24,8 +24,8 @@ app = dash.Dash(
         {"property": "og:description", "content": app_description},
         {"property": "og:image", "content": app_image},
     ],
-).server
-server = app
+)
+server = app.server
 
 pages = [dbc.ListGroupItem(page["name"], href=page["path"]) for page in dash.page_registry.values()]
 navbar = dbc.NavbarSimple(
