@@ -11,19 +11,9 @@ debug = config["debug"]
 version = config["version"]
 link = config["footer_link"]
 app_title = config["app_title"]
-app_description = config["app_description"]
-app_image = config["app_logo"]
 
 app = dash.Dash(
-    __name__,
-    external_stylesheets=[dbc.themes.FLATLY],
-    use_pages=True,
-    meta_tags=[
-        {"property": "og:title", "content": app_title},
-        {"property": "og:type", "content": "website"},
-        {"property": "og:description", "content": app_description},
-        {"property": "og:image", "content": app_image},
-    ],
+    __name__, external_stylesheets=[dbc.themes.FLATLY], use_pages=True, app_title=app_title
 )
 server = app.server
 
