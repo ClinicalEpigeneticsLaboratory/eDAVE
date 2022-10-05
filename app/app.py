@@ -32,7 +32,13 @@ metas = [
     {"property": "og:image", "content": app_image},
 ]
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY], use_pages=True, title=app_title)
+app = dash.Dash(
+    __name__,
+    external_stylesheets=[dbc.themes.FLATLY],
+    use_pages=True,
+    title=app_title,
+    meta_tags=metas,
+)
 server = app.server
 
 pages = [dbc.ListGroupItem(page["name"], href=page["path"]) for page in dash.page_registry.values()]
