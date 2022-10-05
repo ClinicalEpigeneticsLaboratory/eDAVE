@@ -1,9 +1,12 @@
 {
-  "debug": true,
+  "debug": false,
   "version": "0.0.0-beta",
   "sample_sheet": "../data-processing-pipeline/data/meta/sample_sheet.parquet",
   "global_metadata": "../data-processing-pipeline/data/processed/metadataGlobal",
   "summary_metafile": "../data-processing-pipeline/data/processed/summaryMetaFile",
   "base_path": "../data-processing-pipeline/data/processed",
-  "footer_link": "https://www.pum.edu.pl/studia_iii_stopnia/informacje_z_jednostek/wfbmiml/samodzielna_pracownia_epigenetyki_klinicznej/"
+  "footer_link": "https://www.pum.edu.pl/studia_iii_stopnia/informacje_z_jednostek/wfbmiml/samodzielna_pracownia_epigenetyki_klinicznej/",
+  "app_description": "This app is an extension of GDC Data Analysis, Visualization, and Exploration [[DAVE]] (https://gdc.cancer.gov/analyze-data/gdc-dave-tools) tools. Dedicated to analysing quantitative datasets such as DNA methylation and/or gene expression.",
+  "app_title": "eDAVE - extension of GDC Data Analysis, Visualization, and Exploration tools",
+  "app_logo": "https://drive.google.com/file/d/1fzBDOyo2LYtfgMqPRzflG53twRQRwTBz/view?usp=sharing"
 }

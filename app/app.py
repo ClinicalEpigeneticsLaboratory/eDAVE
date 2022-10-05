@@ -10,9 +10,22 @@ with open("config.json", "r", encoding="UTF-8") as config_file:
 debug = config["debug"]
 version = config["version"]
 link = config["footer_link"]
+app_title = config["app_title"]
+app_description = config["app_description"]
+app_image = config["app_logo"]
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY], use_pages=True)
-server = app.server
+app = dash.Dash(
+    __name__,
+    external_stylesheets=[dbc.themes.FLATLY],
+    use_pages=True,
+    meta_tags=[
+        {"property": "og:title", "content": app_title},
+        {"property": "og:type", "content": "website"},
+        {"property": "og:description", "content": app_description},
+        {"property": "og:image", "content": app_image},
+    ],
+).server
+server = app
 
 pages = [dbc.ListGroupItem(page["name"], href=page["path"]) for page in dash.page_registry.values()]
 navbar = dbc.NavbarSimple(
@@ -51,6 +64,7 @@ footer = dash.html.Footer(
 )
 
 app.layout = dbc.Container([navbar, dash.page_container, footer], fluid=True)
+
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
     filename="log.log",
