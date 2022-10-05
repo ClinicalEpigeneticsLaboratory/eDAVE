@@ -12,9 +12,7 @@ version = config["version"]
 link = config["footer_link"]
 app_title = config["app_title"]
 
-app = dash.Dash(
-    __name__, external_stylesheets=[dbc.themes.FLATLY], use_pages=True, app_title=app_title
-)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY], use_pages=True, title=app_title)
 server = app.server
 
 pages = [dbc.ListGroupItem(page["name"], href=page["path"]) for page in dash.page_registry.values()]
