@@ -10,7 +10,27 @@ with open("config.json", "r", encoding="UTF-8") as config_file:
 debug = config["debug"]
 version = config["version"]
 link = config["footer_link"]
-app_title = config["app_title"]
+
+app_description = """
+This app is an extension of GDC Data Analysis, Visualization, and Exploration [DAVE] tools.
+Dedicated to analysing quantitative datasets such as DNA methylation and/or gene expression.
+"""
+
+app_title = "eDAVE - extension of GDC Data Analysis, Visualization, and Exploration Tools"
+app_image = "https://drive.google.com/file/d/1fzBDOyo2LYtfgMqPRzflG53twRQRwTBz/view?usp=sharing"
+
+metas = [
+    {"name": "viewport", "content": "width=device-width, initial-scale=1"},
+    {"property": "twitter:card", "content": "summary_large_image"},
+    {"property": "twitter:url", "content": "https://edave.pum.edu.pl/"},
+    {"property": "twitter:title", "content": app_title},
+    {"property": "twitter:description", "content": app_description},
+    {"property": "twitter:image", "content": app_image},
+    {"property": "og:title", "content": app_title},
+    {"property": "og:type", "content": "website"},
+    {"property": "og:description", "content": app_description},
+    {"property": "og:image", "content": app_image},
+]
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY], use_pages=True, title=app_title)
 server = app.server

@@ -5,6 +5,5 @@
   "global_metadata": "../data-processing-pipeline/data/processed/metadataGlobal",
   "summary_metafile": "../data-processing-pipeline/data/processed/summaryMetaFile",
   "base_path": "../data-processing-pipeline/data/processed",
-  "footer_link": "https://www.pum.edu.pl/studia_iii_stopnia/informacje_z_jednostek/wfbmiml/samodzielna_pracownia_epigenetyki_klinicznej/",
-  "app_title": "eDAVE - extension of GDC Data Analysis, Visualization, and Exploration tools"
+  "footer_link": "https://www.pum.edu.pl/studia_iii_stopnia/informacje_z_jednostek/wfbmiml/samodzielna_pracownia_epigenetyki_klinicznej/"
 }
