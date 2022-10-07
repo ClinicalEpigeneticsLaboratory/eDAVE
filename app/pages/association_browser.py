@@ -101,16 +101,25 @@ layout = dbc.Container(
                     dbc.Row(
                         [
                             dbc.Col(
-                                dbc.Container(id="result-1-met-exp-browser"),
+                                [
+                                    html.Label(
+                                        "Regression statistics", htmlFor="result-1-met-exp-browser"
+                                    ),
+                                    dbc.Container(id="result-1-met-exp-browser"),
+                                ],
                                 xs=12,
                                 sm=12,
                                 md=6,
                                 lg=6,
                                 xl=6,
                             ),
-                            dbc.Col(html.Br()),
                             dbc.Col(
-                                dbc.Container(id="result-2-met-exp-browser"),
+                                [
+                                    html.Label(
+                                        "Model parameters", htmlFor="result-2-met-exp-browser"
+                                    ),
+                                    dbc.Container(id="result-2-met-exp-browser"),
+                                ],
                                 xs=12,
                                 sm=12,
                                 md=6,
@@ -121,7 +130,7 @@ layout = dbc.Container(
                     ),
                     dbc.Row(
                         dbc.Col(
-                            dcc.Graph(id="plot-met-exp-browser"), xs=12, sm=12, md=12, lg=12, xl=12
+                            dcc.Graph(id="plot-met-exp-browser"), xs=11, sm=11, md=11, lg=11, xl=11
                         )
                     ),
                 ],
