@@ -80,11 +80,11 @@ layout = dbc.Container(
                 This app is an extension of
                 GDC Data Analysis, Visualization, and Exploration [[DAVE]]
                 (https://gdc.cancer.gov/analyze-data/gdc-dave-tools) tools.
-                Dedicated to analysing quantitative datasets such as DNA methylation and/or gene expression.
+                Dedicated to analysing quantitative assays such as DNA methylation and/or gene expression.
 
                 Importantly all data records in the current repository are coming from **Genome Data common**
-                [database](https://gdc.cancer.gov/) and were obtained using the most prominent technologies
-                such as **Illumina microarrays** and **RNA-seq**. All records were processed in one, standardized way
+                [database](https://gdc.cancer.gov/) and were obtained using state-of-the-art technologies,
+                such as: **Illumina microarrays** and **RNA-seq**. All records were processed in one, standardized way
                 (raw data processing pipelines described in
                 detail [here](https://docs.gdc.cancer.gov/Data/Introduction/)),
                 thus downstream analysis should be free of unwanted technical variance.
