@@ -21,7 +21,7 @@ This project contains two main components:
 jan.binkowski[at]pum.edu.pl
 
 #### App
-www.www.www
+[go to the app](https://edave.pum.edu.pl/)
 
 #### How to start
 1. make sure that You have python >= 3.8 installed
