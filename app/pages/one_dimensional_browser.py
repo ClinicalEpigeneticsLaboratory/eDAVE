@@ -289,6 +289,6 @@ def main_1d_browser(
         logger.info(
             f"Input: {sample_types} - {data_type} - {variable} - {scaling_method} - {plot_type}"
         )
-        return True, fig, True, msg, "Applicable only for > 1 sample groups", count, ""
+        return True, fig, True, msg, "Applicable only for > 1 sample types", count, ""
 
     return dash.no_update

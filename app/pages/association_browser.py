@@ -130,7 +130,7 @@ layout = dbc.Container(
                     ),
                     dbc.Row(
                         dbc.Col(
-                            dcc.Graph(id="plot-met-exp-browser"), xs=11, sm=11, md=11, lg=11, xl=11
+                            dcc.Graph(id="plot-met-exp-browser"), xs=12, sm=12, md=12, lg=12, xl=12
                         )
                     ),
                 ],
