@@ -39,6 +39,7 @@ class Plot:
             yaxis=dict(title=self.__yaxis_title()),
             xaxis=dict(title="", showticklabels=False),
             font=dict(size=self.font_size),
+            legend=dict(title="Sample type"),
         )
 
         return fig
@@ -49,6 +50,7 @@ class Plot:
             yaxis=dict(title=self.__yaxis_title()),
             xaxis=dict(title="", showticklabels=False),
             font=dict(size=self.font_size),
+            legend=dict(title="Sample type"),
         )
 
         return fig
@@ -93,7 +95,7 @@ class MultiDimPlot:
         else:
             fig = px.scatter_3d(deco_data, x="t-SNE 1", y="t-SNE 2", z="t-SNE 3", color=self.factor)
 
-        fig.update_layout(font=dict(size=self.font_size))
+        fig.update_layout(font=dict(size=self.font_size), legend=dict(title="Sample type"))
 
         return fig
 
@@ -140,6 +142,6 @@ class MultiDimPlot:
                 },
             )
 
-        fig.update_layout(font=dict(size=self.font_size))
+        fig.update_layout(font=dict(size=self.font_size), legend=dict(title="Sample type"))
 
         return fig
