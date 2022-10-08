@@ -47,12 +47,12 @@ layout = dbc.Container(
                             id="sample-types-1d-browser",
                             options=[],
                             clearable=True,
-                            placeholder="Firstly select data type",
+                            placeholder="Firstly select a data type",
                             multi=True,
                             disabled=True,
                             optionHeight=80,
                         ),
-                        dbc.FormText("maximum number of sample types is 5"),
+                        dbc.FormText("maximum number of samples types is 5"),
                     ],
                     xs=10,
                     sm=10,
@@ -73,15 +73,15 @@ layout = dbc.Container(
                             },
                         ),
                         dbc.Tooltip(
-                            "Gene name should be capitalized e.g. 'PAX3' instead of 'pax3'. "
-                            "Probe ID should start with 'cg' prefix eg. 'cg077779434'.",
+                            "Gene name is case sensitive. "
+                            "Probe ID is a unique identifier from appropriate [EPIC/450K] Illumina manifest.",
                             target="label-cpg-gene-1d-browser",
                             placement="top",
                         ),
                         dbc.Input(
                             id="variable-1d-browser",
                             disabled=True,
-                            placeholder="Firstly select data type",
+                            placeholder="Firstly select a data type",
                             maxLength=10,
                             type="text",
                             value="",

@@ -55,7 +55,7 @@ layout = dbc.Container(
                             },
                         ),
                         dbc.Tooltip(
-                            "Gene name should be capitalized e.g. 'PODXL' instead of 'podxl'. ",
+                            "Gene name is case sensitive.",
                             target="label-gene-1d-met-exp-browser",
                             placement="top",
                         ),
@@ -86,7 +86,7 @@ layout = dbc.Container(
                             },
                         ),
                         dbc.Tooltip(
-                            "Probe ID should start with 'cg' prefix eg. 'cg07703401'. ",
+                            "Probe ID is unique identifier from appropriate [EPIC/450K] Illumina manifest.",
                             target="label-probe-1d-met-exp-browser",
                             placement="top",
                         ),
@@ -184,7 +184,7 @@ def update_inputs_fields(sample_type):
     if sample_type:
         return False, "E.g. PODXL", False, "E.g. cg07703401"
 
-    return True, "Firstly select sample type", True, "Firstly select sample type"
+    return True, "Firstly select a sample type", True, "Firstly select a sample type"
 
 
 @callback(
