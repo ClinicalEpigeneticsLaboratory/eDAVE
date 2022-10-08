@@ -12,7 +12,7 @@ repository_summary = pd.read_pickle(config["summary_metafile"])
 
 def plot(cnt: pd.Series, plot_type: str = None) -> go.Figure:
     if plot_type == "bar":
-        cnt = cnt.iloc[:15]
+        cnt = cnt.iloc[:20]
         fig = px.bar(cnt, y=cnt.index, x=cnt.values, orientation="h")
         fig.update_layout(
             xaxis={"title": "Count"},
@@ -64,7 +64,7 @@ layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        dbc.Label("TOP15 sample types by tissue or organ of origin"),
+                        dbc.Label("TOP20 sample types by tissue or organ of origin"),
                         dcc.Graph(figure=plot(repository_summary["tissue_origin_cnt"], "bar")),
                     ],
                     xs=12,
@@ -75,7 +75,7 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        dbc.Label("TOP15 sample types by primary diagnosis"),
+                        dbc.Label("TOP20 sample types by primary diagnosis"),
                         dcc.Graph(figure=plot(repository_summary["primary_diagnosis_cnt"], "bar")),
                     ],
                     xs=12,
@@ -125,7 +125,14 @@ layout = dbc.Container(
     prevent_initial_call=True,
 )
 def func(n_clicks: int, sample_sheet_path: str = config["sample_sheet"]):
-    sample_sheet = pd.read_parquet(sample_sheet_path)
+    sample_sheet = pd.read_parquet(
+        sample_sheet_path,
+        columns=[
+            "primary_diagnosis",
+            "tissue_or_organ_of_origin",
+            "sample_type",
+            "experimental_strategy",
+        ],
+    )
     sample_sheet.index.name = "Case_ID"
-
     return dcc.send_data_frame(sample_sheet.to_csv, "sample_sheet.csv")
