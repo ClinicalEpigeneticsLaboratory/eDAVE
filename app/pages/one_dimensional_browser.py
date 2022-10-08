@@ -50,7 +50,7 @@ layout = dbc.Container(
                             placeholder="Firstly select data type",
                             multi=True,
                             disabled=True,
-                            optionHeight=100,
+                            optionHeight=80,
                         ),
                         dbc.FormText("maximum number of sample types is 5"),
                     ],
@@ -62,7 +62,22 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        html.Label("CpG/Gene", htmlFor="variable-1d-browser"),
+                        html.Label(
+                            "CpG/Gene",
+                            htmlFor="variable-1d-browser",
+                            id="label-cpg-gene-1d-browser",
+                            style={
+                                "color": "blue",
+                                "textDecoration": "underline",
+                                "cursor": "pointer",
+                            },
+                        ),
+                        dbc.Tooltip(
+                            "Gene name should be capitalized e.g. 'PAX3' instead of 'pax3'. "
+                            "CpG id should start with 'cg' prefix eg. 'cg077779434'.",
+                            target="label-cpg-gene-1d-browser",
+                            placement="top",
+                        ),
                         dbc.Input(
                             id="variable-1d-browser",
                             disabled=True,

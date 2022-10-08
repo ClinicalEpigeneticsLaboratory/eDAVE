@@ -33,6 +33,7 @@ layout = dbc.Container(
                             options=available_sample_types,
                             clearable=True,
                             multi=False,
+                            optionHeight=80,
                         ),
                     ],
                     xs=11,
@@ -43,7 +44,21 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        html.Label("Gene name", htmlFor="gene-met-exp-browser"),
+                        html.Label(
+                            "Gene name",
+                            htmlFor="gene-met-exp-browser",
+                            id="label-gene-1d-met-exp-browser",
+                            style={
+                                "color": "blue",
+                                "textDecoration": "underline",
+                                "cursor": "pointer",
+                            },
+                        ),
+                        dbc.Tooltip(
+                            "Gene name should be capitalized e.g. 'PODXL' instead of 'podxl'. ",
+                            target="label-gene-1d-met-exp-browser",
+                            placement="top",
+                        ),
                         dbc.Input(
                             id="gene-met-exp-browser",
                             placeholder="Firstly select sample type",
@@ -60,7 +75,21 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        html.Label("Probe ID", htmlFor="probe-met-exp-browser"),
+                        html.Label(
+                            "Probe ID",
+                            htmlFor="probe-met-exp-browser",
+                            id="label-probe-1d-met-exp-browser",
+                            style={
+                                "color": "blue",
+                                "textDecoration": "underline",
+                                "cursor": "pointer",
+                            },
+                        ),
+                        dbc.Tooltip(
+                            "CpG id should start with 'cg' prefix eg. 'cg07703401'. ",
+                            target="label-probe-1d-met-exp-browser",
+                            placement="top",
+                        ),
                         dbc.Input(
                             id="probe-met-exp-browser",
                             placeholder="Firstly select sample type",
