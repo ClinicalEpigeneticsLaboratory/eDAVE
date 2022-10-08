@@ -36,8 +36,7 @@ class Plot:
     def boxplot(self) -> Figure:
         fig = px.box(data_frame=self.data, x=self.x_axis, y=self.y_axis, color=self.x_axis)
         fig.update_layout(
-            showlegend=False,
-            yaxis=dict(title=self.__yaxis_title()),
+            yaxis=dict(title=self.__yaxis_title(), showticklabels=False),
             xaxis=dict(title=""),
             font=dict(size=self.font_size),
         )
@@ -47,8 +46,7 @@ class Plot:
     def violinplot(self) -> Figure:
         fig = px.violin(data_frame=self.data, x=self.x_axis, y=self.y_axis, color=self.x_axis)
         fig.update_layout(
-            showlegend=False,
-            yaxis=dict(title=self.__yaxis_title()),
+            yaxis=dict(title=self.__yaxis_title(), showticklabels=False),
             xaxis=dict(title=""),
             font=dict(size=self.font_size),
         )

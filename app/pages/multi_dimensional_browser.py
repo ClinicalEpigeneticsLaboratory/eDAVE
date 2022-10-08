@@ -49,7 +49,7 @@ layout = dbc.Container(
                             clearable=True,
                             multi=True,
                             disabled=True,
-                            optionHeight=120,
+                            optionHeight=100,
                         ),
                         dbc.FormText("maximum number of sample types is 5"),
                     ],
