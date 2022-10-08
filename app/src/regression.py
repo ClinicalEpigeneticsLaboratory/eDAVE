@@ -52,11 +52,15 @@ class Model:
         frame1 = dash_table.DataTable(
             data=frame1.to_dict("records"),
             columns=[{"name": "", "id": str(i)} for i in frame1.columns],
+            virtualization=True,
+            style_header={"display": "none"},
         )
 
         frame2 = dash_table.DataTable(
             data=frame2.to_dict("records"),
             columns=[{"name": "", "id": str(i)} for i in frame2.columns],
+            virtualization=True,
+            style_header={"display": "none"},
         )
 
         return frame1, frame2

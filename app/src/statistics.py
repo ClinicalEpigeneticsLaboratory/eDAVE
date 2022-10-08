@@ -23,11 +23,36 @@ class Stats:
     def export_frame(self) -> dash_table:
         html = self.results.as_html()
         frame = pd.read_html(StringIO(html))[0]
+        frame = frame.to_dict("records")
 
-        return dash_table.DataTable(frame.to_dict("records"))
+        frame = dash_table.DataTable(
+            frame,
+            style_table={
+                "overflowX": "auto",
+                "overflowY": "auto",
+                "width": "100%",
+                "minWidth": "100%",
+                "maxWidth": "100%",
+            },
+            style_data={"whiteSpace": "normal", "height": "auto"},
+        )
+        return frame
 
     @property
     def get_factor_count(self) -> dash_table:
         cnt = self.data[self.factor].value_counts().to_frame().reset_index()
         cnt.columns = ["Sample type", "Count"]
-        return dash_table.DataTable(cnt.to_dict("records"))
+        cnt = cnt.to_dict("records")
+        cnt = dash_table.DataTable(
+            cnt,
+            style_table={
+                "overflowX": "auto",
+                "overflowY": "auto",
+                "width": "100%",
+                "minWidth": "100%",
+                "maxWidth": "100%",
+            },
+            style_data={"whiteSpace": "normal", "height": "auto"},
+        )
+
+        return cnt
