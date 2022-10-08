@@ -83,26 +83,16 @@ layout = dbc.Container(
         dbc.Row(
             [
                 html.Label(
-                    "List of variables",
+                    "List of variables [probes IDs/genes]",
                     htmlFor="input-multidim-browser",
-                    id="label-multidim-browser",
-                    style={"color": "blue", "textDecoration": "underline", "cursor": "pointer"},
                 ),
-                dbc.Tooltip(
-                    "Gene name should be capitalized e.g. 'BRCA1' instead of 'brca1'. "
-                    "CpG id should start with 'cg' eg. 'cg077779434'. "
-                    "CpG or genes names should be separated using commas e.g.: 'PAX1, PAX3, MITF' ",
-                    target="label-multidim-browser",
-                    placement="top-start",
-                ),
-                html.Br(),
                 dcc.Textarea(
                     id="input-multidim-browser",
                     placeholder="Firstly select data type",
                     disabled=True,
                     style={"width": "98%"},
                 ),
-                dbc.FormText("Number of inputted variables must be >= 10 and <= 100"),
+                dbc.FormText("Number of input variables must be >= 10 and <= 100"),
             ],
             justify="center",
         ),

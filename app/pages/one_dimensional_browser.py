@@ -63,7 +63,7 @@ layout = dbc.Container(
                 dbc.Col(
                     [
                         html.Label(
-                            "CpG/Gene",
+                            "Probe ID/Gene",
                             htmlFor="variable-1d-browser",
                             id="label-cpg-gene-1d-browser",
                             style={
@@ -74,7 +74,7 @@ layout = dbc.Container(
                         ),
                         dbc.Tooltip(
                             "Gene name should be capitalized e.g. 'PAX3' instead of 'pax3'. "
-                            "CpG id should start with 'cg' prefix eg. 'cg077779434'.",
+                            "Probe ID should start with 'cg' prefix eg. 'cg077779434'.",
                             target="label-cpg-gene-1d-browser",
                             placement="top",
                         ),

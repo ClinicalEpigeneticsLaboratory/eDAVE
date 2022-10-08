@@ -86,7 +86,7 @@ layout = dbc.Container(
                             },
                         ),
                         dbc.Tooltip(
-                            "CpG id should start with 'cg' prefix eg. 'cg07703401'. ",
+                            "Probe ID should start with 'cg' prefix eg. 'cg07703401'. ",
                             target="label-probe-1d-met-exp-browser",
                             placement="top",
                         ),
