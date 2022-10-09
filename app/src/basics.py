@@ -113,12 +113,13 @@ class FrameOperations:
         return frame, "Status: done"
 
     @staticmethod
-    def clean_sequence(sequence_of_variables) -> t.List[str]:
+    def clean_sequence(sequence_of_variables: str, separator: int = "-->") -> t.List[str]:
         """
         Function to parse raw input from text area.
         """
-        sequence_of_variables = str(sequence_of_variables)
-        sequence_of_variables = sequence_of_variables.split("-->")[1]
+        if separator in sequence_of_variables:
+            sequence_of_variables = sequence_of_variables.split(separator)[1]
+
         variables = [var.strip() for var in sequence_of_variables.split(",")]
         variables = list(set(variables))
 
