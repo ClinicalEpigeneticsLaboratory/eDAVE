@@ -1,5 +1,6 @@
 {
   "debug": false,
+  "maintenance_page": false,
   "version": "0.0.0-beta",
   "sample_sheet": "../data-processing-pipeline/data/meta/sample_sheet.parquet",
   "global_metadata": "../data-processing-pipeline/data/processed/metadataGlobal",
