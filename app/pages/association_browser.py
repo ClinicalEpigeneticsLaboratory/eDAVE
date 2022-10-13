@@ -33,7 +33,7 @@ layout = dbc.Container(
                             options=available_sample_types,
                             clearable=True,
                             multi=False,
-                            optionHeight=80,
+                            optionHeight=100,
                         ),
                     ],
                     xs=11,
