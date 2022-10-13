@@ -17,8 +17,6 @@ def check_if_exists(data_path, sample_type: str, file_type: str) -> bool:
     return exists(path)
 
 
-def load_config() -> dict:
-    with open("config.json", "r", encoding="utf-8") as config_file:
-        config = json.load(config_file)
-
-    return config
+def load_config(path: str = "config.json") -> dict:
+    with open(path, "r", encoding="utf-8") as config_file:
+        return json.load(config_file)
