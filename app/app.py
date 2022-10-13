@@ -19,7 +19,7 @@ logging.basicConfig(
 
 if maintenance_page:
     msg = """
-    eDAVE is currently not available due to maintaining works, it will come back as soon as possible.
+    eDAVE is currently not available due to maintenance work, it will come back as soon as possible.
     """
     app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY], use_pages=False)
     app.layout = dbc.Container(dash.html.H5(msg), fluid=True)
