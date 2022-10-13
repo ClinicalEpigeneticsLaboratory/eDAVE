@@ -29,7 +29,6 @@ class FrameOperations:
             metadata = pd.read_pickle(join(self.basic_path, sample_type, "metadata"))
 
             if self.data_type == "Expression [RNA-seq]":
-
                 if variable not in metadata["genes"]:
                     return (
                         pd.DataFrame(),
@@ -38,7 +37,7 @@ class FrameOperations:
 
                 temporary_frame = pd.read_parquet(join(self.basic_path, sample_type, "Exp.parquet"))
 
-            elif self.data_type == "Methylation [450K/EPIC]":
+            if self.data_type == "Methylation [450K/EPIC]":
                 if variable not in metadata["probes"]:
                     return (
                         pd.DataFrame(),
@@ -46,9 +45,6 @@ class FrameOperations:
                     )
 
                 temporary_frame = pd.read_parquet(join(self.basic_path, sample_type, "Met.parquet"))
-
-            else:
-                temporary_frame = pd.DataFrame(), f"Data type: '{self.data_type}' does not exists"
 
             temporary_frame = temporary_frame.loc[variable, :].to_frame()
             temporary_frame["SampleType"] = sample_type
