@@ -1,12 +1,10 @@
-import json
 import logging
 
 import dash
 import dash_bootstrap_components as dbc
+from src.utils import load_config
 
-with open("config.json", "r", encoding="UTF-8") as config_file:
-    config = json.load(config_file)
-
+config = load_config()
 debug = config["debug"]
 version = config["version"]
 link = config["footer_link"]
