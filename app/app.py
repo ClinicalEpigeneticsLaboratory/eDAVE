@@ -14,7 +14,7 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
     filename="log.log",
     level=logging.INFO,
-    datefmt="%m/%d/%Y %I:%M:%S %p",
+    datefmt="%Y/%m/%d %I:%M:%S %p",
 )
 
 if maintenance_page:
