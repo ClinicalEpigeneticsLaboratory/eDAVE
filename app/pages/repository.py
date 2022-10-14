@@ -12,7 +12,7 @@ repository_summary = pd.read_pickle(config["summary_metafile"])
 
 def plot(cnt: pd.Series, plot_type: str = None) -> go.Figure:
     if plot_type == "bar":
-        cnt = cnt.iloc[:20]
+        cnt = cnt.iloc[:15]
         fig = px.bar(cnt, y=cnt.index, x=cnt.values, orientation="h")
         fig.update_layout(
             xaxis={"title": "Count"},
@@ -64,7 +64,7 @@ layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        dbc.Label("TOP20 sample types by tissue or organ of origin"),
+                        dbc.Label("TOP15 sample types by tissue or organ of origin"),
                         dcc.Graph(figure=plot(repository_summary["tissue_origin_cnt"], "bar")),
                     ],
                     xs=12,
@@ -75,7 +75,7 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        dbc.Label("TOP20 sample types by primary diagnosis"),
+                        dbc.Label("TOP15 sample types by primary diagnosis"),
                         dcc.Graph(figure=plot(repository_summary["primary_diagnosis_cnt"], "bar")),
                     ],
                     xs=12,
