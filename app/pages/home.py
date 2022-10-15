@@ -66,11 +66,11 @@ card_4_content = [
 layout = dbc.Container(
     [
         html.Br(),
-        html.Div(
+        dbc.Container(
             dcc.Markdown(
                 "### eDAVE - extension of GDC Data Analysis, Visualization, and Exploration Tools"
             ),
-            style={"display": "flex", "justifyContent": "center"},
+            style={"justifyContent": "center"},
         ),
         html.Br(),
         dbc.Container(
