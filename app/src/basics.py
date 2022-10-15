@@ -54,6 +54,9 @@ class FrameOperations:
         frame = pd.concat(frame, axis=0)
         frame = frame.dropna(axis=0)  # drop rows (samples) with NaNs
 
+        if frame.empty:
+            return frame, "Data records for this specific requests are not available."
+
         return frame, "Status: done"
 
     def load_many(self, variables: t.List[str]) -> pd.DataFrame:
