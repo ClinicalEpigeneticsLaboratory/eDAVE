@@ -209,9 +209,9 @@ def update_input_section(data_type):
 
     if data_type == "Methylation [450K/EPIC]":
         cpgs = (
-            "Example input --> cg25221254, cg24973901, cg13788537, cg00713005, "
-            "cg13755159, cg19588519, cg12438044, cg15006101, "
-            "cg22071194, cg19834855"
+            "Example input --> cg09969830, cg00179196, cg03948744, cg02729269, "
+            "cg10009236, cg10143220, cg05791870, cg01527023, "
+            "cg00928894, cg02369618"
         )
         return False, cpgs
 

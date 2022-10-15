@@ -182,7 +182,7 @@ layout = dbc.Container(
 )
 def update_inputs_fields(sample_type):
     if sample_type:
-        return False, "E.g. PODXL", False, "E.g. cg07703401"
+        return False, "E.g. CSNK1E", False, "E.g. cg01309213"
 
     return True, "Firstly select a sample type", True, "Firstly select a sample type"
 

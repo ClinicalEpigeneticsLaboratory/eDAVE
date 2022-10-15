@@ -273,7 +273,7 @@ def main_1d_browser(
         data, msg = loader.load_1d(variable)
 
         if data.empty:
-            logger.info("Aborted: no common data between selected sample types")
+            logger.info("Aborted: data records for this specific requests are not available")
             return False, EmptyFig, True, msg, "", "", ""
 
         data[variable] = loader.scale(data[variable], scaling_method)
