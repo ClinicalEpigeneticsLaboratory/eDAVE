@@ -120,7 +120,7 @@ layout = dbc.Container(
                         html.Label("Plot type", htmlFor="plot-type-1d-browser"),
                         dcc.Dropdown(
                             id="plot-type-1d-browser",
-                            options=["Box", "Violin"],
+                            options=["Box", "Violin", "Scatter"],
                             value="Box",
                             multi=False,
                             clearable=True,
@@ -287,8 +287,10 @@ def main_1d_browser(
 
         if plot_type == "Box":
             fig = figureGenerator.boxplot()
-        else:
+        elif plot_type == "Violin":
             fig = figureGenerator.violinplot()
+        else:
+            fig = figureGenerator.scatterplot()
 
         stats = Stats(data, "SampleType")
         count = stats.get_factor_count
