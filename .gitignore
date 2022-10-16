@@ -9,6 +9,12 @@ __pycache__/
 # external tools
 gdc-client
 
+# nohup
+*.nohup
+
+# bash scripts
+*.sh
+
 # C extensions
 *.so
 
