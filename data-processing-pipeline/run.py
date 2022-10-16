@@ -270,6 +270,7 @@ def build_frames(
                     sample = pd.read_table(data_file, comment="#")[["gene_name", "tpm_unstranded"]]
                     sample = sample.set_index("gene_name")
                     sample = sample[~sample.index.isna()]
+                    sample = sample.drop_duplicates()
 
                 sample.columns = [sample_id]
                 sample.index.name = ""
