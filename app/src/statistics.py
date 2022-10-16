@@ -2,6 +2,8 @@ from io import StringIO
 
 import pandas as pd
 from dash import dash_table
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics import calinski_harabasz_score
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
 
@@ -56,3 +58,32 @@ class Stats:
         )
 
         return cnt
+
+
+class ClusterAnalysis:
+    def __init__(self, data: pd.DataFrame, factor: str):
+        self.data = data
+        self.factor = factor
+
+    def find_optimal_cluster_number(self):
+        data = self.data.drop(self.factor, axis=1)
+        results = {}
+        max_number_of_clusters = self.data[self.factor].nunique() * 2 + 1
+
+        for n in range(2, max_number_of_clusters):
+            clustering = AgglomerativeClustering(n_clusters=n, linkage="ward")
+            clustering.fit(data)
+            labels = clustering.labels_
+
+            scoring = calinski_harabasz_score(data, labels)
+            results[n] = scoring
+
+        optimal_number_of_clusters = max(results, key=results.get)
+        clustering = AgglomerativeClustering(n_clusters=optimal_number_of_clusters, linkage="ward")
+        clustering.fit(data)
+        optimal_labels = clustering.labels_
+
+        optimal_labels = [f"{n} cluster" for n in optimal_labels]
+        optimal_labels = pd.Series(optimal_labels, index=data.index, name="SampleType")
+
+        return optimal_labels
