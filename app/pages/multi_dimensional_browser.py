@@ -158,11 +158,12 @@ layout = dbc.Container(
             dbc.Collapse(
                 [
                     html.Br(),
-                    html.H6("Samples marked by type"),
+                    html.Label("Samples marked by type", htmlFor="plot-multidim-browser"),
                     dcc.Graph(id="plot-multidim-browser"),
                     html.Br(),
-                    html.H6("Samples marked by predicted cluster"),
-                    html.Br(),
+                    html.Label(
+                        "Samples marked by predicted cluster", htmlFor="plot-2-multidim-browser"
+                    ),
                     dcc.Graph(id="plot-2-multidim-browser"),
                     html.Br(),
                     html.Label("Sample count", htmlFor="sample-count-multidim-browser"),
