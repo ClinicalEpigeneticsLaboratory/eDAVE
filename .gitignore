@@ -10,7 +10,7 @@ __pycache__/
 gdc-client
 
 # nohup
-*.nohup
+nohup.out
 
 # bash scripts
 *.sh
