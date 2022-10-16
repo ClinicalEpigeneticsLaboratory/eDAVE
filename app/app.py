@@ -60,7 +60,7 @@ else:
                         target="blank",
                         className="alert-link",
                     ),
-                    ", Pomeranian Medical University in Szczecin. For research use only.",
+                    ". For research use only.",
                 ],
                 color="primary",
             ),
