@@ -267,7 +267,9 @@ def build_frames(
                     sample = pd.read_table(data_file, header=None, index_col=0)
 
                 else:
-                    sample = pd.read_table(data_file, comment="#")[["gene_name", "tpm_unstranded"]]
+                    sample = pd.read_table(data_file, comment="#", low_memory=False)[
+                        ["gene_name", "tpm_unstranded"]
+                    ]
                     sample = sample.set_index("gene_name")
                     sample = sample[~sample.index.isna()]
                     sample = sample.drop_duplicates()
