@@ -10,8 +10,9 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import Input, Output, State, callback, dcc, html
 from src.basics import FrameOperations
+from src.decomposition import DataDecomposition
 from src.plots import MultiDimPlot
-from src.statistics import Stats
+from src.statistics import ClusterAnalysis, Stats
 from src.utils import load_config, response_multidim
 
 EmptyFig = {}
@@ -156,7 +157,14 @@ layout = dbc.Container(
         dbc.Row(
             dbc.Collapse(
                 [
+                    html.Br(),
+                    html.H6("Samples marked by type"),
                     dcc.Graph(id="plot-multidim-browser"),
+                    html.Br(),
+                    html.H6("Samples marked by predicted cluster"),
+                    html.Br(),
+                    dcc.Graph(id="plot-2-multidim-browser"),
+                    html.Br(),
                     dbc.Container(id="sample-count-multidim-browser", fluid=True),
                 ],
                 id="result-section-multidim-browser",
@@ -230,6 +238,7 @@ def update_slider(method: str):
 
 @callback(
     Output("plot-multidim-browser", "figure"),
+    Output("plot-2-multidim-browser", "figure"),
     Output("result-section-multidim-browser", "is_open"),
     Output("msg-multidim-browser", "children"),
     Output("msg-section-multidim-browser", "is_open"),
@@ -283,14 +292,24 @@ def main_multidim_browser(
 
         loader = FrameOperations(data_type, sample_types)
         data = loader.load_many(variables)
+        count = Stats(data, "SampleType").get_factor_count
 
         if data.empty:
             logger.info("Aborted: no common data in this set of sample types")
-            return EmptyFig, False, "No common data in this set of sample types", True, "", ""
+            return (
+                EmptyFig,
+                EmptyFig,
+                False,
+                "No common data in this set of sample types",
+                True,
+                "",
+                "",
+            )
 
         if data.shape[1] - 1 < 5:
             logger.info("Aborted: less than 5 variables")
             return (
+                EmptyFig,
                 EmptyFig,
                 False,
                 "Identified less than 5 variables in this set of sample types.",
@@ -299,19 +318,26 @@ def main_multidim_browser(
                 "",
             )
 
-        stats = Stats(data, "SampleType")
-        count = stats.get_factor_count
-
-        figureGenerator = MultiDimPlot(data, "SampleType", n_dimensions, perplexity)
+        transformer = DataDecomposition(data, "SampleType", n_dimensions)
 
         if method == "t-SNE":
-            fig = figureGenerator.tsne_plot()
+            deco_data = transformer.tsne(perplexity=perplexity)
         else:
-            fig = figureGenerator.pca_plot()
+            deco_data = transformer.pca()
+
+        plot_generator = MultiDimPlot(deco_data, "SampleType", n_dimensions)
+        fig_1 = plot_generator.plot()
+
+        cls = ClusterAnalysis(deco_data, "SampleType")
+        optimal_labels = cls.find_optimal_cluster_number()
+
+        deco_data["SampleType"] = optimal_labels
+        plot_generator = MultiDimPlot(deco_data, "SampleType", n_dimensions)
+        fig_2 = plot_generator.plot()
 
         logger.info(
             f"Input: {sample_types} - {data_type} - {variables} - {method} - {n_dimensions}"
         )
-        return fig, True, response_multidim(variables, data), True, "", count
+        return fig_1, fig_2, True, response_multidim(variables, data), True, "", count
 
     return dash.no_update
