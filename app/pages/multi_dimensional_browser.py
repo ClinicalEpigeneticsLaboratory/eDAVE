@@ -165,6 +165,7 @@ layout = dbc.Container(
                     html.Br(),
                     dcc.Graph(id="plot-2-multidim-browser"),
                     html.Br(),
+                    html.Label("Sample count", htmlFor="sample-count-multidim-browser"),
                     dbc.Container(id="sample-count-multidim-browser", fluid=True),
                 ],
                 id="result-section-multidim-browser",
