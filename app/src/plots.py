@@ -32,7 +32,10 @@ class Plot:
 
     def boxplot(self) -> Figure:
         fig = px.box(
-            data_frame=self.data, x=self.x_axis, y=self.y_axis, color=self.x_axis, points="all"
+            data_frame=self.data,
+            x=self.x_axis,
+            y=self.y_axis,
+            color=self.x_axis,
         )
         fig.update_layout(
             yaxis=dict(title=self.__yaxis_title()),
@@ -45,13 +48,32 @@ class Plot:
 
     def violinplot(self) -> Figure:
         fig = px.violin(
-            data_frame=self.data, x=self.x_axis, y=self.y_axis, color=self.x_axis, points="all"
+            data_frame=self.data,
+            x=self.x_axis,
+            y=self.y_axis,
+            color=self.x_axis,
         )
         fig.update_layout(
             yaxis=dict(title=self.__yaxis_title()),
             xaxis=dict(title="", showticklabels=False),
             font=dict(size=self.font_size),
-            legend=dict(title="Sample type", orientation="h"),
+            legend=dict(title="Sample type", orientation="h", x=0, y=1.2),
+        )
+
+        return fig
+
+    def scatterplot(self) -> Figure:
+        fig = px.strip(
+            data_frame=self.data,
+            x=self.x_axis,
+            y=self.y_axis,
+            color=self.x_axis,
+        )
+        fig.update_layout(
+            yaxis=dict(title=self.__yaxis_title()),
+            xaxis=dict(title="", showticklabels=False),
+            font=dict(size=self.font_size),
+            legend=dict(title="Sample type", orientation="h", x=0, y=1.2),
         )
 
         return fig
@@ -77,7 +99,8 @@ class MultiDimPlot:
             fig = px.scatter_3d(data, x=col1, y=col2, z=col3, color=self.factor, hover_data=[names])
 
         fig.update_layout(
-            font=dict(size=self.font_size), legend=dict(title="Sample type", orientation="h")
+            font=dict(size=self.font_size),
+            legend=dict(title="Sample type", orientation="h", x=0, y=1.2),
         )
 
         return fig
