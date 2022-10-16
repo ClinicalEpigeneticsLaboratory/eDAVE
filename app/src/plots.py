@@ -41,7 +41,7 @@ class Plot:
             yaxis=dict(title=self.__yaxis_title()),
             xaxis=dict(title="", showticklabels=False),
             font=dict(size=self.font_size),
-            legend=dict(title="Sample type", orientation="h"),
+            legend=dict(title="Sample type", orientation="h", x=0, y=1.3),
         )
 
         return fig
@@ -57,7 +57,7 @@ class Plot:
             yaxis=dict(title=self.__yaxis_title()),
             xaxis=dict(title="", showticklabels=False),
             font=dict(size=self.font_size),
-            legend=dict(title="Sample type", orientation="h", x=0, y=1.2),
+            legend=dict(title="Sample type", orientation="h", x=0, y=1.3),
         )
 
         return fig
@@ -73,7 +73,7 @@ class Plot:
             yaxis=dict(title=self.__yaxis_title()),
             xaxis=dict(title="", showticklabels=False),
             font=dict(size=self.font_size),
-            legend=dict(title="Sample type", orientation="h", x=0, y=1.2),
+            legend=dict(title="Sample type", orientation="h", x=0, y=1.3),
         )
 
         return fig
@@ -100,7 +100,7 @@ class MultiDimPlot:
 
         fig.update_layout(
             font=dict(size=self.font_size),
-            legend=dict(title="Sample type", orientation="h", x=0, y=1.2),
+            legend=dict(title="Sample type", orientation="h", x=0, y=1.3),
         )
 
         return fig
