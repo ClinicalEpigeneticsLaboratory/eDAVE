@@ -93,10 +93,25 @@ class MultiDimPlot:
 
         if self.n_dimensions == 2:
             col1, col2 = data.columns[0], data.columns[1]
-            fig = px.scatter(data, x=col1, y=col2, color=self.factor, hover_data=[names])
+            fig = px.scatter(
+                data,
+                x=col1,
+                y=col2,
+                color=self.factor,
+                hover_data=[names],
+                category_orders={self.factor: sorted(self.data[self.factor].unique())},
+            )
         else:
             col1, col2, col3 = data.columns[0], data.columns[1], data.columns[2]
-            fig = px.scatter_3d(data, x=col1, y=col2, z=col3, color=self.factor, hover_data=[names])
+            fig = px.scatter_3d(
+                data,
+                x=col1,
+                y=col2,
+                z=col3,
+                color=self.factor,
+                hover_data=[names],
+                category_orders={self.factor: sorted(self.data[self.factor].unique())},
+            )
 
         fig.update_layout(
             font=dict(size=self.font_size),
