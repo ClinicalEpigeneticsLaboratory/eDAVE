@@ -272,7 +272,7 @@ def build_frames(
                     ]
                     sample = sample.set_index("gene_name")
                     sample = sample[~sample.index.isna()]
-                    sample = sample.drop_duplicates()
+                    sample = sample[~sample.index.duplicated(keep="first")]
 
                 sample.columns = [sample_id]
                 sample.index.name = ""
