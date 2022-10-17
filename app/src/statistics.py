@@ -83,7 +83,7 @@ class ClusterAnalysis:
         clustering.fit(data)
         optimal_labels = clustering.labels_
 
-        optimal_labels = [f"{n} cluster" for n in optimal_labels]
+        optimal_labels = [f"Cluster {n}" for n in optimal_labels]
         optimal_labels = pd.Series(optimal_labels, index=data.index, name="SampleType")
 
         return optimal_labels
