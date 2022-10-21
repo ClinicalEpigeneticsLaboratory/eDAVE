@@ -1,32 +1,79 @@
 import typing as t
 from io import StringIO
 
+import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import statsmodels.api as sm
 from dash import dash_table
+from sklearn.preprocessing import PolynomialFeatures
 
 
 class Model:
-    def __init__(self, data: pd.DataFrame, response_variable: str):
+    def __init__(
+        self, data: pd.DataFrame, response_variable: str, polynomial_degree: t.Optional[int]
+    ):
         self.data = data
-        self.data["intercept"] = 1
         self.response_variable = response_variable
+        self.polynomial_degree = polynomial_degree
+        self.model = None
         self.model_summary = None
-        self.predictions = None
+        self.min = (None,)
+        self.max = (None,)
+        self.prepared_exog = None
+        self.prepared_endo = None
+
+    def prepare_data(self) -> None:
+        initial = self.data.drop(self.response_variable, axis=1)
+
+        self.prepared_endo = self.data[self.response_variable]
+        self.min = initial.min()
+        self.max = initial.max()
+
+        if self.polynomial_degree > 1:
+            name = initial.columns[0]
+            transformed = PolynomialFeatures(
+                degree=self.polynomial_degree, include_bias=False
+            ).fit_transform(initial)
+            transformed = pd.DataFrame(
+                transformed,
+                index=initial.index,
+                columns=[f"{name}^{degree+1}" for degree in range(self.polynomial_degree)],
+            )
+            self.prepared_exog = transformed
+        else:
+            self.prepared_exog = initial
+
+        self.prepared_exog["Intercept"] = 1
 
     def fit_model(self):
-        model = sm.OLS(
-            endog=self.data[self.response_variable],
-            exog=self.data.drop(self.response_variable, axis=1),
-        )
+        model = sm.OLS(endog=self.prepared_endo, exog=self.prepared_exog)
+        self.model = model.fit()
+        self.model_summary = self.model.summary()
 
-        model = model.fit()
-        self.model_summary = model.summary()
-        self.predictions = model.predict(self.data.drop(self.response_variable, axis=1))
+    def make_predictions(self) -> pd.DataFrame:
+        x_range = np.linspace(self.min, self.max, 100).flatten()
+        x_range = pd.Series(x_range, index=x_range, name="x_range").to_frame()
 
-    def plot(self, x_axis: str, y_axis: str) -> go.Figure:
+        if self.polynomial_degree > 1:
+            transformed = PolynomialFeatures(
+                degree=self.polynomial_degree, include_bias=False
+            ).fit_transform(x_range)
+            transformed = pd.DataFrame(transformed, index=x_range.index)
+            transformed["Intercept"] = 1
+            to_predict = transformed
+
+        else:
+            x_range["Intercept"] = 1
+            to_predict = x_range
+
+        to_predict.columns = self.prepared_exog.columns
+        predictions = self.model.predict(to_predict)
+
+        return predictions
+
+    def plot(self, x_axis: str, y_axis: str, predicted: pd.DataFrame) -> go.Figure:
         names = self.data.index
         names.name = "Case_ID"
 
@@ -36,10 +83,12 @@ class Model:
             y=y_axis,
             marginal_x="box",
             marginal_y="box",
-            trendline="ols",
             hover_data=[names],
             labels={x_axis: f"{x_axis} [β-value]", y_axis: f"{y_axis} [TPM]"},
+            opacity=0.65,
         )
+
+        fig.add_traces(go.Scatter(x=predicted.index, y=predicted.values, name="Regression Fit"))
         fig.update_layout(font=dict(size=14))
 
         return fig

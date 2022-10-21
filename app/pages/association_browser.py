@@ -107,8 +107,32 @@ layout = dbc.Container(
             ]
         ),
         dbc.Row(
-            dbc.Col([html.Br(), dbc.Button("Submit", id="submit-met-exp-browser")]),
+            [
+                dbc.Col(
+                    [
+                        html.Label(
+                            "Degree of polynomial transformation",
+                            htmlFor="poly-degree-met-exp-browser",
+                        ),
+                        dcc.Slider(
+                            id="poly-degree-met-exp-browser",
+                            min=1,
+                            max=5,
+                            step=1,
+                            value=1,
+                            disabled=True,
+                        ),
+                    ],
+                    xs=12,
+                    sm=12,
+                    md=4,
+                    lg=4,
+                    xl=4,
+                ),
+                dbc.Col([html.Br(), dbc.Button("Submit", id="submit-met-exp-browser")]),
+            ],
         ),
+        html.Br(),
         dbc.Row(
             dbc.Col(dbc.Spinner(html.Div(id="progress-met-exp-browser"), color="danger")),
         ),
@@ -178,13 +202,14 @@ layout = dbc.Container(
     Output("gene-met-exp-browser", "placeholder"),
     Output("probe-met-exp-browser", "disabled"),
     Output("probe-met-exp-browser", "placeholder"),
+    Output("poly-degree-met-exp-browser", "disabled"),
     Input("sample-types-met-exp-browser", "value"),
 )
 def update_inputs_fields(sample_type):
     if sample_type:
-        return False, "E.g. CSNK1E", False, "E.g. cg01309213"
+        return False, "E.g. CSNK1E", False, "E.g. cg01309213", False
 
-    return True, "Firstly select a sample type", True, "Firstly select a sample type"
+    return True, "Firstly select a sample type", True, "Firstly select a sample type", True
 
 
 @callback(
@@ -198,9 +223,10 @@ def update_inputs_fields(sample_type):
     State("sample-types-met-exp-browser", "value"),
     State("gene-met-exp-browser", "value"),
     State("probe-met-exp-browser", "value"),
+    State("poly-degree-met-exp-browser", "value"),
     Input("submit-met-exp-browser", "n_clicks"),
 )
-def update_model(sample_type, gene_id, probe_id, n_clicks: int):
+def update_model(sample_type, gene_id, probe_id, degree, n_clicks: int):
 
     if sample_type and gene_id and probe_id:
         loader = FrameOperations("", sample_type)
@@ -210,11 +236,13 @@ def update_model(sample_type, gene_id, probe_id, n_clicks: int):
             logger.info("Aborted: no common data in selected set of sample types")
             return EmptyFig, "", False, "", "", True, msg
 
-        model = Model(frame, gene_id)
+        model = Model(frame, gene_id, degree)
+        model.prepare_data()
         model.fit_model()
-        frame1, frame2 = model.export_frame()
+        predicted = model.make_predictions()
 
-        fig = model.plot(x_axis=probe_id, y_axis=gene_id)
+        frame1, frame2 = model.export_frame()
+        fig = model.plot(x_axis=probe_id, y_axis=gene_id, predicted=predicted)
 
         logger.info(f"Input: {sample_type} - {gene_id} - {probe_id}")
         return fig, "", True, frame1, frame2, True, msg
