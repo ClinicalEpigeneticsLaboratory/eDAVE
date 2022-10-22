@@ -26,10 +26,10 @@ class Model:
 
     def prepare_data(self) -> None:
         initial = self.data.drop(self.response_variable, axis=1)
-
-        self.prepared_endo = self.data[self.response_variable]
         self.min = initial.min()
         self.max = initial.max()
+
+        self.prepared_endo = self.data[self.response_variable]
 
         if self.polynomial_degree > 1:
             name = initial.columns[0]
@@ -42,10 +42,11 @@ class Model:
                 columns=[f"{name}^{degree+1}" for degree in range(self.polynomial_degree)],
             )
             self.prepared_exog = transformed
+
         else:
             self.prepared_exog = initial
 
-        self.prepared_exog["Intercept"] = 1
+        self.prepared_exog.insert(0, "Intercept", 1)
 
     def fit_model(self):
         model = sm.OLS(endog=self.prepared_endo, exog=self.prepared_exog)
@@ -53,23 +54,23 @@ class Model:
         self.model_summary = self.model.summary()
 
     def make_predictions(self) -> pd.DataFrame:
-        x_range = np.linspace(self.min, self.max, 100).flatten()
-        x_range = pd.Series(x_range, index=x_range, name="x_range").to_frame()
+        x_range = np.linspace(self.min, self.max, 100)
 
         if self.polynomial_degree > 1:
             transformed = PolynomialFeatures(
                 degree=self.polynomial_degree, include_bias=False
             ).fit_transform(x_range)
-            transformed = pd.DataFrame(transformed, index=x_range.index)
-            transformed["Intercept"] = 1
+            transformed = pd.DataFrame(transformed)
             to_predict = transformed
 
         else:
-            x_range["Intercept"] = 1
-            to_predict = x_range
+            to_predict = pd.DataFrame(x_range)
 
+        to_predict.insert(0, "Intercept", 1)
         to_predict.columns = self.prepared_exog.columns
+
         predictions = self.model.predict(to_predict)
+        predictions.index = x_range.flatten()
 
         return predictions
 
@@ -85,10 +86,17 @@ class Model:
             marginal_y="box",
             hover_data=[names],
             labels={x_axis: f"{x_axis} [β-value]", y_axis: f"{y_axis} [TPM]"},
-            opacity=0.65,
+            opacity=0.85,
         )
 
-        fig.add_traces(go.Scatter(x=predicted.index, y=predicted.values, name="Regression Fit"))
+        fig.add_traces(
+            go.Scatter(
+                x=predicted.index,
+                y=predicted.values,
+                name="Regression Fit",
+                line=dict(color="firebrick", width=3, dash="dot"),
+            )
+        )
         fig.update_layout(font=dict(size=14))
 
         return fig
