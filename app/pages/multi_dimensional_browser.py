@@ -295,11 +295,12 @@ def main_multidim_browser(
 
         if len(variables) < 10:
             logger.info("Aborted: len(variables) < 10")
-            return EmptyFig, False, "Less than 10 inputted variables", True, "", ""
+            return EmptyFig, EmptyFig, False, "Less than 10 inputted variables", True, "", ""
 
         if len(variables) > 100:
             logger.info("Aborted: len(variables) > 100")
             return (
+                EmptyFig,
                 EmptyFig,
                 False,
                 "Exceeded maximum number of inputted variables [n > 100]",
@@ -311,6 +312,7 @@ def main_multidim_browser(
         if len(sample_types) > 5:
             logger.info("Aborted: len(sample_types) > 5")
             return (
+                EmptyFig,
                 EmptyFig,
                 False,
                 "Exceeded maximum number of sample types [n > 5]",
