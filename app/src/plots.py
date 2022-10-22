@@ -1,5 +1,3 @@
-import typing as t
-
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -41,7 +39,7 @@ class Plot:
             yaxis=dict(title=self.__yaxis_title()),
             xaxis=dict(title="", showticklabels=False),
             font=dict(size=self.font_size),
-            legend=dict(title="Sample type", orientation="h", x=0, y=1.3),
+            legend=dict(title="Sample type", orientation="h", y=-0.2),
         )
 
         return fig
@@ -57,7 +55,7 @@ class Plot:
             yaxis=dict(title=self.__yaxis_title()),
             xaxis=dict(title="", showticklabels=False),
             font=dict(size=self.font_size),
-            legend=dict(title="Sample type", orientation="h", x=0, y=1.3),
+            legend=dict(title="Sample type", orientation="h", y=-0.2),
         )
 
         return fig
@@ -73,7 +71,7 @@ class Plot:
             yaxis=dict(title=self.__yaxis_title()),
             xaxis=dict(title="", showticklabels=False),
             font=dict(size=self.font_size),
-            legend=dict(title="Sample type", orientation="h", x=0, y=1.3),
+            legend=dict(title="Sample type", orientation="h", y=-0.2),
         )
 
         return fig
