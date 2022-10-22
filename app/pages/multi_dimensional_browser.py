@@ -154,20 +154,47 @@ layout = dbc.Container(
                 id="msg-section-multidim-browser",
             )
         ),
+        html.Br(),
         dbc.Row(
             dbc.Collapse(
                 [
-                    html.Br(),
-                    html.Label("Samples marked by type", htmlFor="plot-multidim-browser"),
-                    dcc.Graph(id="plot-multidim-browser"),
-                    html.Br(),
-                    html.Label(
-                        "Samples marked by predicted cluster", htmlFor="plot-2-multidim-browser"
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                [
+                                    html.Label(
+                                        "Samples marked by type", htmlFor="plot-multidim-browser"
+                                    ),
+                                    dcc.Graph(id="plot-multidim-browser"),
+                                ],
+                                xs=12,
+                                sm=12,
+                                md=6,
+                                lg=6,
+                                xl=6,
+                            ),
+                            dbc.Col(
+                                [
+                                    html.Label(
+                                        "Samples marked by predicted cluster",
+                                        htmlFor="plot-2-multidim-browser",
+                                    ),
+                                    dcc.Graph(id="plot-2-multidim-browser"),
+                                ],
+                                xs=12,
+                                sm=12,
+                                md=6,
+                                lg=6,
+                                xl=6,
+                            ),
+                        ]
                     ),
-                    dcc.Graph(id="plot-2-multidim-browser"),
-                    html.Br(),
-                    html.Label("Sample count", htmlFor="sample-count-multidim-browser"),
-                    dbc.Container(id="sample-count-multidim-browser", fluid=True),
+                    dbc.Row(
+                        [
+                            html.Label("Sample count", htmlFor="sample-count-multidim-browser"),
+                            dbc.Container(id="sample-count-multidim-browser", fluid=True),
+                        ]
+                    ),
                 ],
                 id="result-section-multidim-browser",
                 is_open=False,
