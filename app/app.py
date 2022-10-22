@@ -17,40 +17,16 @@ logging.basicConfig(
     datefmt="%Y/%m/%d %I:%M:%S %p",
 )
 
-app_description = """
-eDAVE is an extension of GDC Data Analysis, Visualization, and Exploration [DAVE] tools.
-Designed for the exploration of publicly available CpG methylation or gene expression datasets.
-"""
-app_title = "eDAVE"
-app_image = "https://drive.google.com/file/d/1Fa0OFykXpGOeQzfgwl3CQnqzR1xmBx6z/view?usp=sharing"
-
-metas = [
-    {"name": "viewport", "content": "width=device-width, initial-scale=1"},
-    {"property": "twitter:card", "content": "summary_large_image"},
-    {"property": "twitter:url", "content": "https://edave.pum.edu.pl/"},
-    {"property": "twitter:title", "content": app_title},
-    {"property": "twitter:description", "content": app_description},
-    {"property": "twitter:image", "content": app_image},
-    {"property": "og:title", "content": app_title},
-    {"property": "og:type", "content": "website"},
-    {"property": "og:description", "content": app_description},
-    {"property": "og:image", "content": app_image},
-]
-
 if maintenance_page:
     msg = """
     eDAVE is currently not available due to maintenance work, it will come back as soon as possible.
     """
-    app = dash.Dash(
-        __name__, external_stylesheets=[dbc.themes.FLATLY], use_pages=False, meta_tags=metas
-    )
+    app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY], use_pages=False)
     app.layout = dbc.Container(dash.html.H5(msg), fluid=True)
     server = app.server
 
 else:
-    app = dash.Dash(
-        __name__, external_stylesheets=[dbc.themes.FLATLY], use_pages=True, meta_tags=metas
-    )
+    app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY], use_pages=True)
     server = app.server
 
     pages = [
