@@ -112,10 +112,13 @@ class MultiDimPlot:
                 hover_data=[names],
                 category_orders={self.factor: sorted(self.data[self.factor].unique())},
             )
+            fig.update_layout(
+                margin=dict(l=0, r=0, t=0, b=0), scene_camera=dict(eye=dict(x=2.0, y=2.0, z=0.75))
+            )
 
         fig.update_layout(
             font=dict(size=self.font_size),
-            legend=dict(title="Sample type", orientation="h", x=0, y=1.3),
+            legend=dict(title="Sample type", orientation="h", y=-0.2),
         )
 
         return fig
