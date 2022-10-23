@@ -92,13 +92,13 @@ class FrameOperations:
         meta = pd.read_pickle(join(self.basic_path, self.sample_types, "metadata"))
 
         if len(meta["commonBetween"]) == 0:
-            return pd.DataFrame(), "No common samples for this sample type"
+            return pd.DataFrame(), "No common samples for this sample type."
 
         if gene not in meta["genes"]:
-            return pd.DataFrame(), f"Gene: '{gene}' not found in requested repository"
+            return pd.DataFrame(), f"Gene: '{gene}' not found in requested repository."
 
         if probe not in meta["probes"]:
-            return pd.DataFrame(), f"Probe: '{probe}' not found in requested repository"
+            return pd.DataFrame(), f"Probe: '{probe}' not found in requested repository."
 
         exp_frame = pd.read_parquet(join(self.basic_path, self.sample_types, "Exp.parquet"))
         exp_frame = exp_frame.loc[gene, list(meta["commonBetween"])]
