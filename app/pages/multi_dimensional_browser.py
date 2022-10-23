@@ -295,7 +295,7 @@ def main_multidim_browser(
 
         if len(variables) < 10:
             logger.info("Aborted: len(variables) < 10")
-            return EmptyFig, EmptyFig, False, "Less than 10 inputted variables", True, "", ""
+            return EmptyFig, EmptyFig, False, "Less than 10 inputted variables.", True, "", ""
 
         if len(variables) > 100:
             logger.info("Aborted: len(variables) > 100")
@@ -303,7 +303,7 @@ def main_multidim_browser(
                 EmptyFig,
                 EmptyFig,
                 False,
-                "Exceeded maximum number of inputted variables [n > 100]",
+                "Exceeded maximum number of inputted variables [n > 100].",
                 True,
                 "",
                 "",
@@ -315,7 +315,7 @@ def main_multidim_browser(
                 EmptyFig,
                 EmptyFig,
                 False,
-                "Exceeded maximum number of sample types [n > 5]",
+                "Exceeded maximum number of sample types [n > 5].",
                 True,
                 "",
                 "",
@@ -326,19 +326,19 @@ def main_multidim_browser(
         count = Stats(data, "SampleType").get_factor_count
 
         if data.empty:
-            logger.info("Aborted: no common data in this set of sample types")
+            logger.info("Aborted: no common data in this set of sample types.")
             return (
                 EmptyFig,
                 EmptyFig,
                 False,
-                "No common data in this set of sample types",
+                "No common data in this set of sample types.",
                 True,
                 "",
                 "",
             )
 
         if data.shape[1] - 1 < 5:
-            logger.info("Aborted: less than 5 variables")
+            logger.info("Aborted: less than 5 variables.")
             return (
                 EmptyFig,
                 EmptyFig,
