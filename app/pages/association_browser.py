@@ -233,7 +233,7 @@ def update_model(sample_type, gene_id, probe_id, degree, n_clicks: int):
         frame, msg = loader.load_met_exp_frame(gene_id, probe_id)
 
         if frame.empty:
-            logger.info("Aborted: no common data in selected set of sample types")
+            logger.info("Aborted: no common data in selected set of sample types.")
             return EmptyFig, "", False, "", "", True, msg
 
         model = Model(frame, gene_id, degree)

@@ -1,10 +1,9 @@
-from io import StringIO
-
 import pandas as pd
+import pingouin as pg
+import scipy.stats as sts
 from dash import dash_table
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import calinski_harabasz_score
-from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
 
 class Stats:
@@ -12,21 +11,53 @@ class Stats:
         self.data = data
         self.factor = factor
         self.alpha = alpha
+        self.variance_equal = None
         self.results = None
 
-    def post_hoc(self) -> None:
-        posthoc = pairwise_tukeyhsd(
-            endog=self.data.drop(self.factor, axis=1),
-            groups=self.data[self.factor],
-            alpha=self.alpha,
-        )
-        self.results = posthoc.summary()
+    def test_for_variance_heterogeneity(self, dependent_var: str) -> None:
+        records = [
+            self.data.loc[ids, dependent_var].values
+            for ids in self.data.groupby(self.factor).groups.values()
+        ]
+        _, pvalue = sts.levene(*records)
+
+        if pvalue <= self.alpha:
+            self.variance_equal = False
+        else:
+            self.variance_equal = True
+
+    def __add_status(self, pvalue: float) -> bool:
+        if pvalue <= self.alpha:
+            return True
+        return False
+
+    def post_hoc(self, dependent_var: str) -> None:
+        if self.variance_equal:
+            results = pg.pairwise_tukey(
+                data=self.data, dv=dependent_var, between=self.factor, effsize="cohen"
+            )
+            results = results.rename(columns={"p-tukey": "pval"})
+            test = "pairwise_tukey"
+
+        else:
+            results = pg.pairwise_gameshowell(
+                data=self.data, dv=dependent_var, between=self.factor, effsize="cohen"
+            )
+            test = "pairwise_gameshowell"
+
+        try:
+            results["FC"] = results["mean(A)"] / results["mean(B)"]
+        except ZeroDivisionError:
+            results["FC"] = ""
+
+        results["H0 reject"] = results["pval"].map(self.__add_status)
+        results = results.round(4)
+        results["test"] = test
+
+        self.results = results
 
     def export_frame(self) -> dash_table:
-        html = self.results.as_html()
-        frame = pd.read_html(StringIO(html))[0]
-        frame = frame.to_dict("records")
-
+        frame = self.results.to_dict("records")
         frame = dash_table.DataTable(
             frame,
             style_table={
