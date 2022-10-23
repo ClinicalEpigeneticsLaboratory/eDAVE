@@ -111,9 +111,9 @@ layout = dbc.Container(
                     ],
                     xs=10,
                     sm=10,
-                    md=6,
-                    lg=6,
-                    xl=6,
+                    md=4,
+                    lg=4,
+                    xl=4,
                 ),
                 dbc.Col(
                     [
@@ -128,9 +128,28 @@ layout = dbc.Container(
                     ],
                     xs=10,
                     sm=10,
-                    md=6,
-                    lg=6,
-                    xl=6,
+                    md=4,
+                    lg=4,
+                    xl=4,
+                ),
+                dbc.Col(
+                    [
+                        html.Label("Alpha (significance level)", htmlFor="alpha-type-1d-browser"),
+                        dcc.Slider(
+                            0.001,
+                            0.1,
+                            0.001,
+                            value=0.05,
+                            tooltip={"placement": "bottom", "always_visible": True},
+                            marks=None,
+                            id="alpha-type-1d-browser",
+                        ),
+                    ],
+                    xs=10,
+                    sm=10,
+                    md=4,
+                    lg=4,
+                    xl=4,
                 ),
                 dbc.Col(
                     [html.Br(), dbc.Button("Submit", id="submit-1d-browser")],
@@ -238,6 +257,7 @@ def update_input_field(data_type: str) -> t.Tuple[bool, str]:
     State("variable-1d-browser", "value"),
     State("scaling-method-1d-browser", "value"),
     State("plot-type-1d-browser", "value"),
+    State("alpha-type-1d-browser", "value"),
     Input("submit-1d-browser", "n_clicks"),
 )
 def main_1d_browser(
@@ -246,24 +266,17 @@ def main_1d_browser(
     variable: str,
     scaling_method: str,
     plot_type: str,
+    alpha: float,
     n_clicks: int,
 ):
-    """
-    Main function of current dashboard, returns plot for selected variable and sample types.txt
-    Return empty figure if:
-    a) len(sample_types) > 5
-    b) variable is not in repository
-    """
-
     if data_type and variable:
-
         if len(sample_types) > 5:
-            logger.info("Aborted: exceeded maximum number of sample types > 5")
+            logger.info("Aborted: exceeded maximum number of sample types > 5.")
             return (
                 False,
                 EmptyFig,
                 True,
-                "Exceeded maximum number of sample types [n>5]",
+                "Exceeded maximum number of sample types [n>5].",
                 "",
                 "",
                 "",
@@ -273,7 +286,7 @@ def main_1d_browser(
         data, msg = loader.load_1d(variable)
 
         if data.empty:
-            logger.info("Aborted: data records for this specific requests are not available")
+            logger.info("Aborted: data records for this specific requests are not available.")
             return False, EmptyFig, True, msg, "", "", ""
 
         data[variable] = loader.scale(data[variable], scaling_method)
@@ -292,11 +305,12 @@ def main_1d_browser(
         else:
             fig = figureGenerator.scatterplot()
 
-        stats = Stats(data, "SampleType")
+        stats = Stats(data, "SampleType", alpha=alpha)
         count = stats.get_factor_count
 
         if len(sample_types) > 1:
-            stats.post_hoc()
+            stats.test_for_variance_heterogeneity(variable)
+            stats.post_hoc(variable)
             post_hoc_frame = stats.export_frame()
 
             logger.info(
@@ -307,6 +321,6 @@ def main_1d_browser(
         logger.info(
             f"Input: {sample_types} - {data_type} - {variable} - {scaling_method} - {plot_type}"
         )
-        return True, fig, True, msg, "Applicable only for > 1 sample types", count, ""
+        return True, fig, True, msg, "Applicable only for > 1 sample types.", count, ""
 
     return dash.no_update
