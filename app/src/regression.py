@@ -19,15 +19,13 @@ class Model:
         self.polynomial_degree = polynomial_degree
         self.model = None
         self.model_summary = None
-        self.min = (None,)
-        self.max = (None,)
+        self.domain = None
         self.prepared_exog = None
         self.prepared_endo = None
 
     def prepare_data(self) -> None:
         initial = self.data.drop(self.response_variable, axis=1)
-        self.min = initial.min()
-        self.max = initial.max()
+        self.domain = (initial.min(), initial.max())
 
         self.prepared_endo = self.data[self.response_variable]
 
@@ -54,7 +52,7 @@ class Model:
         self.model_summary = self.model.summary()
 
     def make_predictions(self) -> pd.DataFrame:
-        x_range = np.linspace(self.min, self.max, 100)
+        x_range = np.linspace(*self.domain, 100)
 
         if self.polynomial_degree > 1:
             transformed = PolynomialFeatures(
