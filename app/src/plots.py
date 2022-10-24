@@ -76,6 +76,24 @@ class Plot:
 
         return fig
 
+    def volcanoplot(self, x_border: float, y_border: float) -> Figure:
+        fig = px.scatter(
+            data_frame=self.data, x=self.x_axis, y=self.y_axis, hover_data=[self.data.index]
+        )
+
+        fig.update_layout(
+            yaxis=dict(title="-log10(p-value)"),
+            xaxis=dict(title="log2(FC)"),
+            font=dict(size=self.font_size),
+            legend=dict(title="", orientation="h", y=-0.2),
+        )
+
+        fig.add_hline(y=y_border, line_dash="dash", line_color="red")
+        fig.add_vline(x=-x_border, line_dash="dash", line_color="red")
+        fig.add_vline(x=x_border, line_dash="dash", line_color="red")
+
+        return fig
+
 
 class MultiDimPlot:
     def __init__(self, data: pd.DataFrame, factor: str, n_dimensions: int):
