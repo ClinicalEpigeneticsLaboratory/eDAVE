@@ -206,8 +206,9 @@ def main_dfeatures_browser(data_type: str, group_A: str, group_B: str, clicks: i
         diffF = DifferentialFeatures(data, sample_frame, group_A, group_B)
         diffF.run()
         diffF.build_statistics_frame()
-        results = diffF.export(data_type, group_A, group_B)
+        diffF.export(data_type, group_A, group_B)
 
+        results = diffF.stats_frame
         if results.empty:
             return EmptyFig, False, "No DMPs/DEGs identified.", True, "", ""
 
