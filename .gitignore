@@ -27,6 +27,8 @@ log.log
 
 # data
 data-processing-pipeline/data
+*.parquet
+*.csv
 
 # Notebooks
 notebooks/
