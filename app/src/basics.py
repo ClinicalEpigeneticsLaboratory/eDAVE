@@ -83,6 +83,34 @@ class FrameOperations:
         frame = pd.concat(frame, axis=0).dropna(axis=1)  # drop columns (variables) with NaNs
         return frame
 
+    def load_mvpf(self, threshold: float = 0.9) -> t.Tuple[pd.DataFrame, pd.Series]:
+        """
+        Function to load most variable features across multiple sources [sample types].
+        """
+        frame = []
+        sample_frame = []
+        for sample_type in self.sample_types:
+            if self.data_type == "Expression [RNA-seq]":
+                temporary_frame = pd.read_parquet(join(self.basic_path, sample_type, "Exp.parquet"))
+            else:
+                temporary_frame = pd.read_parquet(join(self.basic_path, sample_type, "Met.parquet"))
+
+            if not temporary_frame.empty:
+                frame.append(temporary_frame)
+                samples = pd.Series(
+                    [sample_type for _ in temporary_frame.columns],
+                    index=temporary_frame.columns,
+                    name="SampleType",
+                )
+                sample_frame.append(samples)
+
+        frame = pd.concat(frame, axis=1).dropna(axis=0)  # drop rows (samples) with NaNs
+        sample_frame = pd.concat(sample_frame)
+
+        std = frame.std(axis=1)
+        frame = frame.loc[std >= std.quantile(threshold)]
+        return frame, sample_frame
+
     def load_met_exp_frame(self, gene: str, probe: str) -> t.Tuple[pd.DataFrame, str]:
         """
         Function to load frame with expression and methylation data for common samples in requested sample type.
