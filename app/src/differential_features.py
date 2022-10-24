@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import pandas as pd
 import scipy.stats as sts
@@ -72,7 +74,7 @@ class DifferentialFeatures:
         frame = frame.set_index("Feature")
         self.stats_frame = frame
 
-    def export(self, data_type: str, group_A: str, group_B: str) -> pd.DataFrame:
+    def export(self, data_type: str, group_A: str, group_B: str) -> None:
         path = f"temp/{data_type.replace('/', '_')}_{group_A}_{group_B}.parquet"
+        os.makedirs("temp/", exist_ok=True)
         self.stats_frame.to_parquet(path)
-        return self.stats_frame
