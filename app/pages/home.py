@@ -50,6 +50,21 @@ card_3_content = [
 ]
 
 card_4_content = [
+    dbc.CardHeader("Tool"),
+    dbc.CardBody(
+        [
+            html.H5("Differential features browser", className="card-title"),
+            html.P(
+                "Module to identify differential expressed genes (DEGs) or differential methylated positions (DMPs) \
+                 between groups of samples.",
+                className="card-text",
+            ),
+            dbc.Button("Go", href="/differential-features-browser", className="mt-auto"),
+        ]
+    ),
+]
+
+card_5_content = [
     dbc.CardHeader("Info"),
     dbc.CardBody(
         [
@@ -99,6 +114,7 @@ layout = dbc.Container(
                 [
                     dbc.Card(card_1_content, color="danger", outline=True),
                     dbc.Card(card_2_content, color="danger", outline=True),
+                    dbc.Card(card_3_content, color="danger", outline=True),
                 ],
                 style={"width": "75%"},
             ),
@@ -107,8 +123,8 @@ layout = dbc.Container(
         dbc.Row(
             dbc.CardGroup(
                 [
-                    dbc.Card(card_3_content, color="danger", outline=True),
-                    dbc.Card(card_4_content, color="info", outline=True),
+                    dbc.Card(card_4_content, color="danger", outline=True),
+                    dbc.Card(card_5_content, color="info", outline=True),
                 ],
                 style={"width": "75%"},
             ),
