@@ -85,19 +85,16 @@ class DifferentialFeatures:
 
         _, frame["FDR"] = fdrcorrection(frame["p-value"])
         frame["-log10(FDR)"] = frame["FDR"].map(lambda value: -np.log10(value))
-        frame["Rank"] = frame["-log10(FDR)"] * frame["log2(FC)"].abs()
-        frame["Rank"] = frame["Rank"] / frame["Rank"].sum()
-
-        frame = frame.sort_values("Rank", ascending=False)
+        frame = frame.sort_values("-log10(FDR)", ascending=False)
         frame = frame.set_index("Feature")
 
         if self.data_type == "Expression [RNA-seq]":
             frame["DEG/DMP"] = (frame["FDR"] <= self.alpha) & (
-                frame["log2(FC)"].abs() > self.effect_size
+                frame["log2(FC)"].abs() >= self.effect_size
             )
         else:
             frame["DEG/DMP"] = (frame["FDR"] <= self.alpha) & (
-                frame["delta"].abs() > self.effect_size
+                frame["delta"].abs() >= self.effect_size
             )
 
         self.stats_frame = frame
