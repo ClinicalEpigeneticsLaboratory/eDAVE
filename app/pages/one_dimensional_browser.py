@@ -207,6 +207,7 @@ layout = dbc.Container(
     Output("sample-types-1d-browser", "value"),
     Output("variable-1d-browser", "value"),
     Input("data-type-1d-browser", "value"),
+    prevent_initial_call=True,
 )
 def update_sample_type_options(
     data_type: t.Union[t.List[str], str]
@@ -231,6 +232,7 @@ def update_sample_type_options(
     Output("variable-1d-browser", "disabled"),
     Output("variable-1d-browser", "placeholder"),
     Input("data-type-1d-browser", "value"),
+    prevent_initial_call=True,
 )
 def update_input_field(data_type: str) -> t.Tuple[bool, str]:
     """
@@ -259,6 +261,7 @@ def update_input_field(data_type: str) -> t.Tuple[bool, str]:
     State("plot-type-1d-browser", "value"),
     State("alpha-type-1d-browser", "value"),
     Input("submit-1d-browser", "n_clicks"),
+    prevent_initial_call=True,
 )
 def main_1d_browser(
     sample_types: t.Union[t.List[str], str],
