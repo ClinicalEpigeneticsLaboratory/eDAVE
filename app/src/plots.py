@@ -77,16 +77,16 @@ class Plot:
         return fig
 
     def volcanoplot(self, x_border: float, y_border: float) -> Figure:
+
         fig = px.scatter(
-            data_frame=self.data, x=self.x_axis, y=self.y_axis, hover_data=[self.data.index]
+            data_frame=self.data,
+            x=self.x_axis,
+            y=self.y_axis,
+            hover_data=[self.data.index, self.data.delta, self.data.FC],
+            color="DEG/DMP",
         )
 
-        fig.update_layout(
-            yaxis=dict(title="-log10(p-value)"),
-            xaxis=dict(title="log2(FC)"),
-            font=dict(size=self.font_size),
-            legend=dict(title="", orientation="h", y=-0.2),
-        )
+        fig.update_layout(font=dict(size=self.font_size))
 
         fig.add_hline(y=y_border, line_dash="dash", line_color="red")
         fig.add_vline(x=-x_border, line_dash="dash", line_color="red")
