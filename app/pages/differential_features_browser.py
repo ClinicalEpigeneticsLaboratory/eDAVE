@@ -14,7 +14,7 @@ from src.basics import FrameOperations
 from src.differential_features import DifferentialFeatures
 from src.plots import Plot
 from src.statistics import Stats
-from src.utils import load_config
+from src.utils import load_config, temp_file_path
 
 EmptyFig = {}
 config = load_config()
@@ -50,8 +50,10 @@ layout = dbc.Container(
                             clearable=True,
                             multi=False,
                             disabled=True,
+                            placeholder="Firstly select a data type",
                             optionHeight=100,
                         ),
+                        dbc.FormText("select cohort A to perform comparison"),
                     ],
                     xs=10,
                     sm=10,
@@ -68,8 +70,10 @@ layout = dbc.Container(
                             clearable=True,
                             multi=False,
                             disabled=True,
+                            placeholder="Firstly select a data type",
                             optionHeight=100,
                         ),
+                        dbc.FormText("select cohort B to perform comparison"),
                     ],
                     xs=10,
                     sm=10,
@@ -79,8 +83,53 @@ layout = dbc.Container(
                 ),
             ]
         ),
+        html.Br(),
         dbc.Row(
-            dbc.Col([html.Br(), dbc.Button("Submit", id="submit-dfeatures-browser")]),
+            [
+                dbc.Col(
+                    [
+                        html.Label("Alpha (significance level)", htmlFor="alpha-dfeatures-browser"),
+                        dcc.Slider(
+                            0.001,
+                            0.1,
+                            0.001,
+                            value=0.05,
+                            tooltip={"placement": "bottom", "always_visible": True},
+                            marks=None,
+                            id="alpha-dfeatures-browser",
+                        ),
+                    ],
+                    xs=10,
+                    sm=10,
+                    md=4,
+                    lg=4,
+                    xl=4,
+                ),
+                dbc.Col(
+                    [
+                        html.Label("Minimum effect size", htmlFor="min-effect-dfeatures-browser"),
+                        dcc.Slider(
+                            0,
+                            0,
+                            0,
+                            value=0.05,
+                            tooltip={"placement": "bottom", "always_visible": True},
+                            marks=None,
+                            disabled=True,
+                            id="min-effect-dfeatures-browser",
+                        ),
+                        dbc.FormText(
+                            "Effect size is expressed as |log2(FC)| for expression and |delta| for methylation datasets."
+                        ),
+                    ],
+                    xs=10,
+                    sm=10,
+                    md=4,
+                    lg=4,
+                    xl=4,
+                ),
+                dbc.Col([html.Br(), dbc.Button("Submit", id="submit-dfeatures-browser")]),
+            ],
         ),
         html.Br(),
         dbc.Row(dbc.Col(dbc.Spinner(html.Div(id="progress-dfeatures-browser"), color="danger"))),
@@ -100,21 +149,18 @@ layout = dbc.Container(
                 [
                     html.Br(),
                     dbc.Row(
-                        dbc.Col(
-                            [
-                                dbc.Button(
-                                    "download summary table", id="download-dfeatures-button"
-                                ),
-                                dcc.Download(id="download-dfeatures-frame"),
-                            ],
-                            xs=7,
-                            sm=7,
-                            md=7,
-                            lg=7,
-                            xl=7,
-                        )
+                        dbc.Row(dcc.Graph(id="plot-dfeatures-browser")),
                     ),
-                    dbc.Row(dcc.Graph(id="plot-dfeatures-browser")),
+                    dbc.Row(
+                        [
+                            dbc.Button(
+                                "download summary table",
+                                id="download-dfeatures-button",
+                                color="danger",
+                            ),
+                            dcc.Download(id="download-dfeatures-frame"),
+                        ],
+                    ),
                     dbc.Row(
                         [
                             html.Label("Sample count", htmlFor="count-table-dfeatures-browser"),
@@ -140,6 +186,7 @@ layout = dbc.Container(
     Output("groupB-dfeatures-browser", "options"),
     Output("groupB-dfeatures-browser", "value"),
     Input("data-type-dfeatures-browser", "value"),
+    prevent_initial_call=True,
 )
 def update_groups_options(
     data_type: str,
@@ -161,6 +208,29 @@ def update_groups_options(
 
 
 @callback(
+    Output("min-effect-dfeatures-browser", "disabled"),
+    Output("min-effect-dfeatures-browser", "min"),
+    Output("min-effect-dfeatures-browser", "max"),
+    Output("min-effect-dfeatures-browser", "step"),
+    Output("min-effect-dfeatures-browser", "value"),
+    Input("data-type-dfeatures-browser", "value"),
+    prevent_initial_call=True,
+)
+def update_min_effect_slider(
+    data_type: str,
+) -> t.Tuple[bool, float, float, float, float]:
+    """
+    Function to update slider for minimum effect size.
+    """
+    if data_type == "Expression [RNA-seq]":
+        return False, 1.0, 10.0, 1.0, 1.0
+    if data_type == "Methylation [450K/EPIC]":
+        return False, 0.05, 0.9, 0.05, 0.05
+
+    return True, 0.0, 0.0, 0.0, 0.0
+
+
+@callback(
     Output("download-dfeatures-frame", "data"),
     State("data-type-dfeatures-browser", "value"),
     State("groupA-dfeatures-browser", "value"),
@@ -168,8 +238,8 @@ def update_groups_options(
     Input("download-dfeatures-button", "n_clicks"),
     prevent_initial_call=True,
 )
-def func(data_type: str, group_A: str, group_B: str, n_clicks: int):
-    path = f"temp/{data_type.replace('/', '_')}_{group_A}_{group_B}.parquet"
+def return_statistic_frame(data_type: str, group_A: str, group_B: str, n_clicks: int):
+    path = temp_file_path(data_type, group_A, group_B)
     frame = pd.read_parquet(path)
 
     return dcc.send_data_frame(frame.to_csv, "summary_table.csv")
@@ -185,9 +255,14 @@ def func(data_type: str, group_A: str, group_B: str, n_clicks: int):
     State("data-type-dfeatures-browser", "value"),
     State("groupA-dfeatures-browser", "value"),
     State("groupB-dfeatures-browser", "value"),
+    State("alpha-dfeatures-browser", "value"),
+    State("min-effect-dfeatures-browser", "value"),
     Input("submit-dfeatures-browser", "n_clicks"),
+    prevent_initial_call=True,
 )
-def main_dfeatures_browser(data_type: str, group_A: str, group_B: str, clicks: int):
+def main_dfeatures_browser(
+    data_type: str, group_A: str, group_B: str, alpha: float, effect_size: float, clicks: int
+):
     if data_type and group_A and group_B:
 
         if group_A == group_B:
@@ -201,19 +276,24 @@ def main_dfeatures_browser(data_type: str, group_A: str, group_B: str, clicks: i
             )
 
         loader = FrameOperations(data_type, [group_A, group_B])
-        data, sample_frame = loader.load_mvpf()
+        data, sample_frame = loader.load_mvf()
 
-        diffF = DifferentialFeatures(data, sample_frame, group_A, group_B)
-        diffF.run()
+        diffF = DifferentialFeatures(
+            data_type, data, sample_frame, group_A, group_B, alpha, effect_size
+        )
+        diffF.identify_differential_features()
         diffF.build_statistics_frame()
-        diffF.export(data_type, group_A, group_B)
 
+        path_to_drop = temp_file_path(data_type, group_A, group_B)
+        diffF.export(path_to_drop)
         results = diffF.stats_frame
-        if results.empty:
-            return EmptyFig, False, "No DMPs/DEGs identified.", True, "", ""
 
-        plot = Plot(results, "log2(FC)", "-log10(p-value)", None, None)
-        fig = plot.volcanoplot(x_border=1, y_border=-np.log10(0.05))
+        if data_type == "Expression [RNA-seq]":
+            plot = Plot(results, "log2(FC)", "-log10(p-value)", None, None)
+            fig = plot.volcanoplot(x_border=effect_size, y_border=-np.log10(0.05))
+        else:
+            plot = Plot(results, "delta", "-log10(p-value)", None, None)
+            fig = plot.volcanoplot(x_border=effect_size, y_border=-np.log10(0.05))
 
         count = Stats(sample_frame.to_frame(), "SampleType").get_factor_count
         return fig, True, "Status: done.", True, "", count
