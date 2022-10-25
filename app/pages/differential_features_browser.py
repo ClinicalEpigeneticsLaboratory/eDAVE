@@ -296,6 +296,8 @@ def main_dfeatures_browser(
             fig = plot.volcanoplot(x_border=effect_size, y_border=-np.log10(0.05))
 
         count = Stats(sample_frame.to_frame(), "SampleType").get_factor_count
+
+        logger.info(f"Input: {data_type} - {group_A} - {group_B}")
         return fig, True, "Status: done.", True, "", count
 
     return dash.no_update
