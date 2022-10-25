@@ -1,8 +1,10 @@
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
+from src.utils import load_config
 
 dash.register_page(__name__, path="/")
+config = load_config()
 
 card_1_content = [
     dbc.CardHeader("Tool"),
@@ -70,13 +72,28 @@ card_5_content = [
         [
             html.H5("About repository", className="card-title"),
             html.P(
-                "Details about repository, number of samples, last update etc.",
+                "Details about repository, number of samples, sequencing platforms, last update etc.",
                 className="card-text",
             ),
             dbc.Button("Read more", href="/repository", className="mt-auto", color="info"),
         ]
     ),
 ]
+
+card_6_content = [
+    dbc.CardHeader("Info"),
+    dbc.CardBody(
+        [
+            html.H5("About us", className="card-title"),
+            html.P(
+                "More information about our department as well as contact details.",
+                className="card-text",
+            ),
+            dbc.Button("Read more", href=config["footer_link"], className="mt-auto", color="info"),
+        ]
+    ),
+]
+
 
 layout = dbc.Container(
     [
@@ -125,6 +142,7 @@ layout = dbc.Container(
                 [
                     dbc.Card(card_4_content, color="danger", outline=True),
                     dbc.Card(card_5_content, color="info", outline=True),
+                    dbc.Card(card_6_content, color="info", outline=True),
                 ],
                 style={"width": "75%"},
             ),
