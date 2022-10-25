@@ -83,9 +83,9 @@ class FrameOperations:
         frame = pd.concat(frame, axis=0).dropna(axis=1)  # drop columns (variables) with NaNs
         return frame
 
-    def load_mvpf(self, threshold: float = 0.9) -> t.Tuple[pd.DataFrame, pd.Series]:
+    def load_mvf(self, threshold: float = 0.9) -> t.Tuple[pd.DataFrame, pd.Series]:
         """
-        Function to load most variable features across multiple sources [sample types].
+        Function to load most variable features [mvf] across multiple sources [sample types].
         """
         frame = []
         sample_frame = []
