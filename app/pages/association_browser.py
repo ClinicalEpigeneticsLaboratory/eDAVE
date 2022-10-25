@@ -120,7 +120,6 @@ layout = dbc.Container(
                             max=5,
                             step=1,
                             value=1,
-                            disabled=True,
                         ),
                     ],
                     xs=12,
@@ -202,14 +201,14 @@ layout = dbc.Container(
     Output("gene-met-exp-browser", "placeholder"),
     Output("probe-met-exp-browser", "disabled"),
     Output("probe-met-exp-browser", "placeholder"),
-    Output("poly-degree-met-exp-browser", "disabled"),
     Input("sample-types-met-exp-browser", "value"),
+    prevent_initial_call=True,
 )
 def update_inputs_fields(sample_type):
     if sample_type:
-        return False, "E.g. CSNK1E", False, "E.g. cg01309213", False
+        return False, "E.g. CSNK1E", False, "E.g. cg01309213"
 
-    return True, "Firstly select a sample type", True, "Firstly select a sample type", True
+    return True, "Firstly select a sample type", True, "Firstly select a sample type"
 
 
 @callback(
@@ -225,6 +224,7 @@ def update_inputs_fields(sample_type):
     State("probe-met-exp-browser", "value"),
     State("poly-degree-met-exp-browser", "value"),
     Input("submit-met-exp-browser", "n_clicks"),
+    prevent_initial_call=True,
 )
 def update_model(sample_type, gene_id, probe_id, degree, n_clicks: int):
 
