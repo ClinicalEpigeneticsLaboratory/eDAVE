@@ -211,6 +211,7 @@ layout = dbc.Container(
     Output("sample-types-multidim-browser", "disabled"),
     Output("sample-types-multidim-browser", "value"),
     Input("data-type-multidim-browser", "value"),
+    prevent_initial_call=True,
 )
 def update_sample_type_options(
     data_type: t.Union[t.List[str], str]
@@ -235,6 +236,7 @@ def update_sample_type_options(
     Output("input-multidim-browser", "disabled"),
     Output("input-multidim-browser", "value"),
     Input("data-type-multidim-browser", "value"),
+    prevent_initial_call=True,
 )
 def update_input_section(data_type):
     if data_type == "Expression [RNA-seq]":
@@ -256,7 +258,9 @@ def update_input_section(data_type):
 
 
 @callback(
-    Output("perplexity-multidim-browser", "disabled"), Input("method-multidim-browser", "value")
+    Output("perplexity-multidim-browser", "disabled"),
+    Input("method-multidim-browser", "value"),
+    prevent_initial_call=True,
 )
 def update_slider(method: str):
     if method == "t-SNE":
@@ -280,6 +284,7 @@ def update_slider(method: str):
     State("perplexity-multidim-browser", "value"),
     State("method-multidim-browser", "value"),
     Input("submit-multidim-browser", "n_clicks"),
+    prevent_initial_call=True,
 )
 def main_multidim_browser(
     data_type: str,
