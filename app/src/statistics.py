@@ -36,21 +36,18 @@ class Stats:
             results = pg.pairwise_tukey(
                 data=self.data, dv=dependent_var, between=self.factor, effsize="cohen"
             )
-            results = results.rename(columns={"p-tukey": "pval"})
+            results = results.rename(columns={"p-tukey": "pvalue"})
             test = "pairwise_tukey"
 
         else:
             results = pg.pairwise_gameshowell(
                 data=self.data, dv=dependent_var, between=self.factor, effsize="cohen"
             )
+            results = results.rename(columns={"pval": "pvalue"})
             test = "pairwise_gameshowell"
 
-        try:
-            results["FC"] = results["mean(A)"] / results["mean(B)"]
-        except ZeroDivisionError:
-            results["FC"] = ""
-
-        results["H0 reject"] = results["pval"].map(self.__add_status)
+        results["FC"] = results["mean(A)"] / results["mean(B)"]
+        results["H0 reject"] = results["pvalue"].map(self.__add_status)
         results = results.round(4)
         results["test"] = test
 
