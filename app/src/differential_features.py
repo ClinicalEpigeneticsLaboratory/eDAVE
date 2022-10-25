@@ -30,8 +30,6 @@ class DifferentialFeatures:
     def identify_differential_features(self) -> None:
         group_a = self.data_frame[self.samples_A]
         group_b = self.data_frame[self.samples_B]
-        print(group_a.isna().sum().any())
-        print(group_b.isna().sum().any())
 
         for var in self.variables:
             group_a_temp = group_a.loc[var].values.flatten()
