@@ -151,6 +151,7 @@ layout = dbc.Container(
                     dbc.Row(
                         dbc.Row(dcc.Graph(id="plot-dfeatures-browser")),
                     ),
+                    html.Br(),
                     dbc.Row(
                         [
                             dbc.Button(
@@ -161,6 +162,7 @@ layout = dbc.Container(
                             dcc.Download(id="download-dfeatures-frame"),
                         ],
                     ),
+                    html.Br(),
                     dbc.Row(
                         [
                             html.Label("Sample count", htmlFor="count-table-dfeatures-browser"),
@@ -235,11 +237,15 @@ def update_min_effect_slider(
     State("data-type-dfeatures-browser", "value"),
     State("groupA-dfeatures-browser", "value"),
     State("groupB-dfeatures-browser", "value"),
+    State("alpha-dfeatures-browser", "value"),
+    State("min-effect-dfeatures-browser", "value"),
     Input("download-dfeatures-button", "n_clicks"),
     prevent_initial_call=True,
 )
-def return_statistic_frame(data_type: str, group_A: str, group_B: str, n_clicks: int):
-    path = temp_file_path(data_type, group_A, group_B)
+def return_statistic_frame(
+    data_type: str, group_A: str, group_B: str, alpha: float, effect: float, n_clicks: int
+):
+    path = temp_file_path(data_type, group_A, group_B, alpha, effect)
     frame = pd.read_parquet(path)
 
     return dcc.send_data_frame(frame.to_csv, "summary_table.csv")
@@ -284,7 +290,7 @@ def main_dfeatures_browser(
         diffF.identify_differential_features()
         diffF.build_statistics_frame()
 
-        path_to_drop = temp_file_path(data_type, group_A, group_B)
+        path_to_drop = temp_file_path(data_type, group_A, group_B, alpha, effect_size)
         diffF.export(path_to_drop)
         results = diffF.stats_frame
 

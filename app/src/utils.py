@@ -23,10 +23,12 @@ def load_config(path: str = "config.json") -> dict:
         return json.load(config_file)
 
 
-def temp_file_path(data_type: str, group_A: str, group_B: str, base: str = "temp/") -> str:
+def temp_file_path(
+    data_type: str, group_A: str, group_B: str, alpha: float, effect: float, base: str = "temp/"
+) -> str:
     makedirs(base, exist_ok=True)
 
-    file_name = f"{data_type}_{group_A}_{group_B}.parquet"
+    file_name = f"{data_type}_{group_A}_{group_B}_{alpha}_{effect}.parquet"
     file_name = file_name.replace("/", "-")
     path = join(base, file_name)
 
