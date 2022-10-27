@@ -10,6 +10,21 @@ card_1_content = [
     dbc.CardHeader("Tool"),
     dbc.CardBody(
         [
+            html.H5("Differential features browser", className="card-title"),
+            html.P(
+                "Module to identify differential expressed genes (DEGs) or differential methylated positions (DMPs) \
+                 between groups of samples.",
+                className="card-text",
+            ),
+            dbc.Button("Go", href="/differential-features-browser", className="mt-auto"),
+        ]
+    ),
+]
+
+card_2_content = [
+    dbc.CardHeader("Tool"),
+    dbc.CardBody(
+        [
             html.H5("1-D browser", className="card-title"),
             html.P(
                 "1-dimensional visualisation and statistical analysis of gene expression or CpG \
@@ -21,7 +36,7 @@ card_1_content = [
     ),
 ]
 
-card_2_content = [
+card_3_content = [
     dbc.CardHeader("Tool"),
     dbc.CardBody(
         [
@@ -36,7 +51,7 @@ card_2_content = [
     ),
 ]
 
-card_3_content = [
+card_4_content = [
     dbc.CardHeader("Tool"),
     dbc.CardBody(
         [
@@ -47,21 +62,6 @@ card_3_content = [
                 className="card-text",
             ),
             dbc.Button("Go", href="/association-browser", className="mt-auto"),
-        ]
-    ),
-]
-
-card_4_content = [
-    dbc.CardHeader("Tool"),
-    dbc.CardBody(
-        [
-            html.H5("Differential features browser", className="card-title"),
-            html.P(
-                "Module to identify differential expressed genes (DEGs) or differential methylated positions (DMPs) \
-                 between groups of samples.",
-                className="card-text",
-            ),
-            dbc.Button("Go", href="/differential-features-browser", className="mt-auto"),
         ]
     ),
 ]
