@@ -120,6 +120,7 @@ layout = dbc.Container(
                 details [here](https://docs.gdc.cancer.gov/Data/Introduction/)), thus downstream analysis should be free
                 of unwanted technical variance.
 
+                Contact: jan.binkowski[at].pum.edu.pl
                  ----
                 """
             ),
