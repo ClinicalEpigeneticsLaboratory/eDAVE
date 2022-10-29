@@ -23,7 +23,6 @@
         "platform",
         "cases.case_id",
         "cases.samples.sample_type",
-        "cases.samples.tissue_type",
         "cases.diagnoses.tissue_or_organ_of_origin",
         "cases.diagnoses.primary_diagnosis"
     ],
