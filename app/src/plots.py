@@ -16,6 +16,9 @@ class Plot:
         font_size: int = 14,
     ):
         self.data = data
+        self.names = self.data.index
+        self.names.name = "Case_ID"
+
         self.x_axis = x_axis
         self.y_axis = y_axis
         self.scaling_method = scaling_method
@@ -34,6 +37,7 @@ class Plot:
             x=self.x_axis,
             y=self.y_axis,
             color=self.x_axis,
+            hover_data=[self.names],
         )
         fig.update_layout(
             yaxis=dict(title=self.__yaxis_title()),
@@ -50,6 +54,7 @@ class Plot:
             x=self.x_axis,
             y=self.y_axis,
             color=self.x_axis,
+            hover_data=[self.names],
         )
         fig.update_layout(
             yaxis=dict(title=self.__yaxis_title()),
@@ -66,6 +71,7 @@ class Plot:
             x=self.x_axis,
             y=self.y_axis,
             color=self.x_axis,
+            hover_data=[self.names],
         )
         fig.update_layout(
             yaxis=dict(title=self.__yaxis_title()),
