@@ -42,7 +42,7 @@ card_3_content = [
         [
             html.H5("M-D browser", className="card-title"),
             html.P(
-                "Multidimensional visualisation of gene expression or CpG \
+                "Multidimensional visualisation and cluster analysis of genes expression or CpGs \
                 methylation across various sample types.",
                 className="card-text",
             ),
