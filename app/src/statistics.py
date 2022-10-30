@@ -41,22 +41,17 @@ class Stats:
         else:
             self.normality = False
 
-    def __add_status(self, pvalue: float) -> bool:
-        if pvalue <= self.alpha:
-            return True
-        return False
-
     def post_hoc(self, dependent_var: str) -> None:
         if self.variance_equal and self.normality:
             results = pg.pairwise_tukey(
-                data=self.data, dv=dependent_var, between=self.factor, effsize="cohen"
+                data=self.data, dv=dependent_var, between=self.factor, effsize="hedges"
             )
             results = results.rename(columns={"p-tukey": "pvalue"})
             test = "pairwise_tukey"
 
         elif not self.variance_equal and self.normality:
             results = pg.pairwise_gameshowell(
-                data=self.data, dv=dependent_var, between=self.factor, effsize="cohen"
+                data=self.data, dv=dependent_var, between=self.factor, effsize="hedges"
             )
             results = results.rename(columns={"pval": "pvalue"})
             test = "pairwise_gameshowell"
@@ -66,7 +61,7 @@ class Stats:
                 data=self.data,
                 dv=dependent_var,
                 between=self.factor,
-                effsize="cohen",
+                effsize="hedges",
                 parametric=False,
                 alpha=self.alpha,
                 padjust="fdr_bh",
@@ -75,7 +70,6 @@ class Stats:
             results = results.rename(columns={"p-unc": "pvalue"})
             test = "pairwise_Man_Whitney_U"
 
-        results["H0 reject"] = results["pvalue"].map(self.__add_status)
         results = results.round(4)
         results["test"] = test
 
