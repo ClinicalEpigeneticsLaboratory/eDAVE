@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pingouin as pg
 import scipy.stats as sts
 from statsmodels.stats.multitest import fdrcorrection
 
@@ -62,6 +63,7 @@ class DifferentialFeatures:
                 fc = np.NaN
                 log_fc = np.NaN
 
+            hedges = pg.compute_effsize(group_a_temp, group_b_temp, paired=False, eftype="hedges")
             delta = group_a_temp_mean - group_b_temp_mean
             abs_delta = abs(delta)
 
@@ -73,6 +75,7 @@ class DifferentialFeatures:
                 "log2(FC)": log_fc,
                 "delta": delta,
                 "|delta|": abs_delta,
+                "Hedge`s g": hedges,
                 "Status": status,
                 "p-value": diff_pvalue,
                 "-log10(p-value)": log10_diff_pvalue,
