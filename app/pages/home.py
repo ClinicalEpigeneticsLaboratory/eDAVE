@@ -12,7 +12,7 @@ card_1_content = [
         [
             html.H5("Differential features browser", className="card-title"),
             html.P(
-                "Module to identify differential expressed genes (DEGs) or differential methylated positions (DMPs) \
+                "Module to identify differentially expressed genes (DEGs) or differentially methylated positions (DMPs) \
                  between groups of samples.",
                 className="card-text",
             ),
@@ -25,10 +25,10 @@ card_2_content = [
     dbc.CardHeader("Tool"),
     dbc.CardBody(
         [
-            html.H5("1-D browser", className="card-title"),
+            html.H5("O-D browser", className="card-title"),
             html.P(
-                "1-dimensional visualisation and statistical analysis of gene expression or CpG \
-                methylation across various sample types.",
+                "One-dimensional visualisation and statistical analysis of gene expression or CpG \
+                methylation across various samples types.",
                 className="card-text",
             ),
             dbc.Button("Go", href="/one-dimensional-browser", className="mt-auto"),
@@ -43,7 +43,7 @@ card_3_content = [
             html.H5("M-D browser", className="card-title"),
             html.P(
                 "Multidimensional visualisation and cluster analysis of genes expression or CpGs \
-                methylation across various sample types.",
+                methylation across various samples types.",
                 className="card-text",
             ),
             dbc.Button("Go", href="/multi-dimensional-browser", className="mt-auto"),
@@ -58,7 +58,7 @@ card_4_content = [
             html.H5("Association browser", className="card-title"),
             html.P(
                 "Analysis of association between CpG methylation and gene expression\
-                 in specific sample type.",
+                 in the specific sample type.",
                 className="card-text",
             ),
             dbc.Button("Go", href="/association-browser", className="mt-auto"),
