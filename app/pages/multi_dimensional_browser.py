@@ -93,7 +93,7 @@ layout = dbc.Container(
                     disabled=True,
                     style={"width": "98%"},
                 ),
-                dbc.FormText("Number of input variables must be >= 10 and <= 100"),
+                dbc.FormText("Number of input variables must be >= 5 and <= 100"),
             ],
             justify="center",
         ),
@@ -298,9 +298,9 @@ def main_multidim_browser(
     if sample_types and data_type and variables:
         variables = FrameOperations.clean_sequence(variables)
 
-        if len(variables) < 10:
-            logger.info("Aborted: len(variables) < 10")
-            return EmptyFig, EmptyFig, False, "Less than 10 inputted variables.", True, "", ""
+        if len(variables) < 5:
+            logger.info("Aborted: len(variables) < 5")
+            return EmptyFig, EmptyFig, False, "Less than 5 inputted variables.", True, "", ""
 
         if len(variables) > 100:
             logger.info("Aborted: len(variables) > 100")
