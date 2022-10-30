@@ -111,7 +111,7 @@ layout = dbc.Container(
     2. Based on results from step 1:
         - if variances between groups are equal and distributions are normal - apply `Tukey-HSD post-hoc test`
         - if variances between groups are unequal and distributions are normal – apply `Games-Howell post-hoc test`
-        - if distributions are not normal - apply pairwise Man-Whitney-U test with FDR correction.
+        - if distributions are not normal - apply `pairwise Man-Whitney-U` test with FDR correction.
 
 
     3. Calculate effect size expressed as: delta, fold-change, Cohen's d metric.
