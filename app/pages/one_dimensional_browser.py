@@ -312,7 +312,8 @@ def main_1d_browser(
         count = stats.get_factor_count
 
         if len(sample_types) > 1:
-            stats.test_for_variance_heterogeneity(variable)
+            stats.test_for_homoscedasticity(variable)
+            stats.test_normality(variable)
             stats.post_hoc(variable)
             post_hoc_frame = stats.export_frame()
 
