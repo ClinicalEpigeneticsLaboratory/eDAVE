@@ -121,6 +121,9 @@ layout = dbc.Container(
                             step=1,
                             value=1,
                         ),
+                        dbc.FormText(
+                            "Degree equal to 1 is equivalent of classical linear regression"
+                        ),
                     ],
                     xs=12,
                     sm=12,
