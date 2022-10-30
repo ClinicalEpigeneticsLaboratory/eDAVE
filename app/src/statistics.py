@@ -70,6 +70,7 @@ class Stats:
             results = results.rename(columns={"p-unc": "pvalue"})
             test = "pairwise_Man_Whitney_U"
 
+        results = results.drop("hedges", axis=1)
         results = results.round(4)
         results["test"] = test
 
