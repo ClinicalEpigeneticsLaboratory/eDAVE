@@ -83,21 +83,23 @@ class Plot:
         return fig
 
     def volcanoplot(self, x_border: float, y_border: float) -> Figure:
+        names = self.data.index
+        names.name = "Feature"
 
         fig = px.scatter(
             data_frame=self.data,
             x=self.x_axis,
             y=self.y_axis,
-            hover_data=[self.data.index, self.data.delta, self.data.FC, self.data["Hedge`s g"]],
+            hover_data=[names, self.data.FC, self.data["Hedge`s g"]],
             color="DEG/DMP",
             color_discrete_map={True: "red", False: "blue"},
         )
 
         fig.update_layout(font=dict(size=self.font_size))
 
-        fig.add_hline(y=y_border, line_dash="dash", line_color="red")
-        fig.add_vline(x=-x_border, line_dash="dash", line_color="red")
-        fig.add_vline(x=x_border, line_dash="dash", line_color="red")
+        fig.add_hline(y=y_border, line_dash="dash", line_color="gray")
+        fig.add_vline(x=-x_border, line_dash="dash", line_color="gray")
+        fig.add_vline(x=x_border, line_dash="dash", line_color="gray")
 
         return fig
 
