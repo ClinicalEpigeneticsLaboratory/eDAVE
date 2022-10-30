@@ -5,8 +5,9 @@ from dash import dcc
 dash.register_page(__name__)
 
 layout = dbc.Container(
-    dcc.Markdown(
-        """
+    [
+        dcc.Markdown(
+            """
     ---
 
     ### Documentation
@@ -104,11 +105,13 @@ layout = dbc.Container(
 
     Process of DMP/DEG identification between multiple samples types is comprising several steps:
 
-    1. For selected feature, test for homoscedasticity (Levene`s test) at predefined significance level (alpha).
+    1. For selected feature, test for homoscedasticity (Levene`s test) and normality (Shapiro-Wilk test)
+    at predefined significance level (alpha).
 
     2. Based on results from step 1:
-        - if variances between groups are equal apply `Tukey-HSD post-hoc test`
-        - if variances between groups are unequal – apply `Games-Howell post-hoc test`
+        - if variances between groups are equal and distributions are normal - apply `Tukey-HSD post-hoc test`
+        - if variances between groups are unequal and distributions are normal – apply `Games-Howell post-hoc test`
+        - if distributions are not normal - apply pairwise Man-Whitney-U test with FDR correction.
 
 
     3. Calculate effect size expressed as: delta, fold-change, Cohen's d metric.
@@ -167,5 +170,7 @@ layout = dbc.Container(
     inflated**, so adjusted R2 or AIC/BIC metrics should be interpreted.
 
     """
-    )
+        ),
+        dbc.Row(style={"height": "15vh"}),
+    ]
 )
