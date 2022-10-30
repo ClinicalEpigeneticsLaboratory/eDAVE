@@ -84,12 +84,12 @@ card_6_content = [
     dbc.CardHeader("Info"),
     dbc.CardBody(
         [
-            html.H5("About us", className="card-title"),
+            html.H5("Documentation", className="card-title"),
             html.P(
-                "More information about our department as well as contact details.",
+                "More information about eDAVE, materials, methods and assumptions.",
                 className="card-text",
             ),
-            dbc.Button("Read more", href=config["footer_link"], className="mt-auto", color="info"),
+            dbc.Button("Read more", href="/documentation", className="mt-auto", color="info"),
         ]
     ),
 ]
