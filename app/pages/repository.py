@@ -39,9 +39,9 @@ layout = dbc.Container(
 
                     ----
 
-                    ###### Repository last update: {repository_summary["last_update"]}
-                    ###### Number of samples in repository: {repository_summary["number_of_samples"]}
-                    ###### Number of sample groups in repository: {repository_summary["number_of_samples_groups"]}
+                    ###### Last update: {repository_summary["last_update"]}
+                    ###### Total number of samples: {repository_summary["number_of_samples"]}
+                    ###### Total number of samples types: {repository_summary["number_of_samples_groups"]}
 
                     ----
                     """
@@ -50,10 +50,7 @@ layout = dbc.Container(
         ),
         dbc.Row(
             [
-                dbc.Col(
-                    "Sample sheet comprising a characterization of samples  in the current release of the data "
-                    "repository: "
-                ),
+                dbc.Col("Sample sheet with all records present in current repository release:  "),
                 html.Br(),
                 dbc.Col(dbc.Button("download CSV", id="download-sample-sheet-button")),
                 dcc.Download(id="download-sample-sheet-frame"),
