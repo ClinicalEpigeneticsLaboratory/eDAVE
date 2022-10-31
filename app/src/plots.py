@@ -90,7 +90,7 @@ class Plot:
             data_frame=self.data,
             x=self.x_axis,
             y=self.y_axis,
-            hover_data=[names, self.data.FC, self.data["Hedge`s g"]],
+            hover_data=[names, self.data.FC, self.data.delta, self.data["Hedge`s g"]],
             color="DEG/DMP",
             color_discrete_map={True: "red", False: "blue"},
         )
