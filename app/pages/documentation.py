@@ -80,9 +80,9 @@ layout = dbc.Container(
     (alpha);
 
     3. Based on results from step 2:
-        - if variance between groups are equal and distributions are normal – apply t-test;
-        - if variance between groups are unequal and distributions are normal – apply Welch's t-test;
-        - if distributions are not normal – apply Mann-Whitney-U test;
+        - if variance between groups are equal and distributions are normal – apply `t-test`;
+        - if variance between groups are unequal and distributions are normal – apply `Welch's t-test`;
+        - if distributions are not normal – apply `Mann-Whitney-U test`;
 
 
     4. Apply Benjamini-Hochberg procedure to control the false discovery rate;
