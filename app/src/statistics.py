@@ -41,38 +41,81 @@ class Stats:
         else:
             self.normality = False
 
+    def __tukey_test(self, dependent_var: str) -> pd.DataFrame:
+        results = pg.pairwise_tukey(data=self.data, dv=dependent_var, between=self.factor)
+        results = results.rename(columns={"p-tukey": "p-value"})
+        results = results[["A", "B", "p-value"]]
+
+        return results
+
+    def __gameshowell(self, dependent_var: str) -> pd.DataFrame:
+        results = pg.pairwise_gameshowell(data=self.data, dv=dependent_var, between=self.factor)
+        results = results.rename(columns={"pval": "p-value"})
+        results = results[["A", "B", "p-value"]]
+
+        return results
+
+    def __pairwise_mnu(self, dependent_var: str) -> pd.DataFrame:
+        results = pg.pairwise_tests(
+            data=self.data,
+            dv=dependent_var,
+            between=self.factor,
+            parametric=False,
+            padjust="fdr_bh",
+        )
+        results = results.rename(columns={"p-unc": "p-value", "p-corr": "FDR"})
+
+        if "FDR" in results.columns:
+            return results[["A", "B", "p-value", "FDR"]]
+
+        return results[["A", "B", "p-value"]]
+
+    def __annotate_posthoc_frame(self, results: pd.DataFrame, dependent_var: str) -> pd.DataFrame:
+        average = self.data.groupby(self.factor).mean()
+
+        a_average = average.rename(columns={dependent_var: "mean(A)"})
+        b_average = average.rename(columns={dependent_var: "mean(B)"})
+
+        results = pd.merge(results, a_average, how="inner", left_on="A", right_index=True)
+        results = pd.merge(results, b_average, how="inner", left_on="B", right_index=True)
+
+        return results
+
+    def __effect_size(self, results: pd.DataFrame, dependent_var: str):
+        results_extended = results.copy()
+
+        for index, record in results_extended.iterrows():
+
+            group_a, group_b = record["A"], record["B"]
+            var_a = self.data[self.data[self.factor] == group_a][dependent_var]
+            var_b = self.data[self.data[self.factor] == group_b][dependent_var]
+
+            effect = pg.compute_effsize(var_a, var_b, paired=False, eftype="hedges")
+            fc = var_a.mean() / var_b.mean()
+            delta = var_a.mean() - var_b.mean()
+
+            results_extended.loc[index, "Hedges` g"] = effect
+            results_extended.loc[index, "FC"] = fc
+            results_extended.loc[index, "delta"] = delta
+
+        return results_extended.round(3)
+
     def post_hoc(self, dependent_var: str) -> None:
         if self.variance_equal and self.normality:
-            results = pg.pairwise_tukey(
-                data=self.data, dv=dependent_var, between=self.factor, effsize="hedges"
-            )
-            results = results.rename(columns={"p-tukey": "pvalue"})
-            test = "pairwise_tukey"
+            results = self.__tukey_test(dependent_var)
+            test = "parametric"
 
         elif not self.variance_equal and self.normality:
-            results = pg.pairwise_gameshowell(
-                data=self.data, dv=dependent_var, between=self.factor, effsize="hedges"
-            )
-            results = results.rename(columns={"pval": "pvalue"})
-            test = "pairwise_gameshowell"
+            results = self.__gameshowell(dependent_var)
+            test = "parametric - not equal variance"
 
         else:
-            results = pg.pairwise_tests(
-                data=self.data,
-                dv=dependent_var,
-                between=self.factor,
-                effsize="hedges",
-                parametric=False,
-                alpha=self.alpha,
-                padjust="fdr_bh",
-            )
-            results = results.drop("Contrast", axis=1)
-            results = results.rename(columns={"p-unc": "pvalue"})
-            test = "pairwise_Man_Whitney_U"
+            results = self.__pairwise_mnu(dependent_var)
+            test = "non-parametric"
 
-        results = results.drop("hedges", axis=1)
-        results = results.round(4)
-        results["test"] = test
+        results = self.__annotate_posthoc_frame(results, dependent_var)
+        results = self.__effect_size(results, dependent_var)
+        results["Type"] = test
 
         self.results = results
 
