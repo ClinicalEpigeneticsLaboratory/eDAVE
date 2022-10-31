@@ -136,7 +136,7 @@ layout = dbc.Container(
     Ward algorithm and calculate Calinski-Harabasz metric (Variance Ratio Criterion);
 
     4. Finally an optimal number of clusters is defined as a number
-    maximizing Calinski-Harabasz metric (the metric is higher when clusters are dense and well separated).
+    maximizing Calinski-Harabasz metric (the metric is higher when clusters are dense and well separated);
 
     ---
 
