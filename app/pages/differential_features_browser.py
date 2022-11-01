@@ -295,10 +295,10 @@ def main_dfeatures_browser(
         results = diffF.stats_frame
 
         if data_type == "Expression [RNA-seq]":
-            plot = Plot(results, "log2(FC)", "-log10(p-value)", None, None)
+            plot = Plot(results, "log2(FC)", "-log10(FDR)", None, None)
             fig = plot.volcanoplot(x_border=effect_size, y_border=-np.log10(alpha))
         else:
-            plot = Plot(results, "delta", "-log10(p-value)", None, None)
+            plot = Plot(results, "delta", "-log10(FDR)", None, None)
             fig = plot.volcanoplot(x_border=effect_size, y_border=-np.log10(alpha))
 
         count = Stats(sample_frame.to_frame(), "SampleType").get_factor_count
