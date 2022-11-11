@@ -119,7 +119,7 @@ class FrameOperations:
         """
         meta = pd.read_pickle(join(self.basic_path, self.sample_types, "metadata"))
 
-        if len(meta["commonBetween"]) == 0:
+        if not meta["commonBetween"]:
             return pd.DataFrame(), "No common samples for this sample type."
 
         if gene not in meta["genes"]:
@@ -136,6 +136,9 @@ class FrameOperations:
 
         frame = pd.concat((exp_frame, met_frame), axis=1)
         frame = frame.dropna(axis=0)
+
+        if frame.empty:
+            return pd.DataFrame(), "Unfortunately this specific dataset is empty."
 
         return frame, "Status: done"
 

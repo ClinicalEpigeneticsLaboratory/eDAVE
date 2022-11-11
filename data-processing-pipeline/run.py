@@ -224,11 +224,19 @@ def download(manifest_base_path: str = INTERIM_BASE_PATH) -> None:
             logger.info(f"Downloading: {manifest}")
             out_dir = str(Path(manifest).parent)
 
-            command = (
-                f"{GDC_TRANSFER_TOOL_EXECUTABLE} download -n {N_PROCESS} -m '{manifest}' -d '{out_dir}' --retry"
-                f"-amount 10 "
-            )
-            call(command, shell=True)
+            command = [
+                f"{GDC_TRANSFER_TOOL_EXECUTABLE}",
+                "download",
+                "-n",
+                f"{N_PROCESS}",
+                "-m",
+                f"{manifest}",
+                "-d",
+                f"{out_dir}",
+                "--retry-amount",
+                "10",
+            ]
+            call(command)
 
 
 @task

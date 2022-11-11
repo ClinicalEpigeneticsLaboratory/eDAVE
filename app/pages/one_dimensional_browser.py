@@ -289,7 +289,7 @@ def main_1d_browser(
         data, msg = loader.load_1d(variable)
 
         if data.empty:
-            logger.info("Aborted: data records for this specific requests are not available.")
+            logger.info(msg)
             return False, EmptyFig, True, msg, "", "", ""
 
         data[variable] = loader.scale(data[variable], scaling_method)
