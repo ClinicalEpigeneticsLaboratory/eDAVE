@@ -45,7 +45,6 @@ jan.binkowski[at]pum.edu.pl
 
        make set_up
 
-
 #### Build local repository
 This script builds the data repository required to run Dash app, and it is
 based on [GDC API](https://gdc.cancer.gov/developers/gdc-application-programming-interface-api)
@@ -59,7 +58,6 @@ be a relatively small number e.g. 100 (default). However, in production mode, it
     cd data-processing-pipeline/
     poetry run python run.py
 
-
 #### Run dash app
 Please note that to run app in production mode set `debug: false` in `app/config.json` file. Moreover,
 the app requires an existing local data repository.
@@ -67,7 +65,6 @@ the app requires an existing local data repository.
     cd app/
     poetry run python app.py  # development mode
     poetry run gunicorn app:server  # production mode
-
 
 #### Run in Docker container
 Alternatively, a user may want to run the app in Docker container. This solution comprises all above-mentioned steps.
@@ -79,7 +76,6 @@ Alternatively, a user may want to run the app in Docker container. This solution
 To ensure the code quality level we use: *black*, *isort*, *lint* and *bandit*. To run those tools:
 
     make
-
 
 or specifically:
 
