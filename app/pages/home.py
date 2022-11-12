@@ -1,10 +1,11 @@
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
-from src.utils import load_config
+from src.utils import load_config, load_news
 
 dash.register_page(__name__, path="/")
 config = load_config()
+news = load_news()
 
 card_1_content = [
     dbc.CardHeader("Tool"),
@@ -146,12 +147,7 @@ layout = dbc.Container(
                     [
                         dbc.CardHeader("News"),
                         dbc.CardBody(
-                            dcc.Markdown(
-                                """
-                                * 12.11.2022: Added *news* section;
-                                * 12.11.2022: Added transformation method in association browser;
-                                """
-                            ),
+                            dcc.Markdown(f"{news}"),
                         ),
                     ],
                     outline=True,

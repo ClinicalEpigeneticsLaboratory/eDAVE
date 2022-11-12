@@ -33,3 +33,15 @@ def temp_file_path(
     path = join(base, file_name)
 
     return path
+
+
+def load_news(path: str = "text.news") -> str:
+    if not exists(path):
+        with open(path, "x") as file:
+            pass
+        return ""
+
+    with open(path, "r", encoding="utf-8") as file:
+        news = file.read()
+
+    return news

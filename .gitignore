@@ -12,6 +12,9 @@ gdc-client
 # nohup
 nohup.out
 
+# news
+*.news
+
 # bash scripts
 *.sh
 
