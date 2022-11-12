@@ -25,7 +25,7 @@ card_2_content = [
     dbc.CardHeader("Tool"),
     dbc.CardBody(
         [
-            html.H5("O-D browser", className="card-title"),
+            html.H5("1-D browser", className="card-title"),
             html.P(
                 "One-dimensional visualisation and statistical analysis of gene expression or CpG \
                 methylation across various samples types.",
@@ -97,24 +97,32 @@ card_6_content = [
 
 layout = dbc.Container(
     [
-        html.Br(),
-        dbc.Container(
-            dcc.Markdown(
-                "### eDAVE - extension of GDC Data Analysis, Visualization, and Exploration Tools"
+        dbc.Row(html.Br()),
+        dbc.Row(
+            dbc.Col(
+                dcc.Markdown(
+                    "### **eDAVE** - **e**xtension of GDC **D**ata **A**nalysis, **V**isualization, and **E**xploration Tools",
+                ),
+                xs=8,
+                sm=8,
+                md=8,
+                lg=8,
+                xl=8,
             ),
-            style={"justifyContent": "center"},
+            justify="center",
         ),
-        html.Br(),
-        dbc.Container(
-            dcc.Markdown(
-                """
+        dbc.Row(html.Br()),
+        dbc.Row(
+            dbc.Col(
+                dcc.Markdown(
+                    """
                  ----
                 This app is an extension of
                 GDC Data Analysis, Visualization, and Exploration [[DAVE]]
                 (https://gdc.cancer.gov/analyze-data/gdc-dave-tools) tools.
-                Designed for the exploration of publicly available **CpG methylation** or **gene expression** datasets.
+                Designed for the exploration of publicly available **methylomics** and **transcriptomics** datasets.
 
-                Importantly all data records in the current repository are coming from **Genome Data common**
+                Importantly, all data records in the current repository are coming from **Genome Data common**
                 [database](https://gdc.cancer.gov/) and were obtained using state-of-the-art technologies.
                 All records were processed in one, standardized way (raw data processing pipelines described in
                 details [here](https://docs.gdc.cancer.gov/Data/Introduction/)), thus downstream analysis should be free
@@ -123,29 +131,72 @@ layout = dbc.Container(
                 Contact: [Jan Bińkowski](mailto:jan.binkowski@pum.edu.pl)
                  ----
                 """
-            ),
-            style={"justifyContent": "center"},
-        ),
-        dbc.Row(html.Br()),
-        dbc.Row(
-            dbc.CardGroup(
-                [
-                    dbc.Card(card_1_content, color="danger", outline=True),
-                    dbc.Card(card_2_content, color="danger", outline=True),
-                    dbc.Card(card_3_content, color="danger", outline=True),
-                ],
-                style={"width": "75%"},
+                ),
+                xs=10,
+                sm=10,
+                md=10,
+                lg=10,
+                xl=10,
             ),
             justify="center",
         ),
         dbc.Row(
-            dbc.CardGroup(
-                [
-                    dbc.Card(card_4_content, color="danger", outline=True),
-                    dbc.Card(card_5_content, color="info", outline=True),
-                    dbc.Card(card_6_content, color="info", outline=True),
-                ],
-                style={"width": "75%"},
+            dbc.Col(
+                dbc.Card(
+                    [
+                        dbc.CardHeader("News"),
+                        dbc.CardBody(
+                            dcc.Markdown(
+                                """
+                                * 12.11.2022: Added *news* section;
+                                * 12.11.2022: Added transformation method in association browser;
+                                """
+                            ),
+                        ),
+                    ],
+                    outline=True,
+                    color="info",
+                ),
+                xs=10,
+                sm=10,
+                md=10,
+                lg=10,
+                xl=10,
+            ),
+            justify="center",
+        ),
+        dbc.Row(html.Br()),
+        dbc.Row(
+            dbc.Col(
+                dbc.CardGroup(
+                    [
+                        dbc.Card(card_1_content, color="danger", outline=True),
+                        dbc.Card(card_2_content, color="danger", outline=True),
+                        dbc.Card(card_3_content, color="danger", outline=True),
+                    ],
+                ),
+                xs=10,
+                sm=10,
+                md=10,
+                lg=10,
+                xl=10,
+            ),
+            justify="center",
+        ),
+        dbc.Row(
+            dbc.Col(
+                dbc.CardGroup(
+                    [
+                        dbc.Card(card_4_content, color="danger", outline=True),
+                        dbc.Card(card_5_content, color="danger", outline=True),
+                        dbc.Card(card_6_content, color="danger", outline=True),
+                    ],
+                ),
+                xs=10,
+                sm=10,
+                md=10,
+                lg=10,
+                xl=10,
             ),
             justify="center",
         ),
