@@ -58,7 +58,7 @@ card_4_content = [
             html.H5("Association browser", className="card-title"),
             html.P(
                 "Analysis of association between CpG methylation and gene expression\
-                 in the specific sample type.",
+                 within a specific sample type.",
                 className="card-text",
             ),
             dbc.Button("Go", href="/association-browser", className="mt-auto"),
