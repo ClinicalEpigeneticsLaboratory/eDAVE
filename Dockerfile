@@ -16,4 +16,3 @@ RUN poetry run python run.py
 # start app
 WORKDIR ../app
 CMD ["poetry", "run", "gunicorn", "-b 0.0.0.0:8000", "app:server"]
-EXPOSE 8000
