@@ -72,7 +72,9 @@ class Model:
 
         return predictions
 
-    def plot(self, x_axis: str, y_axis: str, predicted: pd.DataFrame) -> go.Figure:
+    def plot(
+        self, x_axis: str, y_axis: str, predicted: pd.DataFrame, scaling_method: str
+    ) -> go.Figure:
         names = self.data.index
         names.name = "Case_ID"
 
@@ -83,7 +85,10 @@ class Model:
             marginal_x="box",
             marginal_y="box",
             hover_data=[names],
-            labels={x_axis: f"{x_axis} [β-value]", y_axis: f"{y_axis} [TPM]"},
+            labels={
+                x_axis: f"{x_axis} [β-value]",
+                y_axis: f"{y_axis} [TPM], scaling [{scaling_method}]",
+            },
             opacity=0.85,
         )
 

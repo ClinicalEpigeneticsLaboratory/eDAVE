@@ -122,8 +122,27 @@ layout = dbc.Container(
                             value=1,
                         ),
                         dbc.FormText(
-                            "Degree equal to 1 is equivalent of classical linear regression"
+                            "Degree equal to 1 is equivalent of classical linear regression."
                         ),
+                    ],
+                    xs=12,
+                    sm=12,
+                    md=4,
+                    lg=4,
+                    xl=4,
+                ),
+                dbc.Col(
+                    [
+                        html.Label("Scaling method", htmlFor="scaling-method-met-exp-browser"),
+                        dcc.Dropdown(
+                            id="scaling-method-met-exp-browser",
+                            options=["None", "Log10", "Log2", "Ln", "Standard scaling"],
+                            clearable=True,
+                            multi=False,
+                            value="None",
+                            placeholder="None (default)",
+                        ),
+                        dbc.FormText("Scaling method is applied only on dependent variable."),
                     ],
                     xs=12,
                     sm=12,
@@ -226,10 +245,11 @@ def update_inputs_fields(sample_type):
     State("gene-met-exp-browser", "value"),
     State("probe-met-exp-browser", "value"),
     State("poly-degree-met-exp-browser", "value"),
+    State("scaling-method-met-exp-browser", "value"),
     Input("submit-met-exp-browser", "n_clicks"),
     prevent_initial_call=True,
 )
-def update_model(sample_type, gene_id, probe_id, degree, n_clicks: int):
+def update_model(sample_type, gene_id, probe_id, degree, scaling_method, n_clicks: int):
 
     if sample_type and gene_id and probe_id:
         loader = FrameOperations("", sample_type)
@@ -239,13 +259,18 @@ def update_model(sample_type, gene_id, probe_id, degree, n_clicks: int):
             logger.info(msg)
             return EmptyFig, "", False, "", "", True, msg
 
+        frame[gene_id] = loader.scale(frame[gene_id], scaling_method)
+
         model = Model(frame, gene_id, degree)
         model.prepare_data()
+
         model.fit_model()
         predicted = model.make_predictions()
 
         frame1, frame2 = model.export_frame()
-        fig = model.plot(x_axis=probe_id, y_axis=gene_id, predicted=predicted)
+        fig = model.plot(
+            x_axis=probe_id, y_axis=gene_id, predicted=predicted, scaling_method=scaling_method
+        )
 
         logger.info(f"Input: {sample_type} - {gene_id} - {probe_id}")
         return fig, "", True, frame1, frame2, True, msg
