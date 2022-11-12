@@ -44,7 +44,7 @@ else:
                 label="More",
             ),
         ],
-        brand=f"eDAVE v{version}",
+        brand=f"eDAVE {version}",
         brand_href="/",
         color="primary",
         dark=True,
