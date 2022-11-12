@@ -348,7 +348,7 @@ def main_multidim_browser(
                 EmptyFig,
                 EmptyFig,
                 False,
-                "Identified less than 5 variables in this set of sample types.",
+                "Identified less than 5 variables in this set of sample types, instead use 1-D browser.",
                 True,
                 "",
                 "",
