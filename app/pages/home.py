@@ -123,7 +123,7 @@ layout = dbc.Container(
                 (https://gdc.cancer.gov/analyze-data/gdc-dave-tools) tools.
                 Designed for the exploration of publicly available **methylomics** and **transcriptomics** datasets.
 
-                Importantly, all data records in the current repository are coming from **Genome Data common**
+                Importantly, all data records in the current repository are coming from **Genomic Data Commons**
                 [database](https://gdc.cancer.gov/) and were obtained using state-of-the-art technologies.
                 All records were processed in one, standardized way (raw data processing pipelines described in
                 details [here](https://docs.gdc.cancer.gov/Data/Introduction/)), thus downstream analysis should be free
