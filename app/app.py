@@ -17,8 +17,6 @@ logging.basicConfig(
     datefmt="%Y/%m/%d %I:%M:%S %p",
 )
 
-cookie = '<script type="text/javascript" charset="UTF-8" src="//cdn.cookie-script.com/s/bb3fe642e6b1cbf070e2252fcfafc06b.js"></script>'
-
 if maintenance_page:
     msg = """
     eDAVE is currently not available due to maintenance work, it will come back as soon as possible.
@@ -32,7 +30,6 @@ else:
     app = dash.Dash(
         __name__,
         external_stylesheets=[dbc.themes.FLATLY],
-        external_scripts=[cookie],
         use_pages=True,
     )
     server = app.server
