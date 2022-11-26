@@ -30,6 +30,7 @@ else:
     app = dash.Dash(
         __name__,
         external_stylesheets=[dbc.themes.FLATLY],
+        external_scripts=[{"src": "//cdn.cookie-script.com/s/bb3fe642e6b1cbf070e2252fcfafc06b.js"}],
         use_pages=True,
     )
     server = app.server
