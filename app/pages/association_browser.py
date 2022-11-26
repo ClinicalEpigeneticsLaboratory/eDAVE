@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 dash.register_page(__name__)
 
 import dash_bootstrap_components as dbc
+import dash_loading_spinners as dls
 import pandas as pd
 from dash import Input, Output, State, callback, dcc, html
 from src.basics import FrameOperations
@@ -155,7 +156,17 @@ layout = dbc.Container(
         ),
         html.Br(),
         dbc.Row(
-            dbc.Col(dbc.Spinner(html.Div(id="progress-met-exp-browser"), color="danger")),
+            dbc.Col(
+                dls.Hash(
+                    html.Div(id="progress-met-exp-browser"),
+                    color="#FF0000",
+                    debounce=10,
+                    speed_multiplier=2,
+                    size=100,
+                    fullscreen=True,
+                    show_initially=False,
+                )
+            ),
         ),
         html.Br(),
         dbc.Row(
