@@ -285,17 +285,19 @@ def build_frames(
                 sample.columns = [sample_id]
                 sample.index.name = ""
 
-                if sample.isna().sum() / sample.shape[0] > 0.25:
+                na_freq = sample.isna().sum() / sample.shape[0]
+                if na_freq.squeeze() > 0.25:
                     continue
 
                 frame.append(sample)
 
-            makedirs(join(out_dir, sample_group), exist_ok=True)
-            frame = pd.concat(frame, axis=1)
-            frame = frame.loc[:, ~frame.columns.duplicated(keep="first")]
+            if frame:
+                makedirs(join(out_dir, sample_group), exist_ok=True)
+                frame = pd.concat(frame, axis=1)
+                frame = frame.loc[:, ~frame.columns.duplicated(keep="first")]
 
-            frame.to_parquet(join(out_dir, sample_group, f"{ftype}.parquet"), index=True)
-            logger.info(f"Exporting {ftype} frame for {sample_group}: {frame.shape}")
+                frame.to_parquet(join(out_dir, sample_group, f"{ftype}.parquet"), index=True)
+                logger.info(f"Exporting {ftype} frame for {sample_group}: {frame.shape}")
 
 
 @task
@@ -364,6 +366,28 @@ def metadata(final_dir: str = PROCESSED_DIR) -> None:
             pickle.dump(record.record, meta_file)
 
         logger.info(f"Exporting metadata for {sample_group}")
+
+
+@task
+def clean_sample_sheet(
+    final_dir: str = PROCESSED_DIR, sample_sheet_path: str = SAMPLE_SHEET_FILE
+) -> None:
+    logger = get_run_logger()
+
+    meta_files = glob(join(final_dir, "*", "metadata"))
+    sample_sheet = pd.read_parquet(sample_sheet_path)
+    samples = set()
+
+    for file in meta_files:
+        meta = pd.read_pickle(file)
+        exp_samples, met_samples = meta["expressionSamples"], meta["methylationSamples"]
+        samples_ = exp_samples.union(met_samples)
+        samples = samples.union(samples_)
+
+    logger.info(
+        f"Exporting final sample sheet for n={len(samples)} samples, initially n={sample_sheet.shape[0]}"
+    )
+    sample_sheet.loc[list(samples)].to_parquet(sample_sheet_path)
 
 
 @task
@@ -468,6 +492,7 @@ def run():
     build_frames("Met")
 
     metadata()
+    clean_sample_sheet()
     global_metadata()
     create_repo_summary()
 

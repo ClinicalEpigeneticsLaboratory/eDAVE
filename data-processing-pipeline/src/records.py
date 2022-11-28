@@ -1,5 +1,5 @@
 import typing as t
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 
 from pandas import Series
@@ -12,8 +12,8 @@ class MetaRecord:
     methylation_frame: t.Optional[t.Tuple[int, int]] = None
     genes: t.Optional[t.Set[str]] = None
     probes: t.Optional[t.Set[str]] = None
-    expression_samples: t.Optional[t.Set[str]] = None
-    methylation_samples: t.Optional[t.Set[str]] = None
+    expression_samples: t.Set[str] = field(default_factory=set)
+    methylation_samples: t.Set[str] = field(default_factory=set)
     common_between: t.Optional[t.Set[str]] = None
 
     @property
