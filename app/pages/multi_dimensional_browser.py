@@ -146,7 +146,7 @@ layout = dbc.Container(
                 dls.Hash(
                     html.Div(id="progress-multidim-browser"),
                     color="#FF0000",
-                    debounce=10,
+                    debounce=30,
                     speed_multiplier=2,
                     size=100,
                     fullscreen=True,
