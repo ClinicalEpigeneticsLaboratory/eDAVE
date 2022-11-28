@@ -284,6 +284,10 @@ def build_frames(
 
                 sample.columns = [sample_id]
                 sample.index.name = ""
+
+                if sample.isna().sum() / sample.shape[0] > 0.25:
+                    continue
+
                 frame.append(sample)
 
             makedirs(join(out_dir, sample_group), exist_ok=True)
