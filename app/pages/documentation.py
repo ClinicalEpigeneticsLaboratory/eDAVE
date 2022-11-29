@@ -34,7 +34,7 @@ layout = dbc.Container(
     repository. This local database is periodically updated but sometimes may be outdated in
     comparison to origin GDC database;
 
-    2. if number of samples in specific type is > 100, we used 50 randomly selected instances
+    2. if number of samples in specific type is > 100, we used 100 randomly selected instances
     with assumption that this sample size is large enough to be representative;
 
     3. if number of samples in specific type is < 10, we assumed that this sample size is not
