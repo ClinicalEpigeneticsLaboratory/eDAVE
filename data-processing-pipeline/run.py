@@ -287,12 +287,12 @@ def build_frames(
 
                 frame.append(sample)
 
-        makedirs(join(out_dir, sample_group), exist_ok=True)
-        frame = pd.concat(frame, axis=1)
-        frame = frame.loc[:, ~frame.columns.duplicated(keep="first")]
+            makedirs(join(out_dir, sample_group), exist_ok=True)
+            frame = pd.concat(frame, axis=1)
+            frame = frame.loc[:, ~frame.columns.duplicated(keep="first")]
 
-        frame.to_parquet(join(out_dir, sample_group, f"{ftype}.parquet"), index=True)
-        logger.info(f"Exporting {ftype} frame for {sample_group}: {frame.shape}")
+            frame.to_parquet(join(out_dir, sample_group, f"{ftype}.parquet"), index=True)
+            logger.info(f"Exporting {ftype} frame for {sample_group}: {frame.shape}")
 
 
 @task
