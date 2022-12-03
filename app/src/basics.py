@@ -18,9 +18,12 @@ class FrameOperations:
 
     def load_1d(self, variable: str) -> t.Tuple[pd.DataFrame, str]:
         """
-        Methods load frame of measurement, for one or multiple sample types.
-        If variable is not in repository returns empty frame or selected data_type does not exists returns empty frame.
-        Additionally, the function return a message describing the process.
+        Method load frame of measurement, for one or many sample types.
+        If variable is not in repository method returns empty frame.
+        Additionally, the method returns a message describing the process.
+
+        :param variable:
+        :return pd.DataFrame, str:
         """
 
         frame = []
@@ -59,9 +62,14 @@ class FrameOperations:
 
         return frame, "Status: done"
 
-    def load_many(self, variables: t.List[str]) -> pd.DataFrame:
+    def load_many(self, variables: t.List[str]) -> t.Tuple[pd.DataFrame, str]:
         """
-        Function to load ane extract specific set of variables from multiple sources [sample types].
+        Method to load data from many sources [sample types] and extract specific set of variables.
+        If set of variables [CpGs or genes] is not present in certain sample type method returns empty frame with
+        appropriate message.
+
+        :param variables:
+        :return pd.DataFrame, str:
         """
         frame = []
         variables = set(variables)
@@ -76,16 +84,24 @@ class FrameOperations:
                 list(variables.intersection(set(temporary_frame.index)))
             ].T
 
-            if not temporary_frame.empty:
-                temporary_frame["SampleType"] = sample_type
-                frame.append(temporary_frame)
+            if temporary_frame.empty:
+                return (
+                    pd.DataFrame(),
+                    f"Selected set of variables is not available in {sample_type} dataset.",
+                )
+
+            temporary_frame["SampleType"] = sample_type
+            frame.append(temporary_frame)
 
         frame = pd.concat(frame, axis=0).dropna(axis=1)  # drop columns (variables) with NaNs
-        return frame
+        return frame, ""
 
     def load_mvf(self, threshold: float = 0.9) -> t.Tuple[pd.DataFrame, pd.Series]:
         """
-        Function to load most variable features [mvf] across multiple sources [sample types].
+        Method to load most variable features [mvf] across multiple sources [sample types].
+
+        :param threshold:
+        :return:
         """
         frame = []
         sample_frame = []
@@ -113,9 +129,13 @@ class FrameOperations:
 
     def load_met_exp_frame(self, gene: str, probe: str) -> t.Tuple[pd.DataFrame, str]:
         """
-        Function to load frame with expression and methylation data for common samples in requested sample type.
-        If a probe or gene is not present in the requested repository or there are no common samples between methylation
-        and expression data sets the function returns an empty frame.
+        Method to load frame with expression AND methylation data for requested sample type.
+        If a probe or gene is not present in the requested repository or there are no common samples between
+        methylation and expression datasets the method returns an empty frame, and appropriate message.
+
+        :param gene:
+        :param probe:
+        :return:
         """
         meta = pd.read_pickle(join(self.basic_path, self.sample_types, "metadata"))
 
@@ -143,9 +163,13 @@ class FrameOperations:
         return frame, "Status: done"
 
     @staticmethod
-    def clean_sequence(sequence_of_variables: str, separator: int = "-->") -> t.List[str]:
+    def clean_sequence(sequence_of_variables: str, separator: str = "-->") -> t.List[str]:
         """
-        Function to parse raw input from text area.
+        Static method to parse raw input from text field.
+
+        :param sequence_of_variables:
+        :param separator:
+        :return List[str]:
         """
         if separator in sequence_of_variables:
             sequence_of_variables = sequence_of_variables.split(separator)[1]
@@ -156,9 +180,13 @@ class FrameOperations:
         return variables
 
     @staticmethod
-    def scale(values, method):
+    def scale(values: pd.Series, method: str) -> pd.Series:
         """
-        Function to scale 1-D variable.
+        Static method to scale feature.
+
+        :param values:
+        :param method:
+        :return pd.Series:
         """
         if method == "Log10":
             return values.apply(np.log10)

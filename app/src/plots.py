@@ -26,12 +26,21 @@ class Plot:
         self.font_size = font_size
 
     def __yaxis_title(self) -> str:
+        """
+        Method to set y axis title.
+        :return str:
+        """
         if self.data_type == "Methylation [450K/EPIC]":
             return f"units: β-value, scaling: {self.scaling_method}"
 
         return f"units: TPM, scaling: {self.scaling_method}"
 
     def boxplot(self) -> Figure:
+        """
+        Method to generate boxplot.
+
+        :return Fig:
+        """
         fig = px.box(
             data_frame=self.data,
             x=self.x_axis,
@@ -49,6 +58,11 @@ class Plot:
         return fig
 
     def violinplot(self) -> Figure:
+        """
+        Method to generate violinplot.
+
+        :return Fig:
+        """
         fig = px.violin(
             data_frame=self.data,
             x=self.x_axis,
@@ -66,6 +80,11 @@ class Plot:
         return fig
 
     def scatterplot(self) -> Figure:
+        """
+        Method to generate scatterplot.
+
+        :return Fig:
+        """
         fig = px.strip(
             data_frame=self.data,
             x=self.x_axis,
@@ -83,6 +102,11 @@ class Plot:
         return fig
 
     def volcanoplot(self, x_border: float, y_border: float) -> Figure:
+        """
+        Method to generate volcanoplot.
+
+        :return Fig:
+        """
         names = self.data.index
         names.name = "Feature"
 
@@ -112,6 +136,11 @@ class MultiDimPlot:
         self.font_size = 14
 
     def plot(self) -> Figure:
+        """
+        Method to generate scatterplot for 2 and 3 dimensional datasets.
+
+        :return Fig:
+        """
         data = self.data.copy()
         names = data.index
         names.name = "Case_ID"

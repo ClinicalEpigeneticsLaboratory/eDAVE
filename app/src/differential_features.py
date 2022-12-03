@@ -29,6 +29,11 @@ class DifferentialFeatures:
         self.records = []
 
     def identify_differential_features(self) -> None:
+        """
+        Method to identify DMPs or DEGs using uni-variate analysis analysis.
+
+        :return None:
+        """
         group_a = self.data_frame[self.samples_A]
         group_b = self.data_frame[self.samples_B]
 
@@ -84,6 +89,11 @@ class DifferentialFeatures:
             self.records.append(record)
 
     def build_statistics_frame(self) -> None:
+        """
+        Method to build statistics frame containing stats for each analysed feature.
+
+        :return None:
+        """
         frame = pd.DataFrame(self.records)
 
         _, frame["FDR"] = fdrcorrection(frame["p-value"])
@@ -103,4 +113,10 @@ class DifferentialFeatures:
         self.stats_frame = frame
 
     def export(self, path: str) -> None:
+        """
+        Method to export stats_frame object as a parquet file.
+
+        :param path:
+        :return None:
+        """
         self.stats_frame.to_parquet(path)

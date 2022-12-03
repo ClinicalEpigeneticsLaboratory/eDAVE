@@ -14,6 +14,11 @@ class DataDecomposition:
         self.random_state = 101
 
     def __prepare_data(self) -> t.Tuple[pd.DataFrame, pd.Series]:
+        """
+        Method to scale inputted dataset.
+
+        :return pd.DataFrame, pd.Series:
+        """
         data = self.data.drop(self.factor, axis=1)
         transformer = StandardScaler()
         scaled_data = transformer.fit_transform(data)
@@ -30,6 +35,15 @@ class DataDecomposition:
         n_iter_without_progress: int = 100,
         init: str = "pca",
     ) -> pd.DataFrame:
+        """
+        Method to apply t-SNE.
+
+        :param perplexity:
+        :param n_iter:
+        :param n_iter_without_progress:
+        :param init:
+        :return pd.DataFrame:
+        """
         tsne = TSNE(
             n_components=self.n_components,
             random_state=self.random_state,
@@ -48,6 +62,11 @@ class DataDecomposition:
         return pd.concat((deco_data, factor), axis=1)
 
     def pca(self) -> pd.DataFrame:
+        """
+        Method to apply PCA.
+
+        :return pd.DataFrame:
+        """
         pca = PCA(n_components=self.n_components, random_state=self.random_state)
         data_to_deco, factor = self.__prepare_data()
         deco_data = pca.fit_transform(data_to_deco)

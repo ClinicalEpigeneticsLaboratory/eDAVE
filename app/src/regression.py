@@ -24,6 +24,13 @@ class Model:
         self.prepared_endo = None
 
     def prepare_data(self) -> None:
+        """
+        Method to prepare dataset before feed into regression model.
+        Preparing process contains split original frame into exog and endo frames.
+        Additionally polynomial transformation is applied here.
+
+        :return None:
+        """
         initial = self.data.drop(self.response_variable, axis=1)
         self.domain = (initial.min(), initial.max())
 
@@ -46,12 +53,22 @@ class Model:
 
         self.prepared_exog.insert(0, "Intercept", 1)
 
-    def fit_model(self):
+    def fit_model(self) -> None:
+        """
+        Method to fit regression model.
+
+        :return None:
+        """
         model = sm.OLS(endog=self.prepared_endo, exog=self.prepared_exog)
         self.model = model.fit()
         self.model_summary = self.model.summary()
 
     def make_predictions(self) -> pd.DataFrame:
+        """
+        Method to generate set of predictions based on trained regression model.
+
+        :return pd.DataFrame:
+        """
         x_range = np.linspace(*self.domain, 100)
 
         if self.polynomial_degree > 1:
@@ -75,6 +92,15 @@ class Model:
     def plot(
         self, x_axis: str, y_axis: str, predicted: pd.DataFrame, scaling_method: str
     ) -> go.Figure:
+        """
+        Method to generate plot with original set of data as well as trend line.
+
+        :param x_axis:
+        :param y_axis:
+        :param predicted:
+        :param scaling_method:
+        :return Fig:
+        """
         names = self.data.index
         names.name = "Case_ID"
 
@@ -105,6 +131,11 @@ class Model:
         return fig
 
     def export_frame(self) -> t.Tuple[dash_table.DataTable, dash_table.DataTable]:
+        """
+        Method to convert frames from statsmodels model into dash tables.
+
+        :return pd.DataFrame, pd.DataFrame:
+        """
         table = self.model_summary.as_html()
         frames = pd.read_html(StringIO(table))
         frame1, frame2 = frames[0], frames[1]

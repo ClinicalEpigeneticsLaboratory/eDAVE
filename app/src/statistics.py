@@ -17,6 +17,12 @@ class Stats:
         self.results = None
 
     def test_for_homoscedasticity(self, dependent_var: str) -> None:
+        """
+        Method to test for equal variance between analysed groups of samples.
+
+        :param dependent_var:
+        :return None:
+        """
         records = [
             self.data.loc[ids, dependent_var].values
             for ids in self.data.groupby(self.factor).groups.values()
@@ -29,6 +35,12 @@ class Stats:
             self.variance_equal = True
 
     def test_normality(self, dependent_var: str) -> None:
+        """
+        Method to test for normality all analysed groups of samples.
+
+        :param dependent_var:
+        :return None:
+        """
         records = [
             self.data.loc[ids, dependent_var].values
             for ids in self.data.groupby(self.factor).groups.values()
@@ -42,20 +54,38 @@ class Stats:
             self.normality = False
 
     def __tukey_test(self, dependent_var: str) -> pd.DataFrame:
+        """
+        Method to perform parametric (equal variance) post-hoc test.
+
+        :param dependent_var:
+        :return pd.DataFrame:
+        """
         results = pg.pairwise_tukey(data=self.data, dv=dependent_var, between=self.factor)
         results = results.rename(columns={"p-tukey": "p-value"})
-        results = results[["A", "B", "p-value"]]
+        results = results[["A", "B", "p-value"]]  # pylint: disable=unsubscriptable-object
 
         return results
 
     def __gameshowell(self, dependent_var: str) -> pd.DataFrame:
+        """
+        Method to perform parametric (unequal variance) post-hoc test.
+
+        :param dependent_var:
+        :return pd.DataFrame:
+        """
         results = pg.pairwise_gameshowell(data=self.data, dv=dependent_var, between=self.factor)
         results = results.rename(columns={"pval": "p-value"})
-        results = results[["A", "B", "p-value"]]
+        results = results[["A", "B", "p-value"]]  # pylint: disable=unsubscriptable-object
 
         return results
 
     def __pairwise_mnu(self, dependent_var: str) -> pd.DataFrame:
+        """
+        Method to perform non-parametric post-hoc test.
+
+        :param dependent_var:
+        :return pd.DataFrame:
+        """
         results = pg.pairwise_tests(
             data=self.data,
             dv=dependent_var,
@@ -71,6 +101,13 @@ class Stats:
         return results[["A", "B", "p-value"]]
 
     def __annotate_posthoc_frame(self, results: pd.DataFrame, dependent_var: str) -> pd.DataFrame:
+        """
+        Method to annotate results from post-hoc tests.
+
+        :param results:
+        :param dependent_var:
+        :return pd.DataFrame:
+        """
         average = self.data.groupby(self.factor).mean()
 
         a_average = average.rename(columns={dependent_var: "mean(A)"})
@@ -81,7 +118,15 @@ class Stats:
 
         return results
 
-    def __effect_size(self, results: pd.DataFrame, dependent_var: str):
+    def __effect_size(self, results: pd.DataFrame, dependent_var: str) -> pd.DataFrame:
+        """
+        Method to calculate effect size.
+        Effect size expressed as: fold-change (FC), Delta and Hedges` g.
+
+        :param results:
+        :param dependent_var:
+        :return pd.DataFrame:
+        """
         results_extended = results.copy()
 
         for index, record in results_extended.iterrows():
@@ -101,6 +146,12 @@ class Stats:
         return results_extended.round(3)
 
     def post_hoc(self, dependent_var: str) -> None:
+        """
+        Method to apply appropriate post-hoc test based on results from normality and homoscedasticity tests.
+
+        :param dependent_var:
+        :return None:
+        """
         if self.variance_equal and self.normality:
             results = self.__tukey_test(dependent_var)
             test = "parametric"
@@ -120,6 +171,11 @@ class Stats:
         self.results = results
 
     def export_frame(self) -> dash_table:
+        """
+        Method to convert data frame containing statistics to dash data table object.
+
+        :return dash_table:
+        """
         frame = self.results.to_dict("records")
         frame = dash_table.DataTable(
             frame,
@@ -136,6 +192,11 @@ class Stats:
 
     @property
     def get_factor_count(self) -> dash_table:
+        """
+        Method returns dash table containing counts of samples per types.
+
+        :return dash_table:
+        """
         cnt = self.data[self.factor].value_counts().to_frame().reset_index()
         cnt.columns = ["Sample type", "Count"]
         cnt = cnt.to_dict("records")
@@ -159,7 +220,13 @@ class ClusterAnalysis:
         self.data = data
         self.factor = factor
 
-    def find_optimal_cluster_number(self):
+    def find_optimal_cluster_number(self) -> pd.Series:
+        """
+        Method to identify optimal number of clusters within specific multidimensional dataset.
+        The point of this implementation is to find n_clusters maximising calinski harabasz metric.
+
+        :return pd.Series:
+        """
         data = self.data.drop(self.factor, axis=1)
         results = {}
         max_number_of_clusters = self.data[self.factor].nunique() * 2 + 1
