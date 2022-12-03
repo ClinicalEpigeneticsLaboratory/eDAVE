@@ -224,7 +224,7 @@ ignored-parents=
 max-args=8
 
 # Maximum number of attributes for a class (see R0902).
-max-attributes=8
+max-attributes=12
 
 # Maximum number of boolean expressions in an if statement (see R0916).
 max-bool-expr=5
@@ -248,7 +248,7 @@ max-returns=7
 max-statements=50
 
 # Minimum number of public methods for a class (see R0903).
-min-public-methods=2
+min-public-methods=1
 
 
 [FORMAT]
