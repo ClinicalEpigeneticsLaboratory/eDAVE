@@ -113,7 +113,7 @@ class Model:
             hover_data=[names],
             labels={
                 x_axis: f"{x_axis} [β-value]",
-                y_axis: f"{y_axis} [TPM], scaling [{scaling_method}]",
+                y_axis: f"{y_axis}: TPM, scaling: {scaling_method}",
             },
             opacity=0.85,
         )
