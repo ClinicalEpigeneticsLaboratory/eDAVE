@@ -207,7 +207,11 @@ def update_groups_options(
     data_type: str,
 ) -> t.Tuple[bool, t.List[str], str, bool, t.List[str], str]:
     """
-    Function to update possible sample types for selected data type.
+    Function to update sample type options list based on selected data type.
+    Returns the same list of options to field - group A and field - group B.
+
+    :param data_type:
+    :return boolean, options, str, boolean, options, str:
     """
     if data_type:
         if data_type == "Expression [RNA-seq]":
@@ -235,7 +239,10 @@ def update_min_effect_slider(
     data_type: str,
 ) -> t.Tuple[bool, float, float, float, float]:
     """
-    Function to update slider for minimum effect size.
+    Function updates slider based on type of data Met or Exp.
+
+    :param data_type:
+    :return boolean, float, float, float, float:
     """
     if data_type == "Expression [RNA-seq]":
         return False, 1.0, 10.0, 1.0, 1.0
@@ -257,7 +264,18 @@ def update_min_effect_slider(
 )
 def return_statistic_frame(
     data_type: str, group_A: str, group_B: str, alpha: float, effect: float, n_clicks: int
-):
+) -> pd.DataFrame:
+    """
+    Function sends frame with statistics to the layout.
+
+    :param data_type:
+    :param group_A:
+    :param group_B:
+    :param alpha:
+    :param effect:
+    :param n_clicks:
+    :return pd.DataFrame:
+    """
     path = temp_file_path(data_type, group_A, group_B, alpha, effect)
     frame = pd.read_parquet(path)
 
@@ -282,6 +300,17 @@ def return_statistic_frame(
 def main_dfeatures_browser(
     data_type: str, group_A: str, group_B: str, alpha: float, effect_size: float, clicks: int
 ):
+    """
+    Function to perform DE/DM analysis.
+
+    :param data_type:
+    :param group_A:
+    :param group_B:
+    :param alpha:
+    :param effect_size:
+    :param clicks:
+    :return Optional[Fig, boolean, str, boolean, str, pd.DataFrame]:
+    """
     if data_type and group_A and group_B:
 
         if group_A == group_B:

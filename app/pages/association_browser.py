@@ -238,6 +238,12 @@ layout = dbc.Container(
     prevent_initial_call=True,
 )
 def update_inputs_fields(sample_type):
+    """
+    Function to update input fields [gene and cpg] based on selected sample type.
+
+    :param sample_type:
+    :return boolean, str, boolean, str:
+    """
     if sample_type:
         return False, "E.g. CSNK1E", False, "E.g. cg01309213"
 
@@ -261,6 +267,17 @@ def update_inputs_fields(sample_type):
     prevent_initial_call=True,
 )
 def update_model(sample_type, gene_id, probe_id, degree, scaling_method, n_clicks: int):
+    """
+    Function to perform association analysis.
+
+    :param sample_type:
+    :param gene_id:
+    :param probe_id:
+    :param degree:
+    :param scaling_method:
+    :param n_clicks:
+    :return Optional[Fig, str, boolean, str, str, boolean, str]:
+    """
 
     if sample_type and gene_id and probe_id:
         loader = FrameOperations("", sample_type)

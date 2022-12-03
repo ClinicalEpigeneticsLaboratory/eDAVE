@@ -226,7 +226,10 @@ def update_sample_type_options(
     data_type: t.Union[t.List[str], str]
 ) -> t.Tuple[t.List[str], bool, str, str]:
     """
-    Function to update possible sample types for selected data type.
+    Function to update sample type options list based on selected data type.
+
+    :param data_type:
+    :return options, boolean, str, str:
     """
     if data_type:
         if data_type == "Expression [RNA-seq]":
@@ -249,7 +252,10 @@ def update_sample_type_options(
 )
 def update_input_field(data_type: str) -> t.Tuple[bool, str]:
     """
-    Function to update input field.
+    Function to open or close variable field in the layout.
+
+    :param data_type:
+    :return boolean, str:
     """
     if data_type == "Expression [RNA-seq]":
         return False, "E.g. BRCA1"
@@ -285,14 +291,27 @@ def main_1d_browser(
     alpha: float,
     n_clicks: int,
 ):
+    """
+    Function to perform 1-D analysis.
+
+    :param sample_types:
+    :param data_type:
+    :param variable:
+    :param scaling_method:
+    :param plot_type:
+    :param alpha:
+    :param n_clicks:
+    :return Optional[boolean, Fig, boolean, str, pd.DataFrame, pd.DataFrame, str]:
+    """
     if data_type and variable:
         if len(sample_types) > 5:
-            logger.info("Aborted: exceeded maximum number of sample types > 5.")
+            msg = "Exceeded maximum number of sample types [n>5]."
+            logger.info(msg)
             return (
                 False,
                 EmptyFig,
                 True,
-                "Exceeded maximum number of sample types [n>5].",
+                msg,
                 "",
                 "",
                 "",

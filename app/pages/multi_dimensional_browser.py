@@ -228,7 +228,10 @@ def update_sample_type_options(
     data_type: t.Union[t.List[str], str]
 ) -> t.Tuple[t.List[str], bool, str]:
     """
-    Function to update possible sample types for selected data type.
+    Function to update sample type options list based on selected data type.
+
+    :param data_type:
+    :return options, boolean, str:
     """
     if data_type:
         if data_type == "Expression [RNA-seq]":
@@ -250,6 +253,12 @@ def update_sample_type_options(
     prevent_initial_call=True,
 )
 def update_input_section(data_type):
+    """
+    Function to update input field in the layout, based on selected data type.
+
+    :param data_type:
+    :return boolean, str:
+    """
     if data_type == "Expression [RNA-seq]":
         genes = (
             "Example input (genes names are case sensitive) --> PAX3, SOX8, PARP9, AIM2, "
@@ -274,6 +283,12 @@ def update_input_section(data_type):
     prevent_initial_call=True,
 )
 def update_slider(method: str):
+    """
+    Function to open/close slider in the layout, based on selected decomposition method.
+
+    :param method:
+    :return boolean:
+    """
     if method == "t-SNE":
         return False
 
@@ -306,20 +321,34 @@ def main_multidim_browser(
     method: str,
     n_clicks: int,
 ):
+    """
+    Function to perform multidimensional analysis.
+
+    :param data_type:
+    :param sample_types:
+    :param n_dimensions:
+    :param variables:
+    :param perplexity:
+    :param method:
+    :param n_clicks:
+    :return Optional[Fig, Fig, boolean, str, boolean, str, str]:
+    """
     if sample_types and data_type and variables:
         variables = FrameOperations.clean_sequence(variables)
 
         if len(variables) < 5:
             logger.info("Aborted: len(variables) < 5")
-            return EmptyFig, EmptyFig, False, "Less than 5 inputted variables.", True, "", ""
+            msg = "Less than 5 inputted variables use 1-D browser instead."
+            return EmptyFig, EmptyFig, False, msg, True, "", ""
 
         if len(variables) > 100:
             logger.info("Aborted: len(variables) > 100")
+            msg = "Exceeded maximum number of inputted variables [n > 100]."
             return (
                 EmptyFig,
                 EmptyFig,
                 False,
-                "Exceeded maximum number of inputted variables [n > 100].",
+                msg,
                 True,
                 "",
                 "",
@@ -327,19 +356,19 @@ def main_multidim_browser(
 
         if len(sample_types) > 5:
             logger.info("Aborted: len(sample_types) > 5")
+            msg = "Exceeded maximum number of sample types [n > 5]."
             return (
                 EmptyFig,
                 EmptyFig,
                 False,
-                "Exceeded maximum number of sample types [n > 5].",
+                msg,
                 True,
                 "",
                 "",
             )
 
         loader = FrameOperations(data_type, sample_types)
-        data = loader.load_many(variables)
-        count = Stats(data, "SampleType").get_factor_count
+        data, msg = loader.load_many(variables)
 
         if data.empty:
             logger.info("Aborted: no common data in this set of sample types.")
@@ -347,7 +376,7 @@ def main_multidim_browser(
                 EmptyFig,
                 EmptyFig,
                 False,
-                "No common data in this set of sample types.",
+                msg,
                 True,
                 "",
                 "",
@@ -355,16 +384,18 @@ def main_multidim_browser(
 
         if data.shape[1] - 1 < 5:
             logger.info("Aborted: less than 5 variables.")
+            msg = "Less than 5 variables in this set of sample types, use 1-D browser instead."
             return (
                 EmptyFig,
                 EmptyFig,
                 False,
-                "Identified less than 5 variables in this set of sample types, instead use 1-D browser.",
+                msg,
                 True,
                 "",
                 "",
             )
 
+        count = Stats(data, "SampleType").get_factor_count
         transformer = DataDecomposition(data, "SampleType", n_dimensions)
 
         if method == "t-SNE":

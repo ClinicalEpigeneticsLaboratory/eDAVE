@@ -11,6 +11,13 @@ repository_summary = pd.read_pickle(config["summary_metafile"])
 
 
 def plot(cnt: pd.Series, plot_type: str = None) -> go.Figure:
+    """
+    Function to generate Bar o Pie plot.
+
+    :param cnt:
+    :param plot_type:
+    :return fig:
+    """
     if plot_type == "bar":
         cnt = cnt.iloc[:15]
         fig = px.bar(cnt, y=cnt.index, x=cnt.values, orientation="h")
@@ -121,7 +128,14 @@ layout = dbc.Container(
     Input("download-sample-sheet-button", "n_clicks"),
     prevent_initial_call=True,
 )
-def func(n_clicks: int, sample_sheet_path: str = config["sample_sheet"]):
+def sample_sheet_generator(n_clicks: int, sample_sheet_path: str = config["sample_sheet"]):
+    """
+    Function to generate sample sheet in csv format.
+
+    :param n_clicks:
+    :param sample_sheet_path:
+    :return sample_sheet:
+    """
     sample_sheet = pd.read_parquet(
         sample_sheet_path,
         columns=[
