@@ -40,14 +40,24 @@ N_PROCESS = config["N_PROCESS"]
 
 @task
 def check_if_repository_exists() -> None:
+    """
+    Function raises an exception if local data repository exists.
+
+    :return: None
+    """
     if exists(BASE_DATA_PATH):
         raise RepositoryExistsError("The local repository already exists!")
 
 
 @task
-def build_directory_tree() -> None:
+def build_directory_tree(structure: list = DIRECTORY_TREE) -> None:
+    """
+    Function builds local directory tree defined in config.
+
+    :return: None
+    """
     logger = get_run_logger()
-    for directory in DIRECTORY_TREE:
+    for directory in structure:
         makedirs(directory)
         logger.info(f"Building dir: {directory}.")
 
@@ -60,10 +70,14 @@ def request_gdc_service(
     output_file: str = GDC_RAW_RESPONSE_FILE,
 ) -> None:
     """
-    Function to request GDC, as response it returns df with files.
-    Requested number of records, fields, and filters are declared in config.py file.
-    """
+    Function requests GDC service to get files described in config file.
 
+    :param fields:
+    :param filters:
+    :param n_records:
+    :param output_file:
+    :return: None
+    """
     logger = get_run_logger()
     endpoint = "https://api.gdc.cancer.gov/files"
 
@@ -84,7 +98,12 @@ def build_sample_sheet(
     sample_group_id: str = SAMPLE_GROUP_ID,
 ) -> None:
     """
-    Function build sample sheet based on raw GDC response.
+    Function builds sample sheet based on GDC raw response.
+
+    :param input_file:
+    :param output:
+    :param sample_group_id:
+    :return: None
     """
     frame = pd.read_table(input_file)
 
@@ -133,12 +152,16 @@ def build_manifest(
     min_samples: int = MIN_SAMPLES_PER_SAMPLE_GROUP,
 ) -> List[str]:
     """
-    Function to build manifest for each specific group_of_samples present in sample_group_id field.
-    > Only sample groups containing > MIN_SAMPLES_PER_SAMPLE_GROUP are processed to further steps.
-    > If number of samples > MAX_SAMPLES_PER_SAMPLE_GROUP, random subset
-    [equal to MAX_SAMPLES_PER_SAMPLE_GROUP]  is used.
-    Manifest files are exported to location: <base_path / sample group / file_type [Met / Exp] / manifest.txt>.
-    Manifest file is an input for GDC download tool.
+    Function builds manifest files required by GDC downloading tool. These manifests are required by GDC downloading tool.
+    One manifest is generated for one sample type in specific directory. Moreover manifests are constrained by min and
+    max number of samples.
+
+    :param sample_sheet_path:
+    :param manifest_base_path:
+    :param sample_group_id:
+    :param max_samples:
+    :param min_samples:
+    :return final_list_of_samples:
     """
 
     logger = get_run_logger()
@@ -203,6 +226,13 @@ def build_manifest(
 def update_sample_sheet(
     final_list_of_samples: List[str], sample_sheet_path: str = SAMPLE_SHEET_FILE
 ) -> None:
+    """
+    Function updates sample sheet based on constrained manifest files.
+
+    :param final_list_of_samples:
+    :param sample_sheet_path:
+    :return: None
+    """
     logger = get_run_logger()
     sample_sheet = pd.read_parquet(sample_sheet_path)
 
@@ -214,7 +244,10 @@ def update_sample_sheet(
 @task
 def download(manifest_base_path: str = INTERIM_BASE_PATH) -> None:
     """
-    Function to download methylation files specified in manifest file.
+    Function downloads files using specific manifest file and GDC downloading tool.
+
+    :param manifest_base_path:
+    :return: None
     """
     logger = get_run_logger()
     for data_type in ["Met", "Exp"]:
@@ -247,9 +280,13 @@ def build_frames(
     out_dir: str = PROCESSED_DIR,
 ) -> None:
     """
-    Function to concatenate methylation files into dataframe.
-    Final dataframe is exported as parquet file to: <out_dir / sample_group / [ftype].parquet>.
-    ftype: str = Met|Exp
+    Function builds dataframes [Exp or Met] using data downloaded from GDC.
+
+    :param ftype:
+    :param sample_sheet:
+    :param base_path:
+    :param out_dir:
+    :return: None
     """
     logger = get_run_logger()
 
@@ -298,8 +335,11 @@ def build_frames(
 @task
 def metadata(final_dir: str = PROCESSED_DIR) -> None:
     """
-    Function to export metadata file per sample group, it contains information about creation time, frames dimensions
-    and samples common between Met and Exp files.
+    Function exports metadata file per each sample type. This file contains details about data type, number of samples,
+    number of genes ad number of samples in specific data type repository.
+
+    :param final_dir:
+    :return: None
     """
     logger = get_run_logger()
 
@@ -367,6 +407,14 @@ def metadata(final_dir: str = PROCESSED_DIR) -> None:
 def clean_sample_sheet(
     final_dir: str = PROCESSED_DIR, sample_sheet_path: str = SAMPLE_SHEET_FILE
 ) -> None:
+    """
+    Function cleans sample sheet due to possible connections issue when data downloading. It means that if error occurs
+    and certain sample is not present in meta file it will be removed from sample sheet.
+
+    :param final_dir:
+    :param sample_sheet_path:
+    :return: None
+    """
     logger = get_run_logger()
 
     meta_files = glob(join(final_dir, "*", "metadata"))
@@ -392,7 +440,14 @@ def global_metadata(
     metadata_global_path: str = METADATA_GLOBAL_FILE,
 ) -> None:
     """
-    Function to export global metafile it contains general information about whole repository.
+    Function builds global metadata file for all sample types. It contains information about which sample types
+    have Exp and/or Met datasets additionally it contains information about datasets comprising common samples between Met and
+    Exp.
+
+    :param final_dir:
+    :param min_samples:
+    :param metadata_global_path:
+    :return: None
     """
     logger = get_run_logger()
     sample_groups = glob(join(final_dir, "*/"))
@@ -438,7 +493,16 @@ def create_repo_summary(
     output_file: str = SUMMARY_METAFILE,
     sample_sheet_path: str = SAMPLE_SHEET_FILE,
     metadata_path: str = METADATA_GLOBAL_FILE,
-):
+) -> None:
+    """
+    Function builds repo summary object which contains descriptive data about local data repository.
+    E.g., number of samples, used technology etc.
+
+    :param output_file:
+    :param sample_sheet_path:
+    :param metadata_path:
+    :return: None
+    """
     logger = get_run_logger()
     sample_sheet = pd.read_parquet(sample_sheet_path)
     sample_sheet = sample_sheet[
