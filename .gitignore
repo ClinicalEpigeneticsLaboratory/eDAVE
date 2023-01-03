@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 # env
-.env
+app/.env
 
 # external tools
 gdc-client
@@ -134,7 +134,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+app/.env
 .venv
 env/
 venv/
