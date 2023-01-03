@@ -349,9 +349,12 @@ def main_1d_browser(
             stats.post_hoc(variable)
             post_hoc_frame = stats.export_frame()
 
-            logger.info(
+            log_info = (
                 f"Input: {sample_types} - {data_type} - {variable} - {scaling_method} - {plot_type}"
             )
+            logger.info(log_info)
+            send_slack_msg("One dimensional browser", log_info)
+
             return True, fig, True, msg, post_hoc_frame, count, ""
 
         log_info = (
@@ -359,6 +362,7 @@ def main_1d_browser(
         )
         logger.info(log_info)
         send_slack_msg("One dimensional browser", log_info)
+
         return True, fig, True, msg, "Applicable only for > 1 sample types.", count, ""
 
     return dash.no_update
