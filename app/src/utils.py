@@ -106,6 +106,8 @@ def send_slack_msg(
         raise Exception("Slack-api token not in environ!")
 
     client = WebClient(token=token)
+    if isinstance(msg, tuple):
+        msg = msg[0]
 
     try:
         client.chat_postMessage(channel=channel, text=f"{source} --> {msg}")
