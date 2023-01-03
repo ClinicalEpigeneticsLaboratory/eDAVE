@@ -23,6 +23,8 @@ prefect = "^2.0.0"
 gunicorn = "^20.1.0"
 pingouin = "^0.5.2"
 dash-loading-spinners = "^1.0.0"
+slack-sdk = "^3.19.5"
+python-dotenv = "^0.21.0"
 
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.4.4"
