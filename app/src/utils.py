@@ -3,6 +3,11 @@ from os import makedirs
 from os.path import exists, join
 
 import pandas as pd
+from dotenv import dotenv_values
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
+
+env = dotenv_values()
 
 
 def response_multidim(variables: list, frame: pd.DataFrame) -> str:
@@ -83,3 +88,26 @@ def load_news(path: str = "text.news") -> str:
         news = file.read()
 
     return news
+
+
+def send_slack_msg(
+    source: str, msg: str, channel: str = "edave", token=env["SLACK_API_TOKEN"]
+) -> None:
+    """
+    Function send notification via slack app.
+
+    :param source:
+    :param msg:
+    :param channel:
+    :param token:
+    :return:
+    """
+    if not token:
+        raise Exception("Slack-api token not in environ!")
+
+    client = WebClient(token=token)
+
+    try:
+        client.chat_postMessage(channel=channel, text=f"{source} --> {msg}")
+    except SlackApiError as e:
+        print(f"Error sending message: {e}")
