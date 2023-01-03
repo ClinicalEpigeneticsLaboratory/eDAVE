@@ -102,12 +102,9 @@ def send_slack_msg(
     :param token:
     :return:
     """
-    if not token:
-        raise Exception("Slack-api token not in environ!")
-
-    client = WebClient(token=token)
-
-    try:
-        client.chat_postMessage(channel=channel, text=f"{source} --> {msg}")
-    except SlackApiError as e:
-        print(f"Error sending message: {e}")
+    if token:
+        client = WebClient(token=token)
+        try:
+            client.chat_postMessage(channel=channel, text=f"{source} --> {msg}")
+        except SlackApiError as e:
+            print(f"Error sending message: {e}")
