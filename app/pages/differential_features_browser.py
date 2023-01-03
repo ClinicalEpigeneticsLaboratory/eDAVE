@@ -15,7 +15,7 @@ from src.basics import FrameOperations
 from src.differential_features import DifferentialFeatures
 from src.plots import Plot
 from src.statistics import Stats
-from src.utils import load_config, temp_file_path
+from src.utils import load_config, send_slack_msg, temp_file_path
 
 EmptyFig = {}
 config = load_config()
@@ -345,7 +345,9 @@ def main_dfeatures_browser(
 
         count = Stats(sample_frame.to_frame(), "SampleType").get_factor_count
 
-        logger.info(f"Input: {data_type} - {group_A} - {group_B}")
+        log_info = f"Input: {data_type} - {group_A} - {group_B}"
+        logger.info(log_info)
+        send_slack_msg("Differential features browser", log_info)
         return fig, True, "Status: done.", True, "", count
 
     return dash.no_update

@@ -13,7 +13,7 @@ from dash import Input, Output, State, callback, dcc, html
 from src.basics import FrameOperations
 from src.plots import Plot
 from src.statistics import Stats
-from src.utils import load_config
+from src.utils import load_config, send_slack_msg
 
 EmptyFig = {}
 config = load_config()
@@ -354,9 +354,11 @@ def main_1d_browser(
             )
             return True, fig, True, msg, post_hoc_frame, count, ""
 
-        logger.info(
+        log_info = (
             f"Input: {sample_types} - {data_type} - {variable} - {scaling_method} - {plot_type}"
         )
+        logger.info(log_info)
+        send_slack_msg("One dimensional browser", log_info)
         return True, fig, True, msg, "Applicable only for > 1 sample types.", count, ""
 
     return dash.no_update

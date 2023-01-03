@@ -11,7 +11,7 @@ import pandas as pd
 from dash import Input, Output, State, callback, dcc, html
 from src.basics import FrameOperations
 from src.regression import Model
-from src.utils import load_config
+from src.utils import load_config, send_slack_msg
 
 EmptyFig = {}
 
@@ -300,7 +300,10 @@ def update_model(sample_type, gene_id, probe_id, degree, scaling_method, n_click
             x_axis=probe_id, y_axis=gene_id, predicted=predicted, scaling_method=scaling_method
         )
 
-        logger.info(f"Input: {sample_type} - {gene_id} - {probe_id}")
+        log_info = f"Input: {sample_type} - {gene_id} - {probe_id}"
+        logger.info(log_info)
+        send_slack_msg("Association browser", log_info)
+
         return fig, "", True, frame1, frame2, True, msg
 
     return dash.no_update

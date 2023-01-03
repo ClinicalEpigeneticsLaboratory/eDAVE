@@ -14,7 +14,7 @@ from src.basics import FrameOperations
 from src.decomposition import DataDecomposition
 from src.plots import MultiDimPlot
 from src.statistics import ClusterAnalysis, Stats
-from src.utils import load_config, response_multidim
+from src.utils import load_config, response_multidim, send_slack_msg
 
 EmptyFig = {}
 config = load_config()
@@ -413,9 +413,10 @@ def main_multidim_browser(
         plot_generator = MultiDimPlot(deco_data, "SampleType", n_dimensions)
         fig_2 = plot_generator.plot()
 
-        logger.info(
-            f"Input: {sample_types} - {data_type} - {variables} - {method} - {n_dimensions}"
-        )
+        log_info = f"Input: {sample_types} - {data_type} - {variables} - {method} - {n_dimensions}"
+        logger.info(log_info)
+        send_slack_msg("Multidimensional browser", log_info)
+
         return fig_1, fig_2, True, response_multidim(variables, data), True, "", count
 
     return dash.no_update
