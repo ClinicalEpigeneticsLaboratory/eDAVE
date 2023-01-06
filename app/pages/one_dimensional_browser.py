@@ -306,6 +306,7 @@ def main_1d_browser(
     if data_type and variable:
         if len(sample_types) > 5:
             msg = "Exceeded maximum number of sample types [n>5]."
+            send_slack_msg("One dimensional browser", msg)
             logger.info(msg)
             return (
                 False,
@@ -321,6 +322,7 @@ def main_1d_browser(
         data, msg = loader.load_1d(variable)
 
         if data.empty:
+            send_slack_msg("One dimensional browser", msg)
             logger.info(msg)
             return False, EmptyFig, True, msg, "", "", ""
 
@@ -352,16 +354,16 @@ def main_1d_browser(
             log_info = (
                 f"Input: {sample_types} - {data_type} - {variable} - {scaling_method} - {plot_type}"
             )
-            logger.info(log_info)
             send_slack_msg("One dimensional browser", log_info)
+            logger.info(log_info)
 
             return True, fig, True, msg, post_hoc_frame, count, ""
 
         log_info = (
             f"Input: {sample_types} - {data_type} - {variable} - {scaling_method} - {plot_type}"
         )
-        logger.info(log_info)
         send_slack_msg("One dimensional browser", log_info)
+        logger.info(log_info)
 
         return True, fig, True, msg, "Applicable only for > 1 sample types.", count, ""
 

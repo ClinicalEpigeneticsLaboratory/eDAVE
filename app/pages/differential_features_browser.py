@@ -314,10 +314,12 @@ def main_dfeatures_browser(
     if data_type and group_A and group_B:
 
         if group_A == group_B:
+            msg = f"Can not compare two identical groups of samples - '{group_A}' and '{group_B}'."
+            send_slack_msg("Differential features browser", msg)
             return (
                 EmptyFig,
                 False,
-                "Can not compare two identical groups of samples.",
+                msg,
                 True,
                 "",
                 "",
@@ -346,8 +348,9 @@ def main_dfeatures_browser(
         count = Stats(sample_frame.to_frame(), "SampleType").get_factor_count
 
         log_info = f"Input: {data_type} - {group_A} - {group_B}"
-        logger.info(log_info)
         send_slack_msg("Differential features browser", log_info)
+        logger.info(log_info)
+
         return fig, True, "Status: done.", True, "", count
 
     return dash.no_update

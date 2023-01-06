@@ -16,7 +16,7 @@ layout = dbc.Container(
 
     #### Sample(s) type(s)
 
-    We grouped samples deposited in Genomic Data Commons (GDC) into homogenous groups,
+    We grouped samples deposited in Genomic Data Commons (GDC) into homogeneous groups,
     named `types`, using following strategy:
 
         sample type = <GDC sample_type> + _ + <GDC tissue or organ of origin> + _ + <GDC primary diagnosis>
@@ -37,16 +37,16 @@ layout = dbc.Container(
     2. if number of samples in specific type is > 50, we used 50 randomly selected instances
     with assumption that this sample size is large enough to be representative;
 
-    3. if number of samples in specific type is < 10, we assumed that this sample size is not
-    large enough to be representative, thus excluded from our local data repository;
+    3. if the number of samples in a particular type is < 10, we assumed that this sample size
+    is not large enough to be representative, so it was excluded from our local data repository;
 
     ---
 
-    #### Scales
+    #### Scales & units
 
     Expression levels are expressed as transcripts per million `TPM`:
 
-        TPM ∈ <0, +inf)
+        TPM ∈ <0, +inf).
 
     Methylation levels are expressed as beta-values `β-value`:
 
@@ -54,7 +54,7 @@ layout = dbc.Container(
 
     ---
 
-    #### Raw data processing
+    #### Raw data processing pipelines
 
 
     Raw data processing pipelines are in details described by GDC:
@@ -67,16 +67,16 @@ layout = dbc.Container(
 
     #### Module 1: Differential features browser
 
-    Differential features browser was designed to identify `differentially expressed genes
-    (DEGs)` or `differentially methylated positions (DMPs)` between types of samples.
+    Differential features browser was designed to identify `differentially expressed genes (DEGs)` or
+    `differentially methylated positions (DMPs)` between different types of samples.
 
     Process of DMPs/DEGs identification comprises several steps:
 
     1. extraction of 10% most variable features (CpGs or genes) in specific dataset
-     based on standard deviation;
+    based on standard deviation;
 
-    2. for each feature, test for normality (Shapiro-Wilk test)
-    and homoscedasticity (Levene`s test) at predefined significance level
+    2. for each feature, test for normality (Shapiro-Wilk's test)
+    and homoscedasticity (Levene's test) at predefined significance level
     (alpha);
 
     3. Based on results from step 2:
@@ -90,30 +90,31 @@ layout = dbc.Container(
     5. Calculate `effect size`, expressed as:
 
         - |delta| = |mean(CpG methylation level in group A) - mean(CpG methylation level in group B)|;
-        - log2(FC) = log2(mean(gene expression level in group A) / mean(gene expression level in group B));
+        - FC = mean(gene expression level in group A) / mean(gene expression level in group B)
+        - log2(FC) = log2(FC);
         - Hedges` g = standardized mean difference, in contrary to above described metrics, this one takes in to account
-        pooled standard deviation and size of both groups of samples;
+        the pooled standard deviation and the size of both groups of samples;
 
     ---
 
     #### Module 2: One-dimensional browser
 
     One-dimensional browser was designed to compare sole variable (CpG
-    methylation level or gene expression level) across multiple
+    methylation level or gene expression level) between multiple
     samples types.
 
     Process of DMP/DEG identification between multiple samples types comprises several steps:
 
-    1. For selected feature, test for homoscedasticity (Levene`s test) and normality (Shapiro-Wilk test)
+    1. For selected feature, test for homoscedasticity (Levene's test) and normality (Shapiro-Wilk's test)
     at predefined significance level (alpha);
 
     2. Based on results from step 1:
-        - if variances between groups are equal and distributions are normal - apply `Tukey-HSD post-hoc test`;
-        - if variances between groups are unequal and distributions are normal – apply `Games-Howell post-hoc test`;
+        - if variance between groups are equal and distributions are normal - apply `Tukey-HSD post-hoc test`;
+        - if variance between groups are unequal and distributions are normal – apply `Games-Howell post-hoc test`;
         - if distributions are not normal - apply `pairwise Man-Whitney-U test with FDR correction`;
 
 
-    3. Calculate effect size expressed as: delta, fold-change, Hedges` g;
+    3. Calculate effect size expressed as: delta, fold-change and Hedges` g metrics;
 
     ---
 
@@ -125,17 +126,17 @@ layout = dbc.Container(
 
     Procedure of clusters identification comprises:
 
-    1. Scale dataset (nxm) congaing n-number of samples and m-number of
-    features (genes or CpGs);
+    1. Re-scale to unit variance and mean zero dataset (nxm) congaing n-number
+    of samples and m-number of features (genes or CpGs);
 
     2. Apply PCA (principal component analysis) or t-SNE (t-distributed
     stochastic neighbor embedding) decomposition algorithm on scaled
     dataset;
 
     3. Iteratively, for each predefined number of clusters ∈ <2, 10> apply
-    Ward algorithm and calculate Calinski-Harabasz metric (Variance Ratio Criterion);
+    Ward's algorithm and calculate Calinski-Harabasz metric (variance ratio criterion);
 
-    4. Finally an optimal number of clusters is defined as a number
+    4. Finally, an optimal number of clusters is defined as a number
     maximizing Calinski-Harabasz metric (the metric is higher when clusters are dense and well separated);
 
     ---
@@ -153,15 +154,14 @@ layout = dbc.Container(
 
         expression level ~ Intercept + methylation level^1 + methylation level^2 + methylation level^n
 
-    In these models, estimated coefficient(s) expresses strength of CpG methylation influence on gene expression level.
+    In these models, estimated coefficient(s) express(es) strength of CpG methylation influence on gene expression level.
     To asses significance of estimated effect Wald`s test is performed.
 
     Model performance is expressed in form of multiple different
     parameters, such as: R2, adjusted R2, Log-Likelihood, Akaike
     information content (AIC) and Bayesian information content (BIC).
-    The higher values of `R2`, `adjusted R2` and `Log-Likelihood` indicates
-    a better fit of the model to data. While lower `AIC` and `BIC` indicate less complex
-    and/or better fit models.
+    Larger values of `R2`, `adjusted R2` and `Log Likelihood` indicate a better fit of the model to the data.
+    Lower `AIC` and `BIC` indicate less complex and/or better fit model.
 
     Please note in case of model estimated using polynomial-transformed dataset **R2 coefficient may be strongly
     inflated**, therefore adjusted R2 or AIC/BIC metrics should be interpreted.

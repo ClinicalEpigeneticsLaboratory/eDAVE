@@ -57,7 +57,9 @@ layout = dbc.Container(
         ),
         dbc.Row(
             [
-                dbc.Col("Sample sheet with all records present in current repository release:  "),
+                dbc.Col(
+                    "Sample sheet with all records present in the current version of the repository: "
+                ),
                 html.Br(),
                 dbc.Col(dbc.Button("download CSV", id="download-sample-sheet-button")),
                 dcc.Download(id="download-sample-sheet-frame"),
@@ -68,7 +70,7 @@ layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        dbc.Label("TOP15 sample types by tissue or organ of origin"),
+                        dbc.Label("TOP 15 sample types by tissue or organ of origin"),
                         dcc.Graph(figure=plot(repository_summary["tissue_origin_cnt"], "bar")),
                     ],
                     xs=12,
@@ -79,7 +81,7 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        dbc.Label("TOP15 sample types by primary diagnosis"),
+                        dbc.Label("TOP 15 sample types by primary diagnosis"),
                         dcc.Graph(figure=plot(repository_summary["primary_diagnosis_cnt"], "bar")),
                     ],
                     xs=12,

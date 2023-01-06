@@ -337,13 +337,17 @@ def main_multidim_browser(
         variables = FrameOperations.clean_sequence(variables)
 
         if len(variables) < 5:
-            logger.info("Aborted: len(variables) < 5")
-            msg = "Less than 5 inputted variables use 1-D browser instead."
+            msg = "Less than 5 inputted variables, use 1-D browser instead."
+            send_slack_msg("Multidimensional browser", msg)
+            logger.info(msg)
+
             return EmptyFig, EmptyFig, False, msg, True, "", ""
 
         if len(variables) > 100:
-            logger.info("Aborted: len(variables) > 100")
-            msg = "Exceeded maximum number of inputted variables [n > 100]."
+            msg = "Exceeded maximum number of variables [n > 100]."
+            send_slack_msg("Multidimensional browser", msg)
+            logger.info(msg)
+
             return (
                 EmptyFig,
                 EmptyFig,
@@ -355,8 +359,10 @@ def main_multidim_browser(
             )
 
         if len(sample_types) > 5:
-            logger.info("Aborted: len(sample_types) > 5")
             msg = "Exceeded maximum number of sample types [n > 5]."
+            send_slack_msg("Multidimensional browser", msg)
+            logger.info(msg)
+
             return (
                 EmptyFig,
                 EmptyFig,
@@ -371,7 +377,9 @@ def main_multidim_browser(
         data, msg = loader.load_many(variables)
 
         if data.empty:
-            logger.info("Aborted: no common data in this set of sample types.")
+            send_slack_msg("Multidimensional browser", msg)
+            logger.info(msg)
+
             return (
                 EmptyFig,
                 EmptyFig,
@@ -383,8 +391,10 @@ def main_multidim_browser(
             )
 
         if data.shape[1] - 1 < 5:
-            logger.info("Aborted: less than 5 variables.")
             msg = "Less than 5 variables in this set of sample types, use 1-D browser instead."
+            send_slack_msg("Multidimensional browser", msg)
+            logger.info(msg)
+
             return (
                 EmptyFig,
                 EmptyFig,
@@ -414,8 +424,8 @@ def main_multidim_browser(
         fig_2 = plot_generator.plot()
 
         log_info = f"Input: {sample_types} - {data_type} - {variables} - {method} - {n_dimensions}"
-        logger.info(log_info)
         send_slack_msg("Multidimensional browser", log_info)
+        logger.info(log_info)
 
         return fig_1, fig_2, True, response_multidim(variables, data), True, "", count
 

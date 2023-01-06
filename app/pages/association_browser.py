@@ -284,6 +284,7 @@ def update_model(sample_type, gene_id, probe_id, degree, scaling_method, n_click
         frame, msg = loader.load_met_exp_frame(gene_id, probe_id)
 
         if frame.empty:
+            send_slack_msg("Association browser", msg)
             logger.info(msg)
             return EmptyFig, "", False, "", "", True, msg
 
@@ -301,8 +302,8 @@ def update_model(sample_type, gene_id, probe_id, degree, scaling_method, n_click
         )
 
         log_info = f"Input: {sample_type} - {gene_id} - {probe_id}"
-        logger.info(log_info)
         send_slack_msg("Association browser", log_info)
+        logger.info(log_info)
 
         return fig, "", True, frame1, frame2, True, msg
 

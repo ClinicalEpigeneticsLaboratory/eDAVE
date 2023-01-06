@@ -73,7 +73,7 @@ card_5_content = [
         [
             html.H5("About repository", className="card-title"),
             html.P(
-                "Details about repository, number of samples, sequencing platforms, last update etc.",
+                "Details about repository, number of samples, types of measurement technologies, last update etc.",
                 className="card-text",
             ),
             dbc.Button("Read more", href="/repository", className="mt-auto", color="info"),
@@ -127,7 +127,7 @@ layout = dbc.Container(
                 [database](https://gdc.cancer.gov/) and were obtained using state-of-the-art technologies.
                 All records were processed in one, standardized way (raw data processing pipelines described in
                 details [here](https://docs.gdc.cancer.gov/Data/Introduction/)), thus downstream analysis should be free
-                of unwanted technical variance.
+                of unwanted technical variance deriving from different processing algorithms.
 
                 Contact: [Jan Bińkowski](mailto:jan.binkowski@pum.edu.pl)
                  ----
