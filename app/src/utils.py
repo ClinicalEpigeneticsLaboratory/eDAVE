@@ -105,6 +105,9 @@ def send_slack_msg(
     if token:
         client = WebClient(token=token)
         try:
-            client.chat_postMessage(channel=channel, text=f"{source} --> {msg}")
+            client.chat_postMessage(channel=channel, text=f"Message from: {source} --> {msg}")
         except SlackApiError as e:
             print(f"Error sending message: {e}")
+
+    else:
+        print("Slack notification turned off.")
