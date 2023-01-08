@@ -59,8 +59,8 @@ layout = dbc.Container(
     All CpGs targeted by 450K (n≈450.000) and EPIC (n≈850.000) microarrays have a unique identifier, for example cg22930808.
     Lists of all CpGs along with genomic context for specific technology are available from:
 
-        [EPIC](https://webdata.illumina.com/downloads/productfiles/methylationEPIC/infinium-methylationepic-v-1-0-b5-manifest-file-csv.zip)
-        [450K](https://webdata.illumina.com/downloads/productfiles/humanmethylation450/humanmethylation450_15017482_v1-2.csv)
+    • [EPIC](https://support.illumina.com/downloads/infinium-methylationepic-v1-0-product-files.html)
+    • [450K](https://emea.support.illumina.com/downloads/infinium_humanmethylation450_product_files.html)
 
     Importantly, not all of the 450,000 CpG targeted by the 450K microarray are present in the EPIC.
     In addition, some probes may not pass quality control and will not be available for analysis in specific dataset.
