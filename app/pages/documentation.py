@@ -60,6 +60,7 @@ layout = dbc.Container(
     Lists of all CpGs along with genomic context for specific technology are available from:
 
     • [EPIC](https://support.illumina.com/downloads/infinium-methylationepic-v1-0-product-files.html)
+
     • [450K](https://emea.support.illumina.com/downloads/infinium_humanmethylation450_product_files.html)
 
     Importantly, not all of the 450,000 CpG targeted by the 450K microarray are present in the EPIC.
