@@ -57,7 +57,7 @@ layout = dbc.Container(
     #### CpG identifiers
 
     All CpGs targeted by 450K (n≈450.000) and EPIC (n≈850.000) microarrays have a unique identifier, for example cg22930808.
-    List of all CpGs along with genomic context for specific technology are available from:
+    Manifests containing all of CpGs along with genomic context for specific technology are available from:
 
     • [EPIC](https://support.illumina.com/downloads/infinium-methylationepic-v1-0-product-files.html)
 
