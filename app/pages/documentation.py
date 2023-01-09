@@ -63,8 +63,8 @@ layout = dbc.Container(
 
     • [450K](https://emea.support.illumina.com/downloads/infinium_humanmethylation450_product_files.html)
 
-    Importantly, not all of the 450,000 CpG targeted by the 450K microarray are present in the EPIC.
-    In addition, some probes may not pass quality control and will not be available for analysis in specific dataset.
+    Importantly, not all of the 450,000 CpGs targeted by the 450K microarray are present in the EPIC.
+    In addition, some probes may not pass quality control and will not be available for analysis in specific dataset(s).
 
     ---
 
