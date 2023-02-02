@@ -174,7 +174,7 @@ layout = dbc.Container(
     parameters, such as: R2, adjusted R2, Log-Likelihood, Akaike
     information content (AIC) and Bayesian information content (BIC).
     Larger values of `R2`, `adjusted R2` and `Log Likelihood` indicate a better fit of the model to the data.
-    Lower `AIC` and `BIC` indicate less complex and/or better fit model.
+    Lower `AIC` and `BIC` are characterizing less complex and/or better fit models.
 
     Please note in case of model estimated using polynomial-transformed dataset **R2 coefficient may be strongly
     inflated**, therefore adjusted R2 or AIC/BIC metrics should be interpreted.
