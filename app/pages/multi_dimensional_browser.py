@@ -94,7 +94,7 @@ layout = dbc.Container(
                     disabled=True,
                     style={"width": "98%"},
                 ),
-                dbc.FormText("Number of input variables must in range 5-100."),
+                dbc.FormText("Number of input variables must fit in the range 5-100."),
             ],
             justify="center",
         ),
@@ -261,14 +261,14 @@ def update_input_section(data_type):
     """
     if data_type == "Expression [RNA-seq]":
         genes = (
-            "Example input (genes names are case sensitive) --> PAX3, SOX8, PARP9, AIM2, "
+            "Exemplary input (genes names are case sensitive) --> PAX3, SOX8, PARP9, AIM2, "
             "MX1, TSPAN6, DPM1, SCYL3, NIPAL3, LAS1L"
         )
         return False, genes
 
     if data_type == "Methylation [450K/EPIC]":
         cpgs = (
-            "Example input --> cg10009236, cg08203127, cg26912541, cg08823186, "
+            "Exemplary input --> cg10009236, cg08203127, cg26912541, cg08823186, "
             "cg26616258, cg01546397, cg03884976, cg26804023, "
             "cg07843956, cg00469995"
         )

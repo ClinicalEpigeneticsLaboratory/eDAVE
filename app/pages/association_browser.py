@@ -87,7 +87,7 @@ layout = dbc.Container(
                             },
                         ),
                         dbc.Tooltip(
-                            "Probe ID is a unique identifier from appropriate [EPIC/450K] Illumina manifest.",
+                            "Probe ID is a unique identifier from the appropriate [EPIC/450K] Illumina manifest.",
                             target="label-probe-1d-met-exp-browser",
                             placement="top",
                         ),

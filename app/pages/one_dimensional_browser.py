@@ -75,7 +75,7 @@ layout = dbc.Container(
                         ),
                         dbc.Tooltip(
                             "Gene name is case sensitive. "
-                            "Probe ID is a unique identifier from appropriate [EPIC/450K] Illumina manifest.",
+                            "Probe ID is a unique identifier from the appropriate [EPIC/450K] Illumina manifest.",
                             target="label-cpg-gene-1d-browser",
                             placement="top",
                         ),
