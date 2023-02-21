@@ -193,14 +193,30 @@ layout = dbc.Container(
                     dbc.Row(dcc.Graph(id="plot-1d-browser")),
                     dbc.Row(
                         [
-                            html.Label("Sample count", htmlFor="count-table-1d-browser"),
-                            dbc.Container(id="count-table-1d-browser"),
-                        ]
-                    ),
-                    dbc.Row(
-                        [
-                            html.Label("Post-hoc", htmlFor="post-hoc-1d-browser"),
-                            dbc.Container(id="post-hoc-1d-browser"),
+                            dbc.Col(
+                                [
+                                    html.Label(
+                                        "Sample count frame", htmlFor="count-table-1d-browser"
+                                    ),
+                                    dbc.Container(id="count-table-1d-browser"),
+                                ],
+                                xs=12,
+                                sm=12,
+                                md=6,
+                                lg=6,
+                                xl=6,
+                            ),
+                            dbc.Col(
+                                [
+                                    html.Label("Statistics frame", htmlFor="post-hoc-1d-browser"),
+                                    dbc.Container(id="post-hoc-1d-browser"),
+                                ],
+                                xs=12,
+                                sm=12,
+                                md=6,
+                                lg=6,
+                                xl=6,
+                            ),
                         ]
                     ),
                 ],
