@@ -143,15 +143,40 @@ class Model:
         frame1 = dash_table.DataTable(
             data=frame1.to_dict("records"),
             columns=[{"name": "", "id": str(i)} for i in frame1.columns],
-            virtualization=True,
-            style_header={"display": "none"},
+            style_table={
+                "overflowX": "auto",
+                "overflowY": "auto",
+                "width": "100%",
+                "minWidth": "100%",
+                "maxWidth": "100%",
+                "padding": "1%",
+            },
+            virtualization=False,
+            style_data={"whiteSpace": "normal", "height": "auto"},
         )
 
+        frame2 = frame2.drop(0)
+        frame2.columns = [
+            "Parameter",
+            "Coef",
+            "Std err",
+            "t",
+            "p-value",
+            "95%CI - lb",
+            "95%CI - ub",
+        ]
         frame2 = dash_table.DataTable(
             data=frame2.to_dict("records"),
-            columns=[{"name": "", "id": str(i)} for i in frame2.columns],
-            virtualization=True,
-            style_header={"display": "none"},
+            style_table={
+                "overflowX": "auto",
+                "overflowY": "auto",
+                "width": "100%",
+                "minWidth": "100%",
+                "maxWidth": "100%",
+                "padding": "1%",
+            },
+            virtualization=False,
+            style_data={"whiteSpace": "normal", "height": "auto"},
         )
 
         return frame1, frame2

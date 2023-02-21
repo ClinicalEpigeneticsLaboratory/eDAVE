@@ -185,7 +185,9 @@ class Stats:
                 "width": "100%",
                 "minWidth": "100%",
                 "maxWidth": "100%",
+                "padding": "1%",
             },
+            virtualization=False,
             style_data={"whiteSpace": "normal", "height": "auto"},
         )
         return frame
@@ -208,7 +210,9 @@ class Stats:
                 "width": "100%",
                 "minWidth": "100%",
                 "maxWidth": "100%",
+                "padding": "1%",
             },
+            virtualization=False,
             style_data={"whiteSpace": "normal", "height": "auto"},
         )
 
