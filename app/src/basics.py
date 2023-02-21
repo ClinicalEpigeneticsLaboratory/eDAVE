@@ -163,6 +163,17 @@ class FrameOperations:
         return frame, "Status: done"
 
     @staticmethod
+    def bin_variable(frame: pd.Series, n_bins: int) -> tuple[pd.Series, list[str]]:
+        binned_frame = pd.qcut(frame, n_bins, precision=2)
+
+        binned_frame = binned_frame.apply(
+            lambda x: pd.Interval(left=round(x.left, 2), right=round(x.right, 2))
+        )
+        binned_frame = binned_frame.map(lambda bin_: f"Bin : {bin_}")
+
+        return binned_frame
+
+    @staticmethod
     def clean_sequence(sequence_of_variables: str, separator: str = "-->") -> t.List[str]:
         """
         Static method to parse raw input from text field.
