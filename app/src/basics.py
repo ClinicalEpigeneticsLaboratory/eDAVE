@@ -169,7 +169,7 @@ class FrameOperations:
         binned_frame = binned_frame.apply(
             lambda x: pd.Interval(left=round(x.left, 2), right=round(x.right, 2))
         )
-        binned_frame = binned_frame.map(lambda bin_: f"Bin : {bin_}")
+        binned_frame = binned_frame.map(lambda bin_: f"Bin:{bin_}")
 
         return binned_frame
 
