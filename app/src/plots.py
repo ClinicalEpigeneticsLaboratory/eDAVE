@@ -14,6 +14,8 @@ class Plot:
         scaling_method: str,
         data_type: str,
         font_size: int = 14,
+        show_legend: bool = True,
+        show_x_ticks: bool = False,
     ):
         self.data = data
         self.names = self.data.index
@@ -24,6 +26,8 @@ class Plot:
         self.scaling_method = scaling_method
         self.data_type = data_type
         self.font_size = font_size
+        self.show_legend = show_legend
+        self.show_x_ticks = show_x_ticks
 
     def __yaxis_title(self) -> str:
         """
@@ -31,11 +35,11 @@ class Plot:
         :return str:
         """
         if self.data_type == "Methylation [450K/EPIC]":
-            return f"units: β-value, scaling: {self.scaling_method}"
+            return f"{self.y_axis}: β-value, scaling: {self.scaling_method}"
 
-        return f"units: TPM, scaling: {self.scaling_method}"
+        return f"{self.y_axis}: TPM, scaling: {self.scaling_method}"
 
-    def boxplot(self) -> Figure:
+    def boxplot(self, order: list[str] | None = None) -> Figure:
         """
         Method to generate boxplot.
 
@@ -50,14 +54,18 @@ class Plot:
         )
         fig.update_layout(
             yaxis=dict(title=self.__yaxis_title()),
-            xaxis=dict(title="", showticklabels=False),
+            xaxis=dict(title="", showticklabels=self.show_x_ticks),
             font=dict(size=self.font_size),
             legend=dict(title="", orientation="h", y=-0.2),
+            showlegend=self.show_legend,
         )
+
+        if order:
+            fig.update_xaxes(categoryorder="array", categoryarray=order)
 
         return fig
 
-    def violinplot(self) -> Figure:
+    def violinplot(self, order: list[str] | None = None) -> Figure:
         """
         Method to generate violinplot.
 
@@ -72,14 +80,18 @@ class Plot:
         )
         fig.update_layout(
             yaxis=dict(title=self.__yaxis_title()),
-            xaxis=dict(title="", showticklabels=False),
+            xaxis=dict(title="", showticklabels=self.show_x_ticks),
             font=dict(size=self.font_size),
             legend=dict(title="", orientation="h", y=-0.2),
+            showlegend=self.show_legend,
         )
+
+        if order:
+            fig.update_xaxes(categoryorder="array", categoryarray=order)
 
         return fig
 
-    def scatterplot(self) -> Figure:
+    def scatterplot(self, order: list[str] | None = None) -> Figure:
         """
         Method to generate scatterplot.
 
@@ -94,10 +106,14 @@ class Plot:
         )
         fig.update_layout(
             yaxis=dict(title=self.__yaxis_title()),
-            xaxis=dict(title="", showticklabels=False),
+            xaxis=dict(title="", showticklabels=self.show_x_ticks),
             font=dict(size=self.font_size),
             legend=dict(title="", orientation="h", y=-0.2),
+            showlegend=self.show_legend,
         )
+
+        if order:
+            fig.update_xaxes(categoryorder="array", categoryarray=order)
 
         return fig
 
