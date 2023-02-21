@@ -202,7 +202,9 @@ layout = dbc.Container(
                     ),
                     dbc.Row(
                         [
-                            html.Label("Sample count", htmlFor="sample-count-multidim-browser"),
+                            html.Label(
+                                "Sample count frame", htmlFor="sample-count-multidim-browser"
+                            ),
                             dbc.Container(id="sample-count-multidim-browser", fluid=True),
                         ]
                     ),

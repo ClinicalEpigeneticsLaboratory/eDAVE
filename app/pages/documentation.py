@@ -27,18 +27,17 @@ layout = dbc.Container(
 
     #### Exclusion/inclusion criteria
 
-    eDAVE is fully based on GDC repository, but not all of samples
-    deposited in GDC are available via our tool, and it is because:
+    eDAVE is fully based on the GDC repository, but not all of samples
+    deposited in the GDC are available via our tool, and it is because:
 
-    1. large files transfer via GDC-API is slow, thus we created fast accessible local data
-    repository. This local database is periodically updated but sometimes may be outdated in
-    comparison to origin GDC database;
+    1. large files transfer via GDC-API is slow, therefore we created fast accessible local data
+    repository. This local database is periodically updated but sometimes may be behind origin GDC database;
 
-    2. if number of samples in specific type is > 50, we used 50 randomly selected instances
+    2. if number of samples in specific `type` is > 50, we use 50 randomly selected samples
     with assumption that this sample size is large enough to be representative;
 
-    3. if the number of samples in a particular type is < 10, we assumed that this sample size
-    is not large enough to be representative, so it was excluded from our local data repository;
+    3. if the number of samples in a particular `type` is < 10, we assume that this sample size is not large enough
+    to be representative, so this specific `type` is not achievable in our database.
 
     ---
 
@@ -56,15 +55,14 @@ layout = dbc.Container(
 
     #### CpG identifiers
 
-    All CpGs targeted by 450K (n≈450.000) and EPIC (n≈850.000) microarrays have a unique identifier, for example cg22930808.
+    All CpGs targeted by 450K (n≈450.000) and EPIC (n≈850.000) microarrays have a unique identifier (e.g., cg22930808).
     Manifests containing all of targeted CpGs along with genomic context for specific technology are available from:
 
     • [EPIC](https://support.illumina.com/downloads/infinium-methylationepic-v1-0-product-files.html)
 
     • [450K](https://emea.support.illumina.com/downloads/infinium_humanmethylation450_product_files.html)
 
-    Importantly, not all of the 450,000 CpGs targeted by the 450K microarray are present in the EPIC.
-    In addition, some probes may not pass quality control and will not be available for analysis in specific dataset(s).
+    **Importantly**, some probes (CpG) may not pass quality control and will not be available for analysis in certain datasets.
 
     ---
 
@@ -85,7 +83,7 @@ layout = dbc.Container(
 
     Process of DMPs/DEGs identification comprises several steps:
 
-    1. extraction of 10% most variable features (CpGs or genes) in specific dataset
+    1. extraction of 10% the most variable features (CpGs or genes) in specific dataset
     based on standard deviation;
 
     2. for each feature, test for normality (Shapiro-Wilk's test)
@@ -105,7 +103,7 @@ layout = dbc.Container(
         - |delta| = |mean(CpG methylation level in group A) - mean(CpG methylation level in group B)|;
         - FC = mean(gene expression level in group A) / mean(gene expression level in group B)
         - log2(FC) = log2(FC);
-        - Hedges` g = standardized mean difference, in contrary to above described metrics, this one takes in to account
+        - Hedges` g = standardized mean difference, unlike the metrics described above, this one takes in to account
         the pooled standard deviation and the size of both groups of samples;
 
     ---
@@ -116,7 +114,7 @@ layout = dbc.Container(
     methylation level or gene expression level) between multiple
     samples types.
 
-    Process of DMP/DEG identification between multiple samples types comprises several steps:
+    Process of DMP/DEG identification between multiple types of samples comprises several steps:
 
     1. For selected feature, test for homoscedasticity (Levene's test) and normality (Shapiro-Wilk's test)
     at predefined significance level (alpha);
@@ -126,8 +124,7 @@ layout = dbc.Container(
         - if variance between groups are unequal and distributions are normal – apply `Games-Howell post-hoc test`;
         - if distributions are not normal - apply `pairwise Man-Whitney-U test with FDR correction`;
 
-
-    3. Calculate effect size expressed as: delta, fold-change and Hedges` g metrics;
+    3. Calculate effect size expressed as: delta, fold-change and Hedges` g metrics (described in Module 1 section).
 
     ---
 
@@ -139,27 +136,30 @@ layout = dbc.Container(
 
     Procedure of clusters identification comprises:
 
-    1. Re-scale to unit variance and mean zero dataset (nxm) congaing n-number
-    of samples and m-number of features (genes or CpGs);
+    1. Re-scale dataset (nxm) congaing n-number of samples and m-number of features (genes or CpGs)
+    to unit variance and mean zero;
 
     2. Apply PCA (principal component analysis) or t-SNE (t-distributed
-    stochastic neighbor embedding) decomposition algorithm on scaled
+    stochastic neighbor embedding) decomposition algorithm on the scaled
     dataset;
 
     3. Iteratively, for each predefined number of clusters ∈ <2, 10> apply
-    Ward's algorithm and calculate Calinski-Harabasz metric (variance ratio criterion);
+    Ward's algorithm and calculate Calinski-Harabasz metric;
 
     4. Finally, an optimal number of clusters is defined as a number
-    maximizing Calinski-Harabasz metric (the metric is higher when clusters are dense and well separated);
+    maximizing Calinski-Harabasz metric (the metric is higher when clusters are dense and well separated).
 
     ---
 
     #### Module 4: Association browser
 
     Association browser was designed to analyse association between CpG
-    methylation and gene expression.
+    methylation and gene expression levels, using two independent approaches.
 
-    To assess association between quantitative variables, we propose linear model:
+
+    ##### Module 4.1: Regression-based approach
+
+    using linear model:
 
         expression level ~ Intercept + methylation level
 
@@ -167,17 +167,17 @@ layout = dbc.Container(
 
         expression level ~ Intercept + methylation level^1 + methylation level^2 + methylation level^n
 
-    In these models, estimated coefficient(s) express(es) strength of CpG methylation influence on gene expression level.
-    To asses significance of estimated effect Wald`s test is performed.
-
-    Model performance is expressed in form of multiple different
-    parameters, such as: R2, adjusted R2, Log-Likelihood, Akaike
-    information content (AIC) and Bayesian information content (BIC).
-    Larger values of `R2`, `adjusted R2` and `Log Likelihood` indicate a better fit of the model to the data.
-    Lower `AIC` and `BIC` are characterizing less complex and/or better fit models.
-
     Please note in case of model estimated using polynomial-transformed dataset **R2 coefficient may be strongly
-    inflated**, therefore adjusted R2 or AIC/BIC metrics should be interpreted.
+    inflated**, therefore we recommend to interpret adjusted R2 or AIC/BIC metrics.
+
+    ---
+
+    ##### Module 4.2: Bin-based approach
+
+    In the first step, distribution of the methylation level of a particular CpG is divided into n ∈ {2,3,4} equal-size bins.
+    Then expression levels are compared between bins using the same approach as described in Module 2.
+
+    ---
 
     """
         ),
