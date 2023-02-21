@@ -1,6 +1,7 @@
 import logging
 
 import dash
+import numpy as np
 
 logger = logging.getLogger(__name__)
 dash.register_page(__name__)
@@ -10,7 +11,9 @@ import dash_loading_spinners as dls
 import pandas as pd
 from dash import Input, Output, State, callback, dcc, html
 from src.basics import FrameOperations
+from src.plots import Plot
 from src.regression import Model
+from src.statistics import Stats
 from src.utils import load_config, send_slack_msg
 
 EmptyFig = {}
@@ -122,8 +125,25 @@ layout = dbc.Container(
                             step=1,
                             value=1,
                         ),
-                        dbc.FormText(
-                            "Degree equal to 1 is equivalent of classical linear regression."
+                        dbc.FormText("Affects only regression-based approach."),
+                    ],
+                    xs=12,
+                    sm=12,
+                    md=4,
+                    lg=4,
+                    xl=4,
+                ),
+                dbc.Col(
+                    [
+                        html.Label("Alpha (significance level)", htmlFor="alpha-met-exp-browser"),
+                        dcc.Slider(
+                            0.001,
+                            0.1,
+                            0.001,
+                            value=0.05,
+                            tooltip={"placement": "bottom", "always_visible": True},
+                            marks=None,
+                            id="alpha-met-exp-browser",
                         ),
                     ],
                     xs=12,
@@ -144,6 +164,29 @@ layout = dbc.Container(
                             placeholder="None (default)",
                         ),
                         dbc.FormText("Scaling method is applied only on dependent variable."),
+                    ],
+                    xs=12,
+                    sm=12,
+                    md=4,
+                    lg=4,
+                    xl=4,
+                ),
+            ]
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.Label("Number of bins", htmlFor="n-bins-met-exp-browser"),
+                        dcc.Dropdown(
+                            id="n-bins-met-exp-browser",
+                            options=[2, 3, 4],
+                            clearable=True,
+                            multi=False,
+                            value=3,
+                            placeholder="3 (default)",
+                        ),
+                        dbc.FormText("Affects only bins-based approach."),
                     ],
                     xs=12,
                     sm=12,
@@ -183,6 +226,7 @@ layout = dbc.Container(
         dbc.Row(
             dbc.Collapse(
                 [
+                    dbc.Row(html.H5("Regression-based analysis")),
                     dbc.Row(
                         [
                             dbc.Col(
@@ -218,6 +262,50 @@ layout = dbc.Container(
                             dcc.Graph(id="plot-met-exp-browser"), xs=12, sm=12, md=12, lg=12, xl=12
                         )
                     ),
+                    dbc.Row(html.H5("Bin-based analysis")),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                dcc.Graph(id="plot-2-met-exp-browser"),
+                                xs=12,
+                                sm=12,
+                                md=12,
+                                lg=12,
+                                xl=12,
+                            )
+                        ]
+                    ),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                [
+                                    html.Label(
+                                        "Statistics frame",
+                                        htmlFor="result-3-met-exp-browser",
+                                    ),
+                                    dbc.Container(id="result-3-met-exp-browser"),
+                                ],
+                                xs=12,
+                                sm=12,
+                                md=6,
+                                lg=6,
+                                xl=6,
+                            ),
+                            dbc.Col(
+                                [
+                                    html.Label(
+                                        "Sample count frame", htmlFor="result-4-met-exp-browser"
+                                    ),
+                                    dbc.Container(id="result-4-met-exp-browser"),
+                                ],
+                                xs=12,
+                                sm=12,
+                                md=6,
+                                lg=6,
+                                xl=6,
+                            ),
+                        ]
+                    ),
                 ],
                 id="result-section-met-exp-browser",
                 is_open=False,
@@ -252,33 +340,41 @@ def update_inputs_fields(sample_type):
 
 @callback(
     Output("plot-met-exp-browser", "figure"),
+    Output("plot-2-met-exp-browser", "figure"),
     Output("progress-met-exp-browser", "children"),
     Output("result-section-met-exp-browser", "is_open"),
     Output("result-1-met-exp-browser", "children"),
     Output("result-2-met-exp-browser", "children"),
+    Output("result-3-met-exp-browser", "children"),
+    Output("result-4-met-exp-browser", "children"),
     Output("msg-section-met-exp-browser", "is_open"),
     Output("msg-met-exp-browser", "children"),
     State("sample-types-met-exp-browser", "value"),
     State("gene-met-exp-browser", "value"),
     State("probe-met-exp-browser", "value"),
     State("poly-degree-met-exp-browser", "value"),
+    State("alpha-met-exp-browser", "value"),
     State("scaling-method-met-exp-browser", "value"),
+    State("n-bins-met-exp-browser", "value"),
     Input("submit-met-exp-browser", "n_clicks"),
     prevent_initial_call=True,
 )
-def update_model(sample_type, gene_id, probe_id, degree, scaling_method, n_clicks: int):
+def update_model(
+    sample_type, gene_id, probe_id, degree, alpha, scaling_method, n_bins, n_clicks: int
+):
     """
-    Function to perform association analysis.
+    Main function in association browser.
 
     :param sample_type:
     :param gene_id:
     :param probe_id:
     :param degree:
+    :param alpha:
     :param scaling_method:
+    :param n_bins:
     :param n_clicks:
-    :return Optional[Fig, str, boolean, str, str, boolean, str]:
+    :return:
     """
-
     if sample_type and gene_id and probe_id:
         loader = FrameOperations("", sample_type)
         frame, msg = loader.load_met_exp_frame(gene_id, probe_id)
@@ -301,10 +397,32 @@ def update_model(sample_type, gene_id, probe_id, degree, scaling_method, n_click
             x_axis=probe_id, y_axis=gene_id, predicted=predicted, scaling_method=scaling_method
         )
 
+        frame[probe_id] = FrameOperations.bin_variable(frame[probe_id], n_bins)
+
+        stats = Stats(data=frame, factor=probe_id, alpha=alpha)
+        stats.test_normality(gene_id)
+        stats.test_normality(gene_id)
+        stats.post_hoc(gene_id)
+
+        frame3 = stats.export_frame()
+        frame4 = stats.get_factor_count
+
+        plots = Plot(
+            frame,
+            x_axis=probe_id,
+            y_axis=gene_id,
+            scaling_method=None,
+            data_type="Expression",
+            show_legend=False,
+            show_x_ticks=True,
+        )
+
+        fig2 = plots.boxplot(order=np.sort(frame[probe_id].unique()).tolist())
+
         log_info = f"Input: {sample_type} - {gene_id} - {probe_id}"
         send_slack_msg("Association browser", log_info)
         logger.info(log_info)
 
-        return fig, "", True, frame1, frame2, True, msg
+        return fig, fig2, "", True, frame1, frame2, frame3, frame4, True, msg
 
     return dash.no_update
