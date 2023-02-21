@@ -178,7 +178,9 @@ layout = dbc.Container(
                     html.Br(),
                     dbc.Row(
                         [
-                            html.Label("Sample count", htmlFor="count-table-dfeatures-browser"),
+                            html.Label(
+                                "Sample count frame", htmlFor="count-table-dfeatures-browser"
+                            ),
                             dbc.Container(id="count-table-dfeatures-browser"),
                         ]
                     ),
