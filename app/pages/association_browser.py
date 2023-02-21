@@ -382,7 +382,7 @@ def update_model(
         if frame.empty:
             send_slack_msg("Association browser", msg)
             logger.info(msg)
-            return EmptyFig, "", False, "", "", True, msg
+            return EmptyFig, EmptyFig, "", False, "", "", "", "", True, msg
 
         frame[gene_id] = loader.scale(frame[gene_id], scaling_method)
 
