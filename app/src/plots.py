@@ -41,7 +41,7 @@ class Plot:
 
         return f"{self.y_axis}: TPM, scaling: {self.scaling_method}"
 
-    def boxplot(self, order: t.Optional[list[str], None] = None) -> Figure:
+    def boxplot(self, order: t.Optional[list[str]] = None) -> Figure:
         """
         Method to generate boxplot.
 
@@ -67,7 +67,7 @@ class Plot:
 
         return fig
 
-    def violinplot(self, order: t.Optional[list[str], None] = None) -> Figure:
+    def violinplot(self, order: t.Optional[list[str]] = None) -> Figure:
         """
         Method to generate violinplot.
 
@@ -93,7 +93,7 @@ class Plot:
 
         return fig
 
-    def scatterplot(self, order: t.Optional[list[str], None] = None) -> Figure:
+    def scatterplot(self, order: t.Optional[list[str]] = None) -> Figure:
         """
         Method to generate scatterplot.
 
