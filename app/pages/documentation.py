@@ -170,7 +170,6 @@ layout = dbc.Container(
     Please note in case of model estimated using polynomial-transformed dataset **R2 coefficient may be strongly
     inflated**, therefore we recommend to interpret adjusted R2 or AIC/BIC metrics.
 
-    ---
 
     ##### Module 4.2: Bin-based approach
 
