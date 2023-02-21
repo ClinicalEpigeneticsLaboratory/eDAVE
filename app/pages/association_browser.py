@@ -411,7 +411,7 @@ def update_model(
             frame,
             x_axis=probe_id,
             y_axis=gene_id,
-            scaling_method=None,
+            scaling_method=scaling_method,
             data_type="Expression",
             show_legend=False,
             show_x_ticks=True,
