@@ -8,7 +8,7 @@ from pathlib import Path
 import pandas as pd
 from tqdm import tqdm
 
-with open("config.json", "r") as file:
+with open("config.json", "r", encoding="utf-8") as file:
     config = json.load(file)
 
 
@@ -28,7 +28,7 @@ def test_tree_directory() -> None:
 
 def test_sample_sheet_consistency() -> None:
     sample_sheet = pd.read_parquet(config["SAMPLE_SHEET_FILE"])
-    assert False == sample_sheet.empty, "Sample sheet is empty."
+    assert False is sample_sheet.empty, "Sample sheet is empty."
     assert (
         config["SAMPLE_GROUP_ID"] in sample_sheet.columns
     ), "Lack of sample group id information in sample sheet."
@@ -148,13 +148,13 @@ def test_global_metadata() -> None:
     ), "Wrong number of samples types."
 
     expected_exp_files = glob("data/processed/*/RNA-Seq.parquet")
-    expected_exp_files = set([Path(source).parent.name for source in expected_exp_files])
+    expected_exp_files = {Path(source).parent.name for source in expected_exp_files}
     assert expected_exp_files == set(
         global_metadata["Expression_files_present"]
     ), "Wrong collection of expression frames."
 
     expected_met_files = glob("data/processed/*/Methylation Array.parquet")
-    expected_met_files = set([Path(source).parent.name for source in expected_met_files])
+    expected_met_files = {Path(source).parent.name for source in expected_met_files}
     assert expected_met_files == set(
         global_metadata["Methylation_files_present"]
     ), "Wrong collection of methylation frames."
