@@ -1,6 +1,6 @@
 {
     "N_PROCESS": 10,
-    "FILES_LIMIT": 10000000,
+    "FILES_LIMIT": 100000,
     "MIN_COMMON_SAMPLES": 10,
     "MIN_SAMPLES_PER_SAMPLE_GROUP": 10,
     "MAX_SAMPLES_PER_SAMPLE_GROUP": 50,
@@ -10,6 +10,7 @@
     "SAMPLE_SHEET_FILE": "data/meta/sample_sheet.parquet",
     "BASE_DATA_PATH": "data/",
     "DIRECTORY_TREE": ["data/raw/", "data/meta/", "data/processed/", "data/interim/"],
+    "META_PATH": "data/meta/",
     "INTERIM_BASE_PATH": "data/interim",
     "PROCESSED_DIR": "data/processed",
     "METADATA_GLOBAL_FILE": "data/processed/metadataGlobal",
@@ -24,7 +25,8 @@
         "cases.case_id",
         "cases.samples.sample_type",
         "cases.diagnoses.tissue_or_organ_of_origin",
-        "cases.diagnoses.primary_diagnosis"
+        "cases.diagnoses.primary_diagnosis",
+        "cases.sample_ids"
     ],
     "FILTERS_CONFIG": {
         "op": "and",

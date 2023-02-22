@@ -38,7 +38,9 @@ class FrameOperations:
                         f"Gene: '{variable}' not found in '{sample_type}' repository",
                     )
 
-                temporary_frame = pd.read_parquet(join(self.basic_path, sample_type, "Exp.parquet"))
+                temporary_frame = pd.read_parquet(
+                    join(self.basic_path, sample_type, "RNA-Seq.parquet")
+                )
 
             if self.data_type == "Methylation [450K/EPIC]":
                 if variable not in metadata["probes"]:
@@ -47,7 +49,9 @@ class FrameOperations:
                         f"CpG: '{variable}' not found in '{sample_type}' repository",
                     )
 
-                temporary_frame = pd.read_parquet(join(self.basic_path, sample_type, "Met.parquet"))
+                temporary_frame = pd.read_parquet(
+                    join(self.basic_path, sample_type, "Methylation Array.parquet")
+                )
 
             temporary_frame = temporary_frame.loc[variable, :].to_frame()
             temporary_frame["SampleType"] = sample_type
@@ -76,9 +80,13 @@ class FrameOperations:
 
         for sample_type in self.sample_types:
             if self.data_type == "Expression [RNA-seq]":
-                temporary_frame = pd.read_parquet(join(self.basic_path, sample_type, "Exp.parquet"))
+                temporary_frame = pd.read_parquet(
+                    join(self.basic_path, sample_type, "RNA-Seq.parquet")
+                )
             else:
-                temporary_frame = pd.read_parquet(join(self.basic_path, sample_type, "Met.parquet"))
+                temporary_frame = pd.read_parquet(
+                    join(self.basic_path, sample_type, "Methylation Array.parquet")
+                )
 
             temporary_frame = temporary_frame.loc[
                 list(variables.intersection(set(temporary_frame.index)))
@@ -107,9 +115,13 @@ class FrameOperations:
         sample_frame = []
         for sample_type in self.sample_types:
             if self.data_type == "Expression [RNA-seq]":
-                temporary_frame = pd.read_parquet(join(self.basic_path, sample_type, "Exp.parquet"))
+                temporary_frame = pd.read_parquet(
+                    join(self.basic_path, sample_type, "RNA-Seq.parquet")
+                )
             else:
-                temporary_frame = pd.read_parquet(join(self.basic_path, sample_type, "Met.parquet"))
+                temporary_frame = pd.read_parquet(
+                    join(self.basic_path, sample_type, "Methylation Array.parquet")
+                )
 
             if not temporary_frame.empty:
                 frame.append(temporary_frame)
@@ -148,10 +160,12 @@ class FrameOperations:
         if probe not in meta["probes"]:
             return pd.DataFrame(), f"Probe: '{probe}' not found in requested repository."
 
-        exp_frame = pd.read_parquet(join(self.basic_path, self.sample_types, "Exp.parquet"))
+        exp_frame = pd.read_parquet(join(self.basic_path, self.sample_types, "RNA-Seq.parquet"))
         exp_frame = exp_frame.loc[gene, list(meta["commonBetween"])]
 
-        met_frame = pd.read_parquet(join(self.basic_path, self.sample_types, "Met.parquet"))
+        met_frame = pd.read_parquet(
+            join(self.basic_path, self.sample_types, "Methylation Array.parquet")
+        )
         met_frame = met_frame.loc[probe, list(meta["commonBetween"])]
 
         frame = pd.concat((exp_frame, met_frame), axis=1)
