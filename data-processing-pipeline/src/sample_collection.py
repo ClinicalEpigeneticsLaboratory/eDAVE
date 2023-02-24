@@ -15,8 +15,7 @@ class SamplesCollection:
     def get_samples_list(self, strategy: str) -> t.List[str]:
         if strategy == "RNA-Seq":
             return list(self.expression_samples)
-        else:
-            return list(self.methylation_samples)
+        return list(self.methylation_samples)
 
     @property
     def get_common_samples_list(self) -> t.List[str]:
