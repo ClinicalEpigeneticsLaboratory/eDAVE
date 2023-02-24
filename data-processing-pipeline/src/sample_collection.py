@@ -10,10 +10,7 @@ class SamplesCollection:
     common_samples: t.Set[str] = field(default_factory=set)
 
     def extract_common(self) -> None:
-        met_samples = {sample.split("_")[0] for sample in self.methylation_samples}
-        exp_samples = {sample.split("_")[0] for sample in self.expression_samples}
-
-        self.common_samples = met_samples.intersection(exp_samples)
+        self.common_samples = self.methylation_samples.intersection(self.expression_samples)
 
     def get_samples_list(self, strategy: str) -> t.List[str]:
         if strategy == "RNA-Seq":

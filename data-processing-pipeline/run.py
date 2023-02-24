@@ -17,7 +17,6 @@ from src.sample_collection import SamplesCollection
 from src.utils import load_config
 from tqdm import tqdm
 
-np.random.seed(101)
 config = load_config()
 
 GDC_TRANSFER_TOOL_EXECUTABLE = config["GDC_TRANSFER_TOOL_EXECUTABLE"]
@@ -204,6 +203,7 @@ def build_manifest(
     :return final_list_of_samples:
     """
 
+    np.random.seed(101)
     sample_sheet = pd.read_parquet(sample_sheet_path)
     sample_sheet = sample_sheet[sample_sheet.experimental_strategy == strategy]
 
