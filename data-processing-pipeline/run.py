@@ -530,7 +530,7 @@ def clean_sample_sheet(
         meta = pd.read_pickle(file)
         exp_samples, met_samples = meta["expressionSamples"], meta["methylationSamples"]
         samples_ = exp_samples.union(met_samples)
-        samples = samples.union(samples_)
+        samples = samples | samples_
 
     logger.info(
         f"Exporting final sample sheet for n={len(samples)} samples, initially n={sample_sheet.shape[0]}"
