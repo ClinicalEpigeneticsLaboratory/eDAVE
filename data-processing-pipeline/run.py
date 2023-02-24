@@ -5,7 +5,7 @@ from os import makedirs
 from os.path import exists, join
 from pathlib import Path
 from subprocess import call
-from typing import List
+from typing import List, Set
 
 import numpy as np
 import pandas as pd
@@ -187,7 +187,7 @@ def build_manifest(
     manifests_base_path: str = INTERIM_BASE_PATH,
     max_samples: int = MAX_SAMPLES_PER_SAMPLE_GROUP,
     min_samples: int = MIN_SAMPLES_PER_SAMPLE_GROUP,
-) -> List[str]:
+) -> Set[str]:
     """
     Function builds manifest files required by GDC downloading tool. These manifests are required by GDC-tool.
     One manifest is generated for one sample type in one specific directory. Moreover manifests are constrained by min and
@@ -211,7 +211,7 @@ def build_manifest(
         collections = pickle.load(file)
 
     logger = get_run_logger()
-    final_list_of_samples = []
+    final_set_of_samples = set()
     endpoint = "https://api.gdc.cancer.gov/manifest/"
 
     for group_of_samples, collection in collections.items():
@@ -257,7 +257,7 @@ def build_manifest(
             )
 
         samples = list(samples)
-        final_list_of_samples.extend(samples)
+        final_set_of_samples = final_set_of_samples | set(samples)
         files = temp_sample_sheet.loc[samples, "id"].tolist()
 
         # make dir for specific sample group
@@ -283,26 +283,27 @@ def build_manifest(
             f"Exporting manifest for: {group_of_samples}:{strategy} n samples: {len(samples)}"
         )
 
-    return final_list_of_samples
+    return final_set_of_samples
 
 
 @task
 def update_sample_sheet(
-    final_list_of_samples: List[str], sample_sheet_path: str = SAMPLE_SHEET_FILE
+    final_set_of_samples: Set[str], sample_sheet_path: str = SAMPLE_SHEET_FILE
 ) -> None:
     """
     Function updates sample sheet based on constrained manifest files.
 
-    :param final_list_of_samples:
+    :param final_set_of_samples:
     :param sample_sheet_path:
     :return: None
     """
     logger = get_run_logger()
     sample_sheet = pd.read_parquet(sample_sheet_path)
+    logger.info(f"Manifest size before update {sample_sheet.shape}")
 
-    sample_sheet = sample_sheet[sample_sheet.index.isin(final_list_of_samples)]
+    sample_sheet = sample_sheet[sample_sheet.index.isin(final_set_of_samples)]
     sample_sheet.to_parquet(sample_sheet_path)
-    logger.info("Exporting updated manifest")
+    logger.info(f"Exporting updated manifest - shape {sample_sheet.shape}")
 
 
 @task
@@ -652,7 +653,7 @@ def run():
 
     samples_set_Met = build_manifest("Methylation Array")
     samples_set_Exp = build_manifest("RNA-Seq")
-    update_sample_sheet([*samples_set_Exp, *samples_set_Met])
+    update_sample_sheet(samples_set_Exp.union(samples_set_Met))
 
     download()
     build_met_frame()
