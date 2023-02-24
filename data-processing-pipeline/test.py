@@ -36,7 +36,7 @@ def test_tree_directory() -> None:
         assert exists(path), f"Can`t find {path}"
 
 
-def test_sample_sheet_consistency() -> None:
+def test_sample_sheet_construction() -> None:
     """
     Test to check sample sheet construction.
 
@@ -49,34 +49,19 @@ def test_sample_sheet_consistency() -> None:
         config["SAMPLE_GROUP_ID"] in sample_sheet.columns
     ), "Lack of sample group id information in sample sheet."
 
-    processed_files = glob("data/processed/*/*.parquet")
-    assert processed_files, "Can`t find parquet files in processed directory."
-
-    for source in tqdm(processed_files):
-        sample_group = Path(source).parent.name
-        strategy = Path(source).name.replace(".parquet", "")
-
-        observed_samples = pd.read_parquet(source)
-        observed_samples = set(observed_samples.columns)
-
-        expected_samples = sample_sheet[sample_sheet.experimental_strategy == strategy]
-        expected_samples = expected_samples[
-            expected_samples[config["SAMPLE_GROUP_ID"]] == sample_group
-        ]
-        expected_samples = set(expected_samples.case_id)
-
-        assert observed_samples == expected_samples, f"Sample sheet and are not consistent."
-
 
 def test_samples_names_per_frame() -> None:
     """
-    Test to check if samples names in processed frames are consistent with sample sheet.
+    Test to check if samples names in processed frames [met and exp] are consistent with sample sheet.
 
     :return:
     """
     sample_sheet = pd.read_parquet(config["SAMPLE_SHEET_FILE"])
+    processed_files = glob("data/processed/*/*.parquet")
 
-    for source in tqdm(glob("data/processed/*/*.parquet")):
+    assert processed_files, "Can`t find parquet files in processed directory."
+
+    for source in tqdm(processed_files):
         stype = Path(source).parent.name
         e_strategy = Path(source).name.replace(".parquet", "")
 
@@ -85,14 +70,14 @@ def test_samples_names_per_frame() -> None:
             & (sample_sheet["experimental_strategy"] == e_strategy)
         ]
 
-        expected_samples_per_samples_types = set(temp_sample_sheet.case_id)
+        expected_samples_per_samples_types = set(temp_sample_sheet.index)
 
         samples = pd.read_parquet(source).columns.tolist()
         samples = set(samples)
 
         assert samples.issubset(
             expected_samples_per_samples_types
-        ), f"Non consistent names of samples in processed frames."
+        ), "Non consistent names of samples [case ids] between processed frames and the sample sheet."
 
 
 def test_manifests_files() -> None:
@@ -117,12 +102,16 @@ def test_manifests_files() -> None:
         ]
 
         expected_files = set(expected_files["id"])
-        assert expected_files == observed_files, f"Non consistent manifests files."
+        assert (
+            expected_files == observed_files
+        ), "Non consistent manifests files with sample sheet in terms of files id."
 
 
 def test_meta_samples_collection_1() -> None:
     """
-    Test to check if samples in cleaned sample sheet are subset of samples collections objects.
+    Test to check if samples in cleaned sample sheet are subset of all samples in collections objects.
+    Collection objects contain all met and exp samples with no restriction to max number of samples, so finally
+    samples in local data repository should be a subset of initial sets.
 
     :return:
     """
@@ -174,9 +163,10 @@ def test_meta_samples_collection_2() -> None:
 
             exp_samples = pd.read_parquet(exp_path).columns
             exp_samples = set(exp_samples)
+
             assert exp_samples.issubset(
                 all_exp_samples
-            ), "Exp samples in exp frame are not subset of collection object."
+            ), "Exp samples in exp frame are not subset of exp samples in collection object."
 
         if exists(meth_path):
             all_met_samples = collection.methylation_samples
@@ -185,7 +175,7 @@ def test_meta_samples_collection_2() -> None:
             met_samples = set(met_samples)
             assert met_samples.issubset(
                 all_met_samples
-            ), "Met samples in met frame are not subset of collection object."
+            ), "Met samples in met frame are not subset of met samples in collection object."
 
         if exists(meth_path) and exists(exp_path):
             all_common_samples = collection.common_samples
@@ -193,7 +183,7 @@ def test_meta_samples_collection_2() -> None:
             common = exp_samples.intersection(met_samples)
             assert common.issubset(
                 all_common_samples
-            ), "Common samples between met and exp frames are not subset of collection object."
+            ), "Common samples between met and exp frames are not subset of common samples in collection object."
 
 
 def test_metadata() -> None:
@@ -209,7 +199,7 @@ def test_metadata() -> None:
 
         assert (
             expected_sample_group == metadata["SampleGroup"]
-        ), f"Wrongly specified name of samples group."
+        ), "Wrongly specified name of samples group."
 
         if metadata["genes"]:
             frame = pd.read_parquet(join(Path(source).parent, "RNA-Seq.parquet"))
