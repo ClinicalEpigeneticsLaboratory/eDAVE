@@ -5,7 +5,7 @@ from os import makedirs
 from os.path import exists, join
 from pathlib import Path
 from subprocess import call
-from typing import List, Set
+from typing import Set
 
 import numpy as np
 import pandas as pd
@@ -332,6 +332,8 @@ def download(
                 "download",
                 "-n",
                 f"{N_PROCESS}",
+                "--wait-time",
+                "5",
                 "-m",
                 f"{manifest}",
                 "-d",
@@ -383,7 +385,7 @@ def build_met_frame(
             frame = pd.concat(frame, axis=1)
             frame = frame.loc[:, ~frame.columns.duplicated(keep="first")]
 
-            frame.to_parquet(join(out_dir, sample_group, f"Methylation Array.parquet"), index=True)
+            frame.to_parquet(join(out_dir, sample_group, "Methylation Array.parquet"), index=True)
             logger.info(f"Exporting Methylation frame for {sample_group}: {frame.shape}")
 
 
@@ -433,7 +435,7 @@ def build_exp_frame(
             frame = pd.concat(frame, axis=1)
             frame = frame.loc[:, ~frame.columns.duplicated(keep="first")]
 
-            frame.to_parquet(join(out_dir, sample_group, f"RNA-Seq.parquet"), index=True)
+            frame.to_parquet(join(out_dir, sample_group, "RNA-Seq.parquet"), index=True)
             logger.info(f"Exporting Expression frame for {sample_group}: {frame.shape}")
 
 
@@ -524,19 +526,33 @@ def clean_sample_sheet(
 
     meta_files = glob(join(final_dir, "*", "metadata"))
     sample_sheet = pd.read_parquet(sample_sheet_path)
-    samples = set()
+
+    exp_samples = set()
+    met_samples = set()
 
     for file in meta_files:
         meta = pd.read_pickle(file)
-        exp_samples, met_samples = meta["expressionSamples"], meta["methylationSamples"]
-        samples_ = exp_samples.union(met_samples)
-        samples = samples | samples_
+        exp_samples_, met_samples_ = meta["expressionSamples"], meta["methylationSamples"]
+        exp_samples = exp_samples | exp_samples_
+        met_samples = met_samples | met_samples_
+
+    exp_sample_sheet = sample_sheet[
+        (sample_sheet.index.isin(exp_samples) & (sample_sheet.experimental_strategy == "RNA-Seq"))
+    ]
+
+    met_sample_sheet = sample_sheet[
+        (
+            sample_sheet.index.isin(met_samples)
+            & (sample_sheet.experimental_strategy == "Methylation Array")
+        )
+    ]
+
+    cleaned_sample_sheet = pd.concat((exp_sample_sheet, met_sample_sheet))
+    cleaned_sample_sheet.to_parquet(sample_sheet_path)
 
     logger.info(
-        f"Exporting final sample sheet for n={len(samples)} samples, initially n={sample_sheet.shape[0]}"
+        f"Exporting final sample sheet {cleaned_sample_sheet}, initial shape was {sample_sheet.shape}"
     )
-
-    sample_sheet[sample_sheet["case_id"].isin(samples)].to_parquet(sample_sheet_path)
 
 
 @task
@@ -653,7 +669,7 @@ def run():
 
     samples_set_Met = build_manifest("Methylation Array")
     samples_set_Exp = build_manifest("RNA-Seq")
-    update_sample_sheet(samples_set_Exp.union(samples_set_Met))
+    update_sample_sheet(samples_set_Exp | samples_set_Met)
 
     download()
     build_met_frame()
