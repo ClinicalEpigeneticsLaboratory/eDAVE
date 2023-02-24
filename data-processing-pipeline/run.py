@@ -238,11 +238,13 @@ def build_manifest(
             len(samples) > max_samples and 0 < len(collection.get_common_samples_list) < 50
         ):  # condition for sampling from common samples and non-common samples
             samples_p1 = collection.common_samples  # common samples
-            n_to_sample = max_samples - len(samples_p1)  # number of additional samples
+            n_to_sample = max_samples - len(
+                samples_p1
+            )  # number of additional samples to fill limit
             samples_2 = np.random.choice(
                 list(set(samples).difference(set(samples_p1))), n_to_sample, False
             )  # sampling additional samples
-            samples = samples_p1.union(set(samples_2))
+            samples = samples_p1 | set(samples_2)
             logger.info(
                 f"Partial sampling from: {strategy} - {group_of_samples} using {len(samples_p1)} COMMON samples and {len(samples_2)} non-COMMON samples, in summary n={len(samples)}, n > MAX_SAMPLES_PER_SAMPLE_GROUP"
             )
