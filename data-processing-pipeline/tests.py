@@ -6,10 +6,143 @@ from os.path import exists, join
 from pathlib import Path
 
 import pandas as pd
+from src.collector import SamplesCollector
 from tqdm import tqdm
 
 with open("config.json", "r", encoding="utf-8") as file:
     config = json.load(file)
+
+
+def test_collector_1() -> None:
+    """
+    Test to check scenario when common samples > min samples, final met and exp samples should contain the same samples.
+
+    :return:
+    """
+    methylation_samples = ["A", "B", "C", "D", "E", "F", "G"]
+    expression_samples = ["A", "B", "C", "D", "E", "F", "G"]
+    common = list(set(methylation_samples).intersection(set(expression_samples)))
+
+    sa = SamplesCollector(
+        min_samples=5,
+        max_samples=10,
+        name="",
+        methylation_samples=methylation_samples,
+        expression_samples=expression_samples,
+        common_samples=common,
+    )
+
+    exp = sa.get_samples_list("RNA-Seq")
+    met = sa.get_samples_list("Methylation Array")
+
+    assert met == exp == common, "Met and exp should be equal to common set."
+
+
+def test_collector_2() -> None:
+    """
+    Test to check if met and exp < min samples, so final met and exp lists should be empty.
+
+    :return:
+    """
+    methylation_samples = ["A", "B"]
+    expression_samples = ["A", "B"]
+    common = list(set(methylation_samples).intersection(set(expression_samples)))
+
+    sa = SamplesCollector(
+        min_samples=3,
+        max_samples=10,
+        name="",
+        methylation_samples=methylation_samples,
+        expression_samples=expression_samples,
+        common_samples=common,
+    )
+
+    exp = sa.get_samples_list("RNA-Seq")
+    met = sa.get_samples_list("Methylation Array")
+
+    assert met == exp == [], "Met and exp should be empty sets."
+
+
+def test_collector_3() -> None:
+    """
+    Test to check if met > max samples and exp < min samples, so final met list should be subset of initial met and exp
+    list should be empty.
+
+    :return:
+    """
+    methylation_samples = ["A", "B", "C", "D", "E", "F", "G"]
+    expression_samples = ["A", "B"]
+    common = list(set(methylation_samples).intersection(set(expression_samples)))
+
+    sa = SamplesCollector(
+        min_samples=3,
+        max_samples=5,
+        name="",
+        methylation_samples=methylation_samples,
+        expression_samples=expression_samples,
+        common_samples=common,
+    )
+
+    exp = sa.get_samples_list("RNA-Seq")
+    met = sa.get_samples_list("Methylation Array")
+
+    assert set(met).issubset(set(methylation_samples)), "Wrongly specified met set."
+    assert len(met) == len(set(met)), "Met set contains non unique objects."
+    assert len(met) == 5, "Wrong met set length."
+    assert exp == [], "Exp set should be empty."
+
+
+def test_collector_4() -> None:
+    """
+    Test to check if max samples > met > min samples and exp < min samples, so final met list should be equal to initial
+    and exp list should be empty.
+
+    :return:
+    """
+    methylation_samples = ["A", "B", "C"]
+    expression_samples = ["A", "B"]
+    common = list(set(methylation_samples).intersection(set(expression_samples)))
+
+    sa = SamplesCollector(
+        min_samples=3,
+        max_samples=10,
+        name="",
+        methylation_samples=methylation_samples,
+        expression_samples=expression_samples,
+        common_samples=common,
+    )
+
+    exp = sa.get_samples_list("RNA-Seq")
+    met = sa.get_samples_list("Methylation Array")
+
+    assert met == methylation_samples, "Wrongly specified met set."
+    assert exp == [], "Exp set should be empty."
+
+
+def test_collector_5() -> None:
+    """
+    Test to check if common > min samples so met end exp should contain only common samples.
+
+    :return:
+    """
+    methylation_samples = ["A", "B", "C", "D", "E", "F"]
+    expression_samples = ["A", "B", "C", "D", "E"]
+    common = list(set(methylation_samples).intersection(set(expression_samples)))
+
+    sa = SamplesCollector(
+        min_samples=3,
+        max_samples=5,
+        name="",
+        methylation_samples=methylation_samples,
+        expression_samples=expression_samples,
+        common_samples=common,
+    )
+
+    exp = sa.get_samples_list("RNA-Seq")
+    met = sa.get_samples_list("Methylation Array")
+
+    assert met == exp == common, "Wrongly specified met or exp sets."
+    assert len(met) == 5, "Wrong number of samples per set."
 
 
 def test_config_file() -> None:
@@ -70,13 +203,13 @@ def test_samples_names_per_frame() -> None:
             & (sample_sheet["experimental_strategy"] == e_strategy)
         ]
 
-        expected_samples_per_samples_types = set(temp_sample_sheet.index)
+        expected_samples_per_samples_types = set(temp_sample_sheet.case_id)
 
-        samples = pd.read_parquet(source).columns.tolist()
-        samples = set(samples)
+        observed_samples = pd.read_parquet(source).columns.tolist()
+        observed_samples = set(observed_samples)
 
-        assert samples.issubset(
-            expected_samples_per_samples_types
+        assert (
+            observed_samples == expected_samples_per_samples_types
         ), "Non consistent names of samples [case ids] between processed frames and the sample sheet."
 
 
@@ -101,7 +234,7 @@ def test_manifests_files() -> None:
             & (sample_sheet["experimental_strategy"] == experimental_strategy)
         ]
 
-        expected_files = set(expected_files["id"])
+        expected_files = set(expected_files.index)
         assert (
             expected_files == observed_files
         ), "Non consistent manifests files with sample sheet in terms of files id."
@@ -109,9 +242,7 @@ def test_manifests_files() -> None:
 
 def test_meta_samples_collection_1() -> None:
     """
-    Test to check if samples in cleaned sample sheet are subset of all samples in collections objects.
-    Collection objects contain all met and exp samples with no restriction to max number of samples, so finally
-    samples in local data repository should be a subset of initial sets.
+    Test to check if samples in cleaned sample sheet are consistent with SamplesCollector objects.
 
     :return:
     """
@@ -123,30 +254,32 @@ def test_meta_samples_collection_1() -> None:
     for stype, collection in collections.items():
         temp_sample_sheet = sample_sheet[sample_sheet.SAMPLE_GROUP_ID == stype]
 
-        all_met_samples = collection.methylation_samples
-        all_exp_samples = collection.expression_samples
+        expected_met_samples = set(collection.get_samples_list("Methylation Array"))
+        expected_exp_samples = set(collection.get_samples_list("RNA-Seq"))
 
         selected_exp_samples = set(
-            temp_sample_sheet[temp_sample_sheet.experimental_strategy == "RNA-Seq"].index
+            temp_sample_sheet[temp_sample_sheet.experimental_strategy == "RNA-Seq"]["case_id"]
         )
         selected_met_samples = set(
-            temp_sample_sheet[temp_sample_sheet.experimental_strategy == "Methylation Array"].index
+            temp_sample_sheet[temp_sample_sheet.experimental_strategy == "Methylation Array"][
+                "case_id"
+            ]
         )
 
         assert len(selected_met_samples) <= 50, "Wrong number of met samples in final sample sheet"
         assert len(selected_exp_samples) <= 50, "Wrong number of exp samples in final sample sheet"
 
-        assert selected_exp_samples.issubset(
-            all_exp_samples
+        assert (
+            selected_exp_samples == expected_exp_samples
         ), "Cleaned sample sheet exp files should be a subset of all Exp files."
-        assert selected_met_samples.issubset(
-            all_met_samples
+        assert (
+            selected_met_samples == expected_met_samples
         ), "Cleaned sample sheet met files should be a subset of all Met files."
 
 
 def test_meta_samples_collection_2() -> None:
     """
-    Test to check if samples in met and exp frames are subset of samples collections objects.
+    Test to check if samples in met and exp frames are consistent with SamplesCollector objects.
 
     :return:
     """
@@ -159,31 +292,23 @@ def test_meta_samples_collection_2() -> None:
         exp_path = join(config["PROCESSED_DIR"], name, "RNA-Seq.parquet")
 
         if exists(exp_path):
-            all_exp_samples = collection.expression_samples
+            expected_exp_samples = set(collection.get_samples_list("RNA-Seq"))
 
-            exp_samples = pd.read_parquet(exp_path).columns
-            exp_samples = set(exp_samples)
+            observed_exp_samples = pd.read_parquet(exp_path).columns
+            observed_exp_samples = set(observed_exp_samples)
 
-            assert exp_samples.issubset(
-                all_exp_samples
-            ), "Exp samples in exp frame are not subset of exp samples in collection object."
+            assert (
+                observed_exp_samples == expected_exp_samples
+            ), "Exp samples in exp frame are not consistent with exp samples in collection object."
 
         if exists(meth_path):
-            all_met_samples = collection.methylation_samples
+            expected_met_samples = set(collection.get_samples_list("Methylation Array"))
 
-            met_samples = pd.read_parquet(meth_path).columns
-            met_samples = set(met_samples)
-            assert met_samples.issubset(
-                all_met_samples
-            ), "Met samples in met frame are not subset of met samples in collection object."
-
-        if exists(meth_path) and exists(exp_path):
-            all_common_samples = collection.common_samples
-
-            common = exp_samples.intersection(met_samples)
-            assert common.issubset(
-                all_common_samples
-            ), "Common samples between met and exp frames are not subset of common samples in collection object."
+            observed_met_samples = pd.read_parquet(meth_path).columns
+            observed_met_samples = set(observed_met_samples)
+            assert (
+                observed_met_samples == expected_met_samples
+            ), "Met samples in met frame are not consistent with met samples in collection object."
 
 
 def test_metadata() -> None:
@@ -193,7 +318,7 @@ def test_metadata() -> None:
 
     :return:
     """
-    for source in tqdm(glob("data/processed/*/metadata")):
+    for source in tqdm(glob("data/processed/*/metadata.pkl")):
         metadata = pd.read_pickle(source)
         expected_sample_group = Path(source).parent.name
 
@@ -228,7 +353,7 @@ def test_global_metadata() -> None:
 
     :return:
     """
-    global_metadata = pd.read_pickle("data/processed/metadataGlobal")
+    global_metadata = pd.read_pickle("data/processed/global_metadata_file.pkl")
     expected_number_of_stypes = len(glob("data/processed/*/"))
 
     assert (
