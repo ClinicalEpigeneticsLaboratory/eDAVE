@@ -29,7 +29,7 @@ class FrameOperations:
         frame = []
 
         for sample_type in self.sample_types:
-            metadata = pd.read_pickle(join(self.basic_path, sample_type, "metadata"))
+            metadata = pd.read_pickle(join(self.basic_path, sample_type, "metadata.pkl"))
 
             if self.data_type == "Expression [RNA-seq]":
                 if variable not in metadata["genes"]:
@@ -149,7 +149,7 @@ class FrameOperations:
         :param probe:
         :return:
         """
-        meta = pd.read_pickle(join(self.basic_path, self.sample_types, "metadata"))
+        meta = pd.read_pickle(join(self.basic_path, self.sample_types, "metadata.pkl"))
 
         if not meta["commonBetween"]:
             return pd.DataFrame(), "No common samples for this sample type."
