@@ -3,8 +3,8 @@
   "maintenance_page": false,
   "version": "1.0",
   "sample_sheet": "../data-processing-pipeline/data/meta/sample_sheet.parquet",
-  "global_metadata": "../data-processing-pipeline/data/processed/metadataGlobal",
-  "summary_metafile": "../data-processing-pipeline/data/processed/summaryMetaFile",
+  "global_metadata": "../data-processing-pipeline/data/processed/global_metadata_file.pkl",
+  "summary_metafile": "../data-processing-pipeline/data/processed/summary_metafile.pkl",
   "base_path": "../data-processing-pipeline/data/processed",
   "footer_link": "https://www.pum.edu.pl/studia_iii_stopnia/informacje_z_jednostek/wfbmiml/samodzielna_pracownia_epigenetyki_klinicznej/"
 }
