@@ -353,7 +353,7 @@ def test_global_metadata() -> None:
 
     :return:
     """
-    global_metadata = pd.read_pickle("data/processed/global_metadata_file.pkl")
+    global_metadata = pd.read_pickle(config["METADATA_GLOBAL_FILE"])
     expected_number_of_stypes = len(glob("data/processed/*/"))
 
     assert (

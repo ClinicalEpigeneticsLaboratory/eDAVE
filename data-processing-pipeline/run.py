@@ -352,7 +352,7 @@ def build_met_frame(
             for data_file in files_in_sample_group:
                 file_id = str(Path(data_file).parent.name)
 
-                sample_id = sample_sheet.loc[file_id, "case_id"].squeeze()
+                sample_id = sample_sheet.loc[file_id, "case_id"]
                 sample = pd.read_table(data_file, header=None, index_col=0)
 
                 sample.columns = [sample_id]
@@ -400,7 +400,7 @@ def build_exp_frame(
             for data_file in files_in_sample_group:
                 file_id = str(Path(data_file).parent.name)
 
-                sample_id = sample_sheet[sample_sheet["id"] == file_id]["case_id"][0]
+                sample_id = sample_sheet.loc[file_id, "case_id"]
                 sample = pd.read_table(data_file, comment="#", low_memory=False)[
                     ["gene_name", "tpm_unstranded"]
                 ]
