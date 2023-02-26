@@ -195,10 +195,8 @@ layout = dbc.Container(
                         [
                             dbc.Col(
                                 [
-                                    html.Label(
-                                        "Sample count frame", htmlFor="count-table-1d-browser"
-                                    ),
-                                    dbc.Container(id="count-table-1d-browser"),
+                                    html.Label("Statistics frame", htmlFor="post-hoc-1d-browser"),
+                                    dbc.Container(id="post-hoc-1d-browser"),
                                 ],
                                 xs=12,
                                 sm=12,
@@ -208,8 +206,10 @@ layout = dbc.Container(
                             ),
                             dbc.Col(
                                 [
-                                    html.Label("Statistics frame", htmlFor="post-hoc-1d-browser"),
-                                    dbc.Container(id="post-hoc-1d-browser"),
+                                    html.Label(
+                                        "Sample count frame", htmlFor="count-table-1d-browser"
+                                    ),
+                                    dbc.Container(id="count-table-1d-browser"),
                                 ],
                                 xs=12,
                                 sm=12,
