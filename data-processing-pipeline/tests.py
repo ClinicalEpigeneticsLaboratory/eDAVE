@@ -177,7 +177,7 @@ def test_sample_sheet_construction() -> None:
     """
     sample_sheet = pd.read_parquet(config["SAMPLE_SHEET_FILE"])
     assert False is sample_sheet.empty, "Sample sheet is empty."
-    assert sample_sheet.id.nunique() == sample_sheet.shape[0], "Files ids non unique."
+    assert sample_sheet.index.nunique() == sample_sheet.shape[0], "Files ids non unique."
     assert (
         config["SAMPLE_GROUP_ID"] in sample_sheet.columns
     ), "Lack of sample group id information in sample sheet."
