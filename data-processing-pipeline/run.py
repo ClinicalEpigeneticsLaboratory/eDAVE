@@ -5,15 +5,15 @@ from os import makedirs
 from os.path import exists, join
 from pathlib import Path
 from subprocess import call
-from typing import Set
+from typing import Dict, List, Set
 
 import numpy as np
 import pandas as pd
 import requests
 from prefect import flow, get_run_logger, task
-from src.exceptions import RepositoryExistsError
+from src.collector import SamplesCollector
+from src.exceptions import NonUniqueIndex, RepositoryExistsError
 from src.records import GlobalMetaRecord, MetaRecord, RepositorySummary
-from src.sample_collection import SamplesCollection
 from src.utils import load_config
 from tqdm import tqdm
 
@@ -111,9 +111,12 @@ def build_sample_sheet(
     # fill nans in platform field
     frame.platform = frame.platform.fillna("RNA-Seq [platform - unknown]")
 
-    # set index as case_id
-    frame.index = frame["cases.0.case_id"]
+    # set index as file id
+    frame.index = frame["id"]
     frame.index.name = ""
+
+    if len(frame.index) != len(set(frame.index)):
+        raise NonUniqueIndex("Sample sheet index are not unique.")
 
     # rename columns
     frame.columns = [name.split(".")[-1] if "." in name else name for name in frame.columns]
@@ -145,7 +148,7 @@ def build_sample_sheet(
 
 
 @task
-def prepare_samples_lists(
+def prepare_samples_collections(
     sample_sheet_path: str = SAMPLE_SHEET_FILE,
     sample_group_id: str = SAMPLE_GROUP_ID,
     path_to_meta: str = META_PATH,
@@ -153,26 +156,39 @@ def prepare_samples_lists(
 
     collections = {}
     logger = get_run_logger()
+    np.random.seed(101)
+
     sample_sheet = pd.read_parquet(sample_sheet_path)
+    exp_sample_sheet = sample_sheet[sample_sheet.experimental_strategy == "RNA-Seq"]
+    met_sample_sheet = sample_sheet[sample_sheet.experimental_strategy == "Methylation Array"]
 
     for group_of_samples in sample_sheet[sample_group_id].unique():
         logger.info(f"Exporting SamplesCollection object per {group_of_samples}")
 
-        # get cases in specific group_of_samples
-        temp_sample_sheet = sample_sheet[sample_sheet[sample_group_id] == group_of_samples]
-        single_collection = SamplesCollection(name=group_of_samples)
+        exp_samples = exp_sample_sheet[exp_sample_sheet[sample_group_id] == group_of_samples][
+            "case_id"
+        ].tolist()
+        met_samples = met_sample_sheet[met_sample_sheet[sample_group_id] == group_of_samples][
+            "case_id"
+        ].tolist()
 
-        for strategy in temp_sample_sheet["experimental_strategy"].unique():
-            temp_sample_sheet_per_platform = temp_sample_sheet[
-                temp_sample_sheet.experimental_strategy == strategy
-            ]
-            if strategy == "Methylation Array":
-                single_collection.methylation_samples = set(temp_sample_sheet_per_platform.index)
-            else:
-                single_collection.expression_samples = set(temp_sample_sheet_per_platform.index)
+        if len(exp_samples) != len(set(exp_samples)):
+            raise NonUniqueIndex("Non unique exp samples.")
 
-        single_collection.extract_common()
-        collections[group_of_samples] = single_collection
+        if len(exp_samples) != len(set(exp_samples)):
+            raise NonUniqueIndex("Non unique met samples.")
+
+        common_samples = list(set(exp_samples).intersection(set(met_samples)))
+        collection = SamplesCollector(
+            name=sample_group_id,
+            methylation_samples=met_samples,
+            expression_samples=exp_samples,
+            common_samples=common_samples,
+            max_samples=MAX_SAMPLES_PER_SAMPLE_GROUP,
+            min_samples=MIN_SAMPLES_PER_SAMPLE_GROUP,
+        )
+
+        collections[group_of_samples] = collection
 
     with open(join(path_to_meta, "samples_collection.pkl"), "wb") as file:
         pickle.dump(collections, file)
@@ -182,85 +198,45 @@ def prepare_samples_lists(
 def build_manifest(
     strategy: str,
     path_to_meta: str = META_PATH,
-    sample_sheet_path: str = SAMPLE_SHEET_FILE,
     sample_group_id: str = SAMPLE_GROUP_ID,
+    sample_sheet_path: str = SAMPLE_SHEET_FILE,
     manifests_base_path: str = INTERIM_BASE_PATH,
-    max_samples: int = MAX_SAMPLES_PER_SAMPLE_GROUP,
-    min_samples: int = MIN_SAMPLES_PER_SAMPLE_GROUP,
-) -> Set[str]:
+    endpoint="https://api.gdc.cancer.gov/manifest/",
+) -> List[str]:
     """
-    Function builds manifest files required by GDC downloading tool. These manifests are required by GDC-tool.
-    One manifest is generated for one sample type in one specific directory. Moreover manifests are constrained by min and
-    max number of samples.
+    Function builds manifest files required by GDC downloading tool.
 
     :param strategy:
     :param path_to_meta:
+    :param sample_group_id:
     :param sample_sheet_path:
     :param manifests_base_path:
-    :param sample_group_id:
-    :param max_samples:
-    :param min_samples:
+    :param endpoint:
     :return final_list_of_samples:
     """
 
-    np.random.seed(101)
     sample_sheet = pd.read_parquet(sample_sheet_path)
-    sample_sheet = sample_sheet[sample_sheet.experimental_strategy == strategy]
-
     with open(join(path_to_meta, "samples_collection.pkl"), "rb") as file:
         collections = pickle.load(file)
 
     logger = get_run_logger()
-    final_set_of_samples = set()
-    endpoint = "https://api.gdc.cancer.gov/manifest/"
+    final_set_of_files = []
 
     for group_of_samples, collection in collections.items():
-        temp_sample_sheet = sample_sheet[sample_sheet[sample_group_id] == group_of_samples]
+        temp_sample_sheet = sample_sheet[
+            (sample_sheet.experimental_strategy == strategy)
+            & (sample_sheet[sample_group_id] == group_of_samples)
+        ]
+
         samples = collection.get_samples_list(strategy)
+        files = temp_sample_sheet[temp_sample_sheet.case_id.isin(samples)].index.tolist()
+        final_set_of_files.extend(files)
 
-        if len(samples) < min_samples:  # condition for non-representative sample size
+        if len(files) != len(set(files)):
+            raise NonUniqueIndex(f"Non unique files ids for {group_of_samples}-{strategy}")
 
-            logger.info(
-                f"Skipping: {strategy} - {group_of_samples}, n < MIN_SAMPLES_PER_SAMPLE_GROUP"
-            )
+        if len(files) == 0:
             continue
-
-        if (
-            len(samples) > max_samples and len(collection.get_common_samples_list) >= 50
-        ):  # condition for sampling only from common samples group
-
-            samples = np.random.choice(collection.get_common_samples_list, max_samples, False)
-            logger.info(
-                f"Complete sampling from: {strategy} - {group_of_samples} COMMON samples, n > MAX_SAMPLES_PER_SAMPLE_GROUP"
-            )
-
-        if (
-            len(samples) > max_samples and 0 < len(collection.get_common_samples_list) < 50
-        ):  # condition for sampling from common samples and non-common samples
-            samples_p1 = collection.common_samples  # common samples
-            n_to_sample = max_samples - len(
-                samples_p1
-            )  # number of additional samples to fill limit
-            samples_2 = np.random.choice(
-                list(set(samples).difference(set(samples_p1))), n_to_sample, False
-            )  # sampling additional samples
-            samples = samples_p1 | set(samples_2)
-            logger.info(
-                f"Partial sampling from: {strategy} - {group_of_samples} using {len(samples_p1)} COMMON samples and {len(samples_2)} non-COMMON samples, in summary n={len(samples)}, n > MAX_SAMPLES_PER_SAMPLE_GROUP"
-            )
-
-        if (
-            len(samples) > max_samples and not collection.get_common_samples_list
-        ):  # condition for sample only from non-COMMON samples (if common are not present)
-
-            samples = np.random.choice(samples, max_samples, False)
-            logger.info(
-                f"Sampling from: {strategy} - {group_of_samples} using ONLY non-COMMON samples, n > MAX_SAMPLES_PER_SAMPLE_GROUP"
-            )
-
-        samples = list(samples)
-        final_set_of_samples = final_set_of_samples | set(samples)
-        files = temp_sample_sheet.loc[samples, "id"].tolist()
 
         # make dir for specific sample group
         makedirs(join(manifests_base_path, group_of_samples, strategy), exist_ok=True)
@@ -285,27 +261,27 @@ def build_manifest(
             f"Exporting manifest for: {group_of_samples}:{strategy} n samples: {len(samples)}"
         )
 
-    return final_set_of_samples
+    return final_set_of_files
 
 
 @task
 def update_sample_sheet(
-    final_set_of_samples: Set[str], sample_sheet_path: str = SAMPLE_SHEET_FILE
+    final_set_of_files: List[str], sample_sheet_path: str = SAMPLE_SHEET_FILE
 ) -> None:
     """
     Function updates sample sheet based on constrained manifest files.
 
-    :param final_set_of_samples:
+    :param final_set_of_files:
     :param sample_sheet_path:
     :return: None
     """
     logger = get_run_logger()
     sample_sheet = pd.read_parquet(sample_sheet_path)
-    logger.info(f"Manifest size before update {sample_sheet.shape}")
+    logger.info(f"Manifest shape before removing unused files {sample_sheet.shape}")
 
-    sample_sheet = sample_sheet[sample_sheet.index.isin(final_set_of_samples)]
+    sample_sheet = sample_sheet.loc[final_set_of_files, :]
     sample_sheet.to_parquet(sample_sheet_path)
-    logger.info(f"Exporting updated manifest - shape {sample_sheet.shape}")
+    logger.info(f"Manifest shape after removing unused files {sample_sheet.shape}")
 
 
 @task
@@ -322,8 +298,8 @@ def download(
     logger = get_run_logger()
     sample_sheet = pd.read_parquet(sample_sheet_path)
 
-    for data_type in sample_sheet["experimental_strategy"].unique():
-        manifests = glob(join(manifest_base_path, "*", f"{data_type}/manifest.txt"))
+    for strategy in sample_sheet["experimental_strategy"].unique():
+        manifests = glob(join(manifest_base_path, "*", strategy, "manifest.txt"))
 
         for manifest in manifests:
             logger.info(f"Downloading: {manifest}")
@@ -349,33 +325,34 @@ def download(
 @task
 def build_met_frame(
     sample_sheet: str = SAMPLE_SHEET_FILE,
-    base_path: str = INTERIM_BASE_PATH,
-    out_dir: str = PROCESSED_DIR,
+    interim_files_path: str = INTERIM_BASE_PATH,
+    processed_dir: str = PROCESSED_DIR,
 ) -> None:
     """
-    Function builds dataframes [Met] using data downloaded from GDC.
+    Function builds data frames [Met] using interim data downloaded from GDC.
 
-    :param ftype:
     :param sample_sheet:
-    :param base_path:
-    :param out_dir:
+    :param interim_files_path:
+    :param processed_dir:
     :return: None
     """
     logger = get_run_logger()
 
-    sample_groups = glob(join(base_path, "*/"))
-    sample_groups = [str(Path(name).name) for name in sample_groups]
+    sample_groups = glob(join(interim_files_path, "*/"))
+    sample_groups = [Path(name).name for name in sample_groups]
     sample_sheet = pd.read_parquet(sample_sheet)
 
     for sample_group in sample_groups:
         frame = []
-        files_in = glob(join(base_path, sample_group, "Methylation Array", "*", "*level3betas.txt"))
+        files_in_sample_group = glob(
+            join(interim_files_path, sample_group, "Methylation Array/", "*/", "*level3betas.txt")
+        )
 
-        if files_in:
-            for data_file in files_in:
+        if files_in_sample_group:
+            for data_file in files_in_sample_group:
                 file_id = str(Path(data_file).parent.name)
 
-                sample_id = sample_sheet[sample_sheet["id"] == file_id]["case_id"][0]
+                sample_id = sample_sheet.loc[file_id, "case_id"].squeeze()
                 sample = pd.read_table(data_file, header=None, index_col=0)
 
                 sample.columns = [sample_id]
@@ -383,41 +360,44 @@ def build_met_frame(
 
                 frame.append(sample)
 
-            makedirs(join(out_dir, sample_group), exist_ok=True)
+            makedirs(join(processed_dir, sample_group), exist_ok=True)
             frame = pd.concat(frame, axis=1)
             frame = frame.loc[:, ~frame.columns.duplicated(keep="first")]
 
-            frame.to_parquet(join(out_dir, sample_group, "Methylation Array.parquet"), index=True)
+            frame.to_parquet(
+                join(processed_dir, sample_group, "Methylation Array.parquet"), index=True
+            )
             logger.info(f"Exporting Methylation frame for {sample_group}: {frame.shape}")
 
 
 @task
 def build_exp_frame(
     sample_sheet: str = SAMPLE_SHEET_FILE,
-    base_path: str = INTERIM_BASE_PATH,
-    out_dir: str = PROCESSED_DIR,
+    interim_files_path: str = INTERIM_BASE_PATH,
+    processed_dir: str = PROCESSED_DIR,
 ) -> None:
     """
     Function builds dataframe [Exp] using data downloaded from GDC.
 
-    :param ftype:
     :param sample_sheet:
-    :param base_path:
-    :param out_dir:
+    :param interim_files_path:
+    :param processed_dir:
     :return: None
     """
     logger = get_run_logger()
 
-    sample_groups = glob(join(base_path, "*/"))
-    sample_groups = [str(Path(name).name) for name in sample_groups]
+    sample_groups = glob(join(interim_files_path, "*/"))
+    sample_groups = [Path(name).name for name in sample_groups]
     sample_sheet = pd.read_parquet(sample_sheet)
 
     for sample_group in sample_groups:
         frame = []
-        files_in = glob(join(base_path, sample_group, "RNA-Seq", "*", "*_star_gene_counts.tsv"))
+        files_in_sample_group = glob(
+            join(interim_files_path, sample_group, "RNA-Seq/", "*/", "*_star_gene_counts.tsv")
+        )
 
-        if files_in:
-            for data_file in files_in:
+        if files_in_sample_group:
+            for data_file in files_in_sample_group:
                 file_id = str(Path(data_file).parent.name)
 
                 sample_id = sample_sheet[sample_sheet["id"] == file_id]["case_id"][0]
@@ -433,31 +413,31 @@ def build_exp_frame(
 
                 frame.append(sample)
 
-            makedirs(join(out_dir, sample_group), exist_ok=True)
+            makedirs(join(processed_dir, sample_group), exist_ok=True)
             frame = pd.concat(frame, axis=1)
             frame = frame.loc[:, ~frame.columns.duplicated(keep="first")]
 
-            frame.to_parquet(join(out_dir, sample_group, "RNA-Seq.parquet"), index=True)
+            frame.to_parquet(join(processed_dir, sample_group, "RNA-Seq.parquet"), index=True)
             logger.info(f"Exporting Expression frame for {sample_group}: {frame.shape}")
 
 
 @task
-def metadata(final_dir: str = PROCESSED_DIR) -> None:
+def metadata(processed_dir: str = PROCESSED_DIR) -> None:
     """
-    Function exports metadata file per each sample type. This file contains details about data type, number of samples,
-    number of genes ad number of samples in specific data type repository.
+    Function exports metadata file per each sample type.
+    This file allows fast access to information about single unit (sample type) in local data repository..
 
-    :param final_dir:
+    :param processed_dir:
     :return: None
     """
     logger = get_run_logger()
 
-    sample_groups = glob(join(final_dir, "*/"))
+    sample_groups = glob(join(processed_dir, "*/"))
     sample_groups = [str(Path(name).name) for name in sample_groups]
 
     for sample_group in tqdm(sample_groups):
-        met_file = join(final_dir, sample_group, "Methylation Array.parquet")
-        exp_file = join(final_dir, sample_group, "RNA-Seq.parquet")
+        met_file = join(processed_dir, sample_group, "Methylation Array.parquet")
+        exp_file = join(processed_dir, sample_group, "RNA-Seq.parquet")
 
         if exists(met_file) and exists(exp_file):
             met_file = pd.read_parquet(met_file)
@@ -506,7 +486,7 @@ def metadata(final_dir: str = PROCESSED_DIR) -> None:
         else:
             record = MetaRecord(sample_group)
 
-        with open(join(final_dir, sample_group, "metadata"), "wb") as meta_file:
+        with open(join(processed_dir, sample_group, "metadata.pkl"), "wb") as meta_file:
             pickle.dump(record.record, meta_file)
 
         logger.info(f"Exporting metadata for {sample_group}")
@@ -514,19 +494,18 @@ def metadata(final_dir: str = PROCESSED_DIR) -> None:
 
 @task
 def clean_sample_sheet(
-    final_dir: str = PROCESSED_DIR, sample_sheet_path: str = SAMPLE_SHEET_FILE
+    processed_dir: str = PROCESSED_DIR, sample_sheet_path: str = SAMPLE_SHEET_FILE
 ) -> None:
     """
-    Function cleans sample sheet due to possible connections issue when data downloading. It means that if error occurs
-    and certain sample is not present in meta file it will be removed from sample sheet.
+    Function cleans sample sheet due to possible connections issue when data downloading.
 
-    :param final_dir:
+    :param processed_dir:
     :param sample_sheet_path:
     :return: None
     """
     logger = get_run_logger()
 
-    meta_files = glob(join(final_dir, "*", "metadata"))
+    meta_files = glob(join(processed_dir, "*", "metadata.pkl"))
     sample_sheet = pd.read_parquet(sample_sheet_path)
 
     exp_samples = set()
@@ -539,12 +518,12 @@ def clean_sample_sheet(
         met_samples = met_samples | met_samples_
 
     exp_sample_sheet = sample_sheet[
-        (sample_sheet.index.isin(exp_samples) & (sample_sheet.experimental_strategy == "RNA-Seq"))
+        (sample_sheet.case_id.isin(exp_samples) & (sample_sheet.experimental_strategy == "RNA-Seq"))
     ]
 
     met_sample_sheet = sample_sheet[
         (
-            sample_sheet.index.isin(met_samples)
+            sample_sheet.case_id.isin(met_samples)
             & (sample_sheet.experimental_strategy == "Methylation Array")
         )
     ]
@@ -553,28 +532,27 @@ def clean_sample_sheet(
     cleaned_sample_sheet.to_parquet(sample_sheet_path)
 
     logger.info(
-        f"Exporting final sample sheet {cleaned_sample_sheet}, initial shape was {sample_sheet.shape}"
+        f"Final sample sheet shape is {cleaned_sample_sheet.shape}, initial shape was {sample_sheet.shape}."
     )
 
 
 @task
 def global_metadata(
-    final_dir: str = PROCESSED_DIR,
+    processed_dir: str = PROCESSED_DIR,
     min_samples: int = MIN_COMMON_SAMPLES,
     metadata_global_path: str = METADATA_GLOBAL_FILE,
 ) -> None:
     """
-    Function builds global metadata file for all sample types. It contains information about which sample types
-    have Exp and/or Met datasets additionally it contains information about datasets comprising common samples between Met and
-    Exp.
+    Function builds global metadata file for all sample types.
+    This file allows fast and spimple access to global information about local repository.
 
-    :param final_dir:
+    :param processed_dir:
     :param min_samples:
     :param metadata_global_path:
     :return: None
     """
     logger = get_run_logger()
-    sample_groups = glob(join(final_dir, "*/"))
+    sample_groups = glob(join(processed_dir, "*/"))
 
     exp_files_present = []
     met_files_present = []
@@ -582,7 +560,7 @@ def global_metadata(
     met_exp_files_with_common_samples_present = []
 
     for sample_group in tqdm(sample_groups):
-        local_metadata = pd.read_pickle(join(sample_group, "metadata"))
+        local_metadata = pd.read_pickle(join(sample_group, "metadata.pkl"))
         sample_group = Path(sample_group).name
 
         if local_metadata["expressionFrame"] and local_metadata["methylationFrame"]:
@@ -609,7 +587,7 @@ def global_metadata(
     with open(metadata_global_path, "wb") as meta_file:
         pickle.dump(record.record, meta_file)
 
-    logger.info("Exporting global metadata for whole repository")
+    logger.info("Exporting global metadata file for current local repository.")
 
 
 @task
@@ -619,8 +597,7 @@ def create_repo_summary(
     metadata_path: str = METADATA_GLOBAL_FILE,
 ) -> None:
     """
-    Function builds repo summary object which contains descriptive data about local data repository.
-    E.g., number of samples, used technology etc.
+    Function builds repo summary object which contains descriptive details about local data repository.
 
     :param output_file:
     :param sample_sheet_path:
@@ -667,11 +644,11 @@ def run():
     request_gdc_service()
 
     build_sample_sheet()
-    prepare_samples_lists()
+    prepare_samples_collections()
 
-    samples_set_Met = build_manifest("Methylation Array")
-    samples_set_Exp = build_manifest("RNA-Seq")
-    update_sample_sheet(samples_set_Exp | samples_set_Met)
+    met_files = build_manifest("Methylation Array")
+    exp_files = build_manifest("RNA-Seq")
+    update_sample_sheet([*met_files, *exp_files])
 
     download()
     build_met_frame()
