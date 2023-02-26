@@ -13,8 +13,8 @@
     "META_PATH": "data/meta/",
     "INTERIM_BASE_PATH": "data/interim",
     "PROCESSED_DIR": "data/processed",
-    "METADATA_GLOBAL_FILE": "data/processed/metadataGlobal",
-    "SUMMARY_METAFILE": "data/processed/summaryMetaFile",
+    "METADATA_GLOBAL_FILE": "data/processed/global_metadata_file.pkl",
+    "SUMMARY_METAFILE": "data/processed/summary_metafile.pkl",
     "FIELDS_CONFIG": [
         "access",
         "data_category",
