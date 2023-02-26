@@ -108,15 +108,15 @@ def build_sample_sheet(
     """
     frame = pd.read_table(input_file)
 
-    # fill nans in platform field
-    frame.platform = frame.platform.fillna("RNA-Seq [platform - unknown]")
-
     # set index as file id
-    frame.index = frame["id"]
+    frame = frame.set_index("id")
     frame.index.name = ""
 
     if len(frame.index) != len(set(frame.index)):
         raise NonUniqueIndex("Sample sheet index are not unique.")
+
+    # fill nans in platform field
+    frame.platform = frame.platform.fillna("RNA-Seq [platform - unknown]")
 
     # rename columns
     frame.columns = [name.split(".")[-1] if "." in name else name for name in frame.columns]
@@ -165,18 +165,17 @@ def prepare_samples_collections(
     for group_of_samples in sample_sheet[sample_group_id].unique():
         logger.info(f"Exporting SamplesCollection object per {group_of_samples}")
 
-        exp_samples = exp_sample_sheet[exp_sample_sheet[sample_group_id] == group_of_samples][
-            "case_id"
-        ].tolist()
-        met_samples = met_sample_sheet[met_sample_sheet[sample_group_id] == group_of_samples][
-            "case_id"
-        ].tolist()
+        exp_samples = (
+            exp_sample_sheet[exp_sample_sheet[sample_group_id] == group_of_samples]["case_id"]
+            .drop_duplicates(keep="first")
+            .tolist()
+        )
 
-        if len(exp_samples) != len(set(exp_samples)):
-            raise NonUniqueIndex("Non unique exp samples.")
-
-        if len(exp_samples) != len(set(exp_samples)):
-            raise NonUniqueIndex("Non unique met samples.")
+        met_samples = (
+            met_sample_sheet[met_sample_sheet[sample_group_id] == group_of_samples]["case_id"]
+            .drop_duplicates(keep="first")
+            .tolist()
+        )
 
         common_samples = list(set(exp_samples).intersection(set(met_samples)))
         collection = SamplesCollector(
