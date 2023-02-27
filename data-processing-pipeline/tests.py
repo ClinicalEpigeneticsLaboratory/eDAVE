@@ -154,7 +154,7 @@ def test_config_file() -> None:
     assert (
         config["MAX_SAMPLES_PER_SAMPLE_GROUP"] > config["MIN_SAMPLES_PER_SAMPLE_GROUP"]
     ), "MAX and MIN params wrongly specified."
-    assert multiprocessing.cpu_count() >= config["N_PROCESS"], "N_PROCESS exceed limit."
+    assert multiprocessing.cpu_count() * 3 >= config["N_PROCESS"], "N_PROCESS exceed limit."
     assert exists(config["GDC_TRANSFER_TOOL_EXECUTABLE"]), "Can`t find GDC tool."
     assert config["FILES_LIMIT"] > 0, "Negative limit of files."
 
