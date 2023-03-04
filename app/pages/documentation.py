@@ -173,7 +173,7 @@ layout = dbc.Container(
 
     ##### Module 4.2: Bin-based approach
 
-    In the first step, distribution of the methylation level of a particular CpG is divided into n ∈ {2,3,4} equal-size bins.
+    In the first step, distribution of the methylation level of a particular CpG is divided into n ∈ {2,3,4} sorted and equal-size bins.
     Then expression levels are compared between bins using the same approach as described in Module 2.
 
     ---
