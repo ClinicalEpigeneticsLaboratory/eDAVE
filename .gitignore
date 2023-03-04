@@ -6,6 +6,9 @@ __pycache__/
 # env
 app/.env
 
+# cache
+app/cache/
+
 # external tools
 gdc-client
 

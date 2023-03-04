@@ -2,6 +2,7 @@ import logging
 import typing as t
 
 import dash
+import diskcache
 
 logger = logging.getLogger(__name__)
 dash.register_page(__name__)
@@ -11,6 +12,7 @@ import dash_loading_spinners as dls
 import numpy as np
 import pandas as pd
 from dash import Input, Output, State, callback, dcc, html
+from dash.long_callback import DiskcacheLongCallbackManager
 from src.basics import FrameOperations
 from src.differential_features import DifferentialFeatures
 from src.plots import Plot
@@ -20,6 +22,10 @@ from src.utils import load_config, send_slack_msg, temp_file_path
 EmptyFig = {}
 config = load_config()
 global_metadata = pd.read_pickle(config["global_metadata"])
+
+app = dash.get_app()
+cache = diskcache.Cache("./cache")
+long_callback_manager = DiskcacheLongCallbackManager(cache)
 
 layout = dbc.Container(
     [
@@ -284,7 +290,7 @@ def return_statistic_frame(
     return dcc.send_data_frame(frame.to_csv, "summary_table.csv")
 
 
-@callback(
+@app.long_callback(
     Output("plot-dfeatures-browser", "figure"),
     Output("result-section-dfeatures-browser", "is_open"),
     Output("msg-dfeatures-browser", "children"),
@@ -297,6 +303,7 @@ def return_statistic_frame(
     State("alpha-dfeatures-browser", "value"),
     State("min-effect-dfeatures-browser", "value"),
     Input("submit-dfeatures-browser", "n_clicks"),
+    manager=long_callback_manager,
     prevent_initial_call=True,
 )
 def main_dfeatures_browser(
