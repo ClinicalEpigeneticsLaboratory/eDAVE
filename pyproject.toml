@@ -31,7 +31,6 @@ diskcache = "^5.4.0"
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.4.4"
 black = "^22.6.0"
-nb-black = "^1.0.7"
 pylint = "^2.14.5"
 bandit = "^1.7.4"
 isort = "^5.10.1"
