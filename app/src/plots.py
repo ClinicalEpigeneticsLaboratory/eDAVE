@@ -15,7 +15,7 @@ class Plot:
         y_axis: str,
         scaling_method: str,
         data_type: str,
-        font_size: int = 20,
+        font_size: int = 19,
         show_legend: bool = True,
         show_x_ticks: bool = False,
     ):
@@ -58,7 +58,7 @@ class Plot:
             yaxis=dict(title=self.__yaxis_title()),
             xaxis=dict(title="", showticklabels=self.show_x_ticks),
             font=dict(size=self.font_size),
-            legend=dict(title="", orientation="h", y=-0.2),
+            legend=dict(title="", orientation="h", y=-0.25),
             showlegend=self.show_legend,
         )
 
@@ -84,7 +84,7 @@ class Plot:
             yaxis=dict(title=self.__yaxis_title()),
             xaxis=dict(title="", showticklabels=self.show_x_ticks),
             font=dict(size=self.font_size),
-            legend=dict(title="", orientation="h", y=-0.2),
+            legend=dict(title="", orientation="h", y=-0.25),
             showlegend=self.show_legend,
         )
 
@@ -110,7 +110,7 @@ class Plot:
             yaxis=dict(title=self.__yaxis_title()),
             xaxis=dict(title="", showticklabels=self.show_x_ticks),
             font=dict(size=self.font_size),
-            legend=dict(title="", orientation="h", y=-0.2),
+            legend=dict(title="", orientation="h", y=-0.25),
             showlegend=self.show_legend,
         )
 
