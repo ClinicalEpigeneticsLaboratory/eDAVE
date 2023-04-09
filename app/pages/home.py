@@ -11,13 +11,13 @@ card_1_content = [
     dbc.CardHeader("Tool"),
     dbc.CardBody(
         [
-            html.H5("Differential features browser", className="card-title"),
+            html.H5("Differential features (DEGs/DMPs) explorer", className="card-title"),
             html.P(
-                "Module to identify differentially expressed genes (DEGs) or differentially methylated positions (DMPs) \
+                "Identification of differentially expressed genes (DEGs) or differentially methylated positions (DMPs) \
                  between groups of samples.",
                 className="card-text",
             ),
-            dbc.Button("Go", href="/differential-features-browser", className="mt-auto"),
+            dbc.Button("Go", href="/differential-features-explorer", className="mt-auto"),
         ]
     ),
 ]
@@ -26,13 +26,13 @@ card_2_content = [
     dbc.CardHeader("Tool"),
     dbc.CardBody(
         [
-            html.H5("1-D browser", className="card-title"),
+            html.H5("Single probe/gene explorer", className="card-title"),
             html.P(
                 "One-dimensional visualisation and statistical analysis of gene expression or CpG \
                 methylation across various samples types.",
                 className="card-text",
             ),
-            dbc.Button("Go", href="/one-dimensional-browser", className="mt-auto"),
+            dbc.Button("Go", href="/probe-gene-explorer", className="mt-auto"),
         ]
     ),
 ]
@@ -41,13 +41,13 @@ card_3_content = [
     dbc.CardHeader("Tool"),
     dbc.CardBody(
         [
-            html.H5("M-D browser", className="card-title"),
+            html.H5("Cluster explorer", className="card-title"),
             html.P(
                 "Multidimensional visualisation and cluster analysis of genes expression or CpGs \
                 methylation across various samples types.",
                 className="card-text",
             ),
-            dbc.Button("Go", href="/multi-dimensional-browser", className="mt-auto"),
+            dbc.Button("Go", href="/cluster-explorer", className="mt-auto"),
         ]
     ),
 ]
@@ -56,13 +56,13 @@ card_4_content = [
     dbc.CardHeader("Tool"),
     dbc.CardBody(
         [
-            html.H5("Association browser", className="card-title"),
+            html.H5("Methylation-expression explorer", className="card-title"),
             html.P(
                 "Analysis of association between CpG methylation and gene expression\
                  within a specific sample type.",
                 className="card-text",
             ),
-            dbc.Button("Go", href="/association-browser", className="mt-auto"),
+            dbc.Button("Go", href="/association-explorer", className="mt-auto"),
         ]
     ),
 ]

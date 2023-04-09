@@ -29,7 +29,7 @@ long_callback_manager = DiskcacheLongCallbackManager(cache)
 
 layout = dbc.Container(
     [
-        dbc.Row([html.Br(), html.H3("Differential features (DEGs / DMPs) browser"), html.Hr()]),
+        dbc.Row([html.Br(), html.H3("Differential features (DEGs/DMPs) explorer"), html.Hr()]),
         dbc.Row(
             [
                 dbc.Col(
@@ -50,7 +50,7 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        html.Label("Group A", htmlFor="groupA-dfeatures-browser"),
+                        html.Label("Category A", htmlFor="groupA-dfeatures-browser"),
                         dcc.Dropdown(
                             id="groupA-dfeatures-browser",
                             options=[],
@@ -60,7 +60,7 @@ layout = dbc.Container(
                             placeholder="Firstly select a data type",
                             optionHeight=100,
                         ),
-                        dbc.FormText("Select cohort A to perform comparison."),
+                        dbc.FormText("Select category A to perform comparison."),
                     ],
                     xs=10,
                     sm=10,
@@ -70,7 +70,7 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        html.Label("Group B", htmlFor="groupB-dfeatures-browser"),
+                        html.Label("Category B", htmlFor="groupB-dfeatures-browser"),
                         dcc.Dropdown(
                             id="groupB-dfeatures-browser",
                             options=[],
@@ -80,7 +80,7 @@ layout = dbc.Container(
                             placeholder="Firstly select a data type",
                             optionHeight=100,
                         ),
-                        dbc.FormText("Select cohort B to perform comparison."),
+                        dbc.FormText("Select category B to perform comparison."),
                     ],
                     xs=10,
                     sm=10,
@@ -168,7 +168,21 @@ layout = dbc.Container(
                 [
                     html.Br(),
                     dbc.Row(
-                        dbc.Row(dcc.Graph(id="plot-dfeatures-browser")),
+                        dbc.Row(
+                            dcc.Graph(
+                                id="plot-dfeatures-browser",
+                                config={
+                                    "toImageButtonOptions": {
+                                        "format": "svg",
+                                        "filename": "volcano_plot.svg",
+                                        "height": 500,
+                                        "width": 700,
+                                        "scale": 2,
+                                    },
+                                    "displayModeBar": True,
+                                },
+                            )
+                        ),
                     ),
                     html.Br(),
                     dbc.Row(

@@ -22,7 +22,7 @@ global_metadata = pd.read_pickle(config["global_metadata"])
 
 layout = dbc.Container(
     [
-        dbc.Row([html.Br(), html.H3("Multidimensional browser"), html.Hr()]),
+        dbc.Row([html.Br(), html.H3("Cluster explorer"), html.Hr()]),
         dbc.Row(
             [
                 dbc.Col(
@@ -43,7 +43,9 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        html.Label("Select sample type/s", htmlFor="sample-types-multidim-browser"),
+                        html.Label(
+                            "Select sample category(ies)", htmlFor="sample-types-multidim-browser"
+                        ),
                         dcc.Dropdown(
                             id="sample-types-multidim-browser",
                             options=[],
@@ -53,7 +55,7 @@ layout = dbc.Container(
                             disabled=True,
                             optionHeight=100,
                         ),
-                        dbc.FormText("Maximum number of samples types is 5."),
+                        dbc.FormText("Maximum number of samples categories is 5."),
                     ],
                     xs=10,
                     sm=10,
@@ -176,7 +178,19 @@ layout = dbc.Container(
                                     html.Label(
                                         "Samples marked by type", htmlFor="plot-multidim-browser"
                                     ),
-                                    dcc.Graph(id="plot-multidim-browser"),
+                                    dcc.Graph(
+                                        id="plot-multidim-browser",
+                                        config={
+                                            "toImageButtonOptions": {
+                                                "format": "svg",
+                                                "filename": "cluster_1_plot.svg",
+                                                "height": 500,
+                                                "width": 700,
+                                                "scale": 2,
+                                            },
+                                            "displayModeBar": True,
+                                        },
+                                    ),
                                 ],
                                 xs=12,
                                 sm=12,
@@ -190,7 +204,19 @@ layout = dbc.Container(
                                         "Samples marked by predicted cluster",
                                         htmlFor="plot-2-multidim-browser",
                                     ),
-                                    dcc.Graph(id="plot-2-multidim-browser"),
+                                    dcc.Graph(
+                                        id="plot-2-multidim-browser",
+                                        config={
+                                            "toImageButtonOptions": {
+                                                "format": "svg",
+                                                "filename": "cluster_2_plot.svg",
+                                                "height": 500,
+                                                "width": 700,
+                                                "scale": 2,
+                                            },
+                                            "displayModeBar": True,
+                                        },
+                                    ),
                                 ],
                                 xs=12,
                                 sm=12,

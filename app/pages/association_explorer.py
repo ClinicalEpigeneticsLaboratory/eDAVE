@@ -26,12 +26,14 @@ available_sample_types = available_sample_types[
 
 layout = dbc.Container(
     [
-        dbc.Row([html.Br(), html.H3("Association browser"), html.Hr()]),
+        dbc.Row([html.Br(), html.H3("Methylation-expression explorer"), html.Hr()]),
         dbc.Row(
             [
                 dbc.Col(
                     [
-                        html.Label("Sample type", htmlFor="sample-types-met-exp-browser"),
+                        html.Label(
+                            "Select sample category", htmlFor="sample-types-met-exp-browser"
+                        ),
                         dcc.Dropdown(
                             id="sample-types-met-exp-browser",
                             options=available_sample_types,
@@ -259,14 +261,43 @@ layout = dbc.Container(
                     ),
                     dbc.Row(
                         dbc.Col(
-                            dcc.Graph(id="plot-met-exp-browser"), xs=12, sm=12, md=12, lg=12, xl=12
+                            dcc.Graph(
+                                id="plot-met-exp-browser",
+                                config={
+                                    "toImageButtonOptions": {
+                                        "format": "svg",
+                                        "filename": "regression_based_plot.svg",
+                                        "height": 500,
+                                        "width": 700,
+                                        "scale": 2,
+                                    },
+                                    "displayModeBar": True,
+                                },
+                            ),
+                            xs=12,
+                            sm=12,
+                            md=12,
+                            lg=12,
+                            xl=12,
                         )
                     ),
                     dbc.Row(html.H5("Bin-based analysis")),
                     dbc.Row(
                         [
                             dbc.Col(
-                                dcc.Graph(id="plot-2-met-exp-browser"),
+                                dcc.Graph(
+                                    id="plot-2-met-exp-browser",
+                                    config={
+                                        "toImageButtonOptions": {
+                                            "format": "svg",
+                                            "filename": "bin_based_plot.svg",
+                                            "height": 500,
+                                            "width": 700,
+                                            "scale": 2,
+                                        },
+                                        "displayModeBar": True,
+                                    },
+                                ),
                                 xs=12,
                                 sm=12,
                                 md=12,

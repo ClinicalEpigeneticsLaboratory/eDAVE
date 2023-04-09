@@ -21,7 +21,7 @@ global_metadata = pd.read_pickle(config["global_metadata"])
 
 layout = dbc.Container(
     [
-        dbc.Row([html.Br(), html.H3("One dimensional browser"), html.Hr()]),
+        dbc.Row([html.Br(), html.H3("Single probe/gene explorer"), html.Hr()]),
         dbc.Row(
             [
                 dbc.Col(
@@ -43,7 +43,9 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        html.Label("Sample type/s", htmlFor="sample-types-1d-browser"),
+                        html.Label(
+                            "Select sample category(ies)", htmlFor="sample-types-1d-browser"
+                        ),
                         dcc.Dropdown(
                             id="sample-types-1d-browser",
                             options=[],
@@ -53,7 +55,7 @@ layout = dbc.Container(
                             disabled=True,
                             optionHeight=100,
                         ),
-                        dbc.FormText("Maximum number of samples types is 5."),
+                        dbc.FormText("Maximum number of samples categories is 5."),
                     ],
                     xs=10,
                     sm=10,
@@ -190,7 +192,21 @@ layout = dbc.Container(
         dbc.Row(
             dbc.Collapse(
                 [
-                    dbc.Row(dcc.Graph(id="plot-1d-browser")),
+                    dbc.Row(
+                        dcc.Graph(
+                            id="plot-1d-browser",
+                            config={
+                                "toImageButtonOptions": {
+                                    "format": "svg",
+                                    "filename": "cluster_2_plot.svg",
+                                    "height": 500,
+                                    "width": 700,
+                                    "scale": 2,
+                                },
+                                "displayModeBar": True,
+                            },
+                        )
+                    ),
                     dbc.Row(
                         [
                             dbc.Col(

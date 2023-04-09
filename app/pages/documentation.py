@@ -17,9 +17,9 @@ layout = dbc.Container(
     #### Sample(s) type(s)
 
     We grouped samples deposited in Genomic Data Commons (GDC) into homogeneous groups,
-    named `types`, using following strategy:
+    named `categories` or `types`, using following strategy:
 
-        sample type = <GDC sample_type> + _ + <GDC tissue or organ of origin> + _ + <GDC primary diagnosis>
+        sample category = <GDC sample_type> + _ + <GDC tissue or organ of origin> + _ + <GDC primary diagnosis>
 
     For example: `Primary Tumor_Kidney_Papillary adenocarcinoma, NOS`
 
