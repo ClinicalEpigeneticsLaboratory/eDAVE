@@ -15,7 +15,7 @@ class Plot:
         y_axis: str,
         scaling_method: str,
         data_type: str,
-        font_size: int = 14,
+        font_size: int = 20,
         show_legend: bool = True,
         show_x_ticks: bool = False,
     ):
@@ -151,7 +151,7 @@ class MultiDimPlot:
         self.data = data
         self.factor = factor
         self.n_dimensions = n_dimensions
-        self.font_size = 14
+        self.font_size = 16
 
     def plot(self) -> Figure:
         """
@@ -190,7 +190,7 @@ class MultiDimPlot:
 
         fig.update_layout(
             font=dict(size=self.font_size),
-            legend=dict(title="", orientation="h", y=-0.2),
+            legend=dict(title="", orientation="h", y=-0.3),
         )
 
         return fig

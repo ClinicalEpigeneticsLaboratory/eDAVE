@@ -126,7 +126,7 @@ class Model:
                 line=dict(color="firebrick", width=3, dash="dot"),
             )
         )
-        fig.update_layout(font=dict(size=14))
+        fig.update_layout(font=dict(size=20))
 
         return fig
 
