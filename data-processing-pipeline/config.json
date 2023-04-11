@@ -55,6 +55,10 @@
                     "value": [
                               "Primary Tumor",
                               "Solid Tissue Normal",
+                              "Primary Blood Derived Cancer - Bone Marrow",
+                              "Primary Blood Derived Cancer - Peripheral Blood",
+                              "Bone Marrow Normal",
+                              "Blood Derived Normal",
                               "Metastatic"
                               ]
                 }
