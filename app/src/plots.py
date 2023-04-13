@@ -186,9 +186,12 @@ class MultiDimPlot:
             )
             fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
+        camera = dict(eye=dict(x=2, y=2, z=0.1))
+
         fig.update_layout(
             font=dict(size=self.font_size),
             legend=dict(title="", orientation="h", y=-0.3),
+            scene_camera=camera,
         )
 
         return fig
