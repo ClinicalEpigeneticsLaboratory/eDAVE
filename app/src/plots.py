@@ -178,6 +178,7 @@ class MultiDimPlot:
                 xaxis=dict(showticklabels=False),
                 yaxis=dict(showticklabels=False),
             )
+
         else:
             col1, col2, col3 = data.columns[0], data.columns[1], data.columns[2]
             fig = px.scatter_3d(
@@ -194,9 +195,11 @@ class MultiDimPlot:
                 margin=dict(l=0, r=0, t=0, b=0),
                 scene_camera=camera,
                 font=dict(size=self.font_size - 4),
-                xaxis=dict(showticklabels=False),
-                yaxis=dict(showticklabels=False),
-                zaxis=dict(showticklabels=False),
+                scene=dict(
+                    xaxis=dict(showticklabels=False),
+                    yaxis=dict(showticklabels=False),
+                    zaxis=dict(showticklabels=False),
+                ),
             )
 
         fig.update_layout(
