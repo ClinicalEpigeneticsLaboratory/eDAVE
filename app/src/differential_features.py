@@ -110,6 +110,7 @@ class DifferentialFeatures:
                 frame["delta"].abs() >= self.effect_size
             )
 
+        frame = frame.sort_values("DEG/DMP", ascending=False)
         self.stats_frame = frame
 
     def export(self, path: str) -> None:
