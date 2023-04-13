@@ -151,7 +151,7 @@ class MultiDimPlot:
         self.data = data
         self.factor = factor
         self.n_dimensions = n_dimensions
-        self.font_size = 16
+        self.font_size = 14
 
     def plot(self) -> Figure:
         """
