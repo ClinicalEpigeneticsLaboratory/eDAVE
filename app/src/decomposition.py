@@ -72,7 +72,7 @@ class DataDecomposition:
         deco_data = pca.fit_transform(data_to_deco)
 
         col_names = [
-            f"PCA{cnt + 1} {round(var * 100, 0)}%"
+            f"PCA{cnt + 1} {int(var * 100)}%"
             for cnt, var in enumerate(pca.explained_variance_ratio_)
         ]
         deco_data = pd.DataFrame(deco_data, index=data_to_deco.index, columns=col_names)
