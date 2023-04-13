@@ -192,8 +192,6 @@ class MultiDimPlot:
             font=dict(size=self.font_size),
             legend=dict(title="", orientation="h", y=-0.3),
             scene_camera=camera,
-            width=600,
-            height=600,
         )
 
         return fig
