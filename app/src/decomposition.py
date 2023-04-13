@@ -56,7 +56,7 @@ class DataDecomposition:
         data_to_deco, factor = self.__prepare_data()
         deco_data = tsne.fit_transform(data_to_deco)
 
-        col_names = [f"t-SNE {i}" for i in range(1, self.n_components + 1)]
+        col_names = [f"t-SNE{i}" for i in range(1, self.n_components + 1)]
         deco_data = pd.DataFrame(deco_data, index=data_to_deco.index, columns=col_names)
 
         return pd.concat((deco_data, factor), axis=1)
@@ -72,7 +72,7 @@ class DataDecomposition:
         deco_data = pca.fit_transform(data_to_deco)
 
         col_names = [
-            f"PCA {cnt + 1} ({round(var * 100, 1)}%)"
+            f"PCA{cnt + 1} {round(var * 100, 0)}%"
             for cnt, var in enumerate(pca.explained_variance_ratio_)
         ]
         deco_data = pd.DataFrame(deco_data, index=data_to_deco.index, columns=col_names)
