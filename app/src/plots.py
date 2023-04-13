@@ -151,7 +151,7 @@ class MultiDimPlot:
         self.data = data
         self.factor = factor
         self.n_dimensions = n_dimensions
-        self.font_size = 14
+        self.font_size = 18
 
     def plot(self) -> Figure:
         """
@@ -173,6 +173,7 @@ class MultiDimPlot:
                 hover_data=[names],
                 category_orders={self.factor: sorted(self.data[self.factor].unique())},
             )
+            fig.update_layout(font=dict(size=self.font_size))
         else:
             col1, col2, col3 = data.columns[0], data.columns[1], data.columns[2]
             fig = px.scatter_3d(
@@ -184,14 +185,15 @@ class MultiDimPlot:
                 hover_data=[names],
                 category_orders={self.factor: sorted(self.data[self.factor].unique())},
             )
-            fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
-
-        camera = dict(eye=dict(x=2, y=2, z=0.1))
+            camera = dict(eye=dict(x=2, y=2, z=0.1))
+            fig.update_layout(
+                margin=dict(l=0, r=0, t=0, b=0),
+                scene_camera=camera,
+                font=dict(size=self.font_size - 4),
+            )
 
         fig.update_layout(
-            font=dict(size=self.font_size),
             legend=dict(title="", orientation="h", y=-0.3),
-            scene_camera=camera,
         )
 
         return fig
