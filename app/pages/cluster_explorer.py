@@ -347,7 +347,7 @@ def main_multidim_browser(
     variables: str,
     perplexity: int,
     method: str,
-    n_clicks: int,
+    _: int,
 ):
     """
     Function to perform multidimensional analysis.

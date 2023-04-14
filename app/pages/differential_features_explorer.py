@@ -321,7 +321,7 @@ def return_statistic_frame(
     prevent_initial_call=True,
 )
 def main_dfeatures_browser(
-    data_type: str, group_A: str, group_B: str, alpha: float, effect_size: float, clicks: int
+    data_type: str, group_A: str, group_B: str, alpha: float, effect_size: float, _: int
 ):
     """
     Function to perform DE/DM analysis.
@@ -331,7 +331,7 @@ def main_dfeatures_browser(
     :param group_B:
     :param alpha:
     :param effect_size:
-    :param clicks:
+    :param _:
     :return Optional[Fig, boolean, str, boolean, str, pd.DataFrame]:
     """
     if data_type and group_A and group_B:

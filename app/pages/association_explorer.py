@@ -390,9 +390,7 @@ def update_inputs_fields(sample_type):
     Input("submit-met-exp-browser", "n_clicks"),
     prevent_initial_call=True,
 )
-def update_model(
-    sample_type, gene_id, probe_id, degree, alpha, scaling_method, n_bins, n_clicks: int
-):
+def update_model(sample_type, gene_id, probe_id, degree, alpha, scaling_method, n_bins, _: int):
     """
     Main function in association browser.
 
@@ -403,7 +401,7 @@ def update_model(
     :param alpha:
     :param scaling_method:
     :param n_bins:
-    :param n_clicks:
+    :param _:
     :return:
     """
     if sample_type and gene_id and probe_id:

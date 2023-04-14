@@ -321,7 +321,7 @@ def main_1d_browser(
     scaling_method: str,
     plot_type: str,
     alpha: float,
-    n_clicks: int,
+    _: int,
 ):
     """
     Function to perform 1-D analysis.
@@ -332,7 +332,7 @@ def main_1d_browser(
     :param scaling_method:
     :param plot_type:
     :param alpha:
-    :param n_clicks:
+    :param _:
     :return Optional[boolean, Fig, boolean, str, pd.DataFrame, pd.DataFrame, str]:
     """
     if data_type and variable:
