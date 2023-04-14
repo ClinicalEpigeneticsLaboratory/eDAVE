@@ -192,7 +192,7 @@ class MultiDimPlot:
             )
 
             fig.update_layout(
-                margin={"l": 0, "r": 0, "T": 0, "b": 0},
+                margin={"l": 0, "r": 0, "t": 0, "b": 0},
                 font={"size": self.font_size - 4},
                 scene={
                     "xaxis": {"showticklabels": False},
@@ -202,5 +202,4 @@ class MultiDimPlot:
             )
 
         fig.update_layout(legend={"title": "", "orientation": "h", "y": -0.3})
-
         return fig
