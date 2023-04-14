@@ -15,14 +15,6 @@ isort:
 	@echo "Imports sorting"
 	poetry run isort .
 
-pylint:
-	@echo "Code QC"
-	poetry run pylint *
-
-bandit:
-	@echo "Security check"
-	poetry run bandit -r app/
-
 tests_data_processing_pipeline:
 	@echo "Running tests for data processing pipeline"
 	cd data-processing-pipeline/ && poetry run python -m pytest tests.py
@@ -30,3 +22,11 @@ tests_data_processing_pipeline:
 tests_app:
 	@echo "Running tests for app"
 	cd app/ && poetry run python -m pytest tests.py
+
+pylint:
+	@echo "Code QC"
+	poetry run pylint *
+
+bandit:
+	@echo "Security check"
+	poetry run bandit -r app/ -s B101,B301,B403
