@@ -194,6 +194,7 @@ class MultiDimPlot:
             fig.update_layout(
                 margin={"l": 0, "r": 0, "t": 0, "b": 0},
                 font={"size": self.font_size - 4},
+                scene_camera={"eye": {"x": 2, "y": 2, "z": 0.1}},
                 scene={
                     "xaxis": {"showticklabels": False},
                     "yaxis": {"showticklabels": False},
