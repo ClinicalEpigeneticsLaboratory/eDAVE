@@ -151,6 +151,7 @@ class Model:
                 "maxWidth": "100%",
                 "padding": "1%",
             },
+            export_format="csv",
             virtualization=False,
             style_data={"whiteSpace": "normal", "height": "auto"},
         )
@@ -175,6 +176,7 @@ class Model:
                 "maxWidth": "100%",
                 "padding": "1%",
             },
+            export_format="csv",
             virtualization=False,
             style_data={"whiteSpace": "normal", "height": "auto"},
         )
