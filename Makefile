@@ -1,4 +1,4 @@
-all: black isort bandit pylint tests
+all: black isort bandit tests_data_processing_pipeline tests_app pylint
 
 
 set_up:
@@ -23,6 +23,10 @@ bandit:
 	@echo "Security check"
 	poetry run bandit -r app/
 
-tests:
-	@echo "Unit tests"
+tests_data_processing_pipeline:
+	@echo "Running tests for data processing pipeline"
 	cd data-processing-pipeline/ && poetry run python -m pytest tests.py
+
+tests_app:
+	@echo "Running tests for app"
+	cd app/ && poetry run python -m pytest tests.py
