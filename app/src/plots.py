@@ -55,10 +55,10 @@ class Plot:
             hover_data=[self.names],
         )
         fig.update_layout(
-            yaxis=dict(title=self.__yaxis_title()),
-            xaxis=dict(title="", showticklabels=self.show_x_ticks),
-            font=dict(size=self.font_size),
-            legend=dict(title="", orientation="h", y=-0.25),
+            yaxis={"title": self.__yaxis_title()},
+            xaxis={"title": "", "showticklabels": self.show_x_ticks},
+            font={"size": self.font_size},
+            legend={"title": "", "orientation": "h", "y": -0.25},
             showlegend=self.show_legend,
         )
 
@@ -81,10 +81,10 @@ class Plot:
             hover_data=[self.names],
         )
         fig.update_layout(
-            yaxis=dict(title=self.__yaxis_title()),
-            xaxis=dict(title="", showticklabels=self.show_x_ticks),
-            font=dict(size=self.font_size),
-            legend=dict(title="", orientation="h", y=-0.25),
+            yaxis={"title": self.__yaxis_title()},
+            xaxis={"title": "", "showticklabels": self.show_x_ticks},
+            font={"size": self.font_size},
+            legend={"title": "", "orientation": "h", "y": -0.25},
             showlegend=self.show_legend,
         )
 
@@ -107,10 +107,10 @@ class Plot:
             hover_data=[self.names],
         )
         fig.update_layout(
-            yaxis=dict(title=self.__yaxis_title()),
-            xaxis=dict(title="", showticklabels=self.show_x_ticks),
-            font=dict(size=self.font_size),
-            legend=dict(title="", orientation="h", y=-0.25),
+            yaxis={"title": self.__yaxis_title()},
+            xaxis={"title": "", "showticklabels": "self.show_x_ticks"},
+            font={"size": self.font_size},
+            legend={"title": "", "orientation": "h", "y": -0.25},
             showlegend=self.show_legend,
         )
 
@@ -137,7 +137,7 @@ class Plot:
             color_discrete_map={True: "red", False: "blue"},
         )
 
-        fig.update_layout(font=dict(size=self.font_size))
+        fig.update_layout(font={"size": self.font_size})
 
         fig.add_hline(y=y_border, line_dash="dash", line_color="gray")
         fig.add_vline(x=-x_border, line_dash="dash", line_color="gray")
@@ -174,9 +174,9 @@ class MultiDimPlot:
                 category_orders={self.factor: sorted(self.data[self.factor].unique())},
             )
             fig.update_layout(
-                font=dict(size=self.font_size),
-                xaxis=dict(showticklabels=False),
-                yaxis=dict(showticklabels=False),
+                font={"size": self.font_size},
+                xaxis={"showticklabels": False},
+                yaxis={"showticklabels": False},
             )
 
         else:
@@ -190,20 +190,17 @@ class MultiDimPlot:
                 hover_data=[names],
                 category_orders={self.factor: sorted(self.data[self.factor].unique())},
             )
-            camera = dict(eye=dict(x=2, y=2, z=0.1))
+
             fig.update_layout(
-                margin=dict(l=0, r=0, t=0, b=0),
-                scene_camera=camera,
-                font=dict(size=self.font_size - 4),
-                scene=dict(
-                    xaxis=dict(showticklabels=False),
-                    yaxis=dict(showticklabels=False),
-                    zaxis=dict(showticklabels=False),
-                ),
+                margin={"l": 0, "r": 0, "T": 0, "b": 0},
+                font={"size": self.font_size - 4},
+                scene={
+                    "xaxis": {"showticklabels": False},
+                    "yaxis": {"showticklabels": False},
+                    "zaxis": {"showticklabels": False},
+                },
             )
 
-        fig.update_layout(
-            legend=dict(title="", orientation="h", y=-0.3),
-        )
+        fig.update_layout(legend={"title": "", "orientation": "h", "y": -0.3})
 
         return fig

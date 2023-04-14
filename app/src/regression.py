@@ -123,10 +123,10 @@ class Model:
                 x=predicted.index,
                 y=predicted.values,
                 name="Regression Fit",
-                line=dict(color="firebrick", width=3, dash="dot"),
+                line={"color": "firebrick", "width": 3, "dash": "dot"},
             )
         )
-        fig.update_layout(font=dict(size=20))
+        fig.update_layout(font={"size": 20})
 
         return fig
 
