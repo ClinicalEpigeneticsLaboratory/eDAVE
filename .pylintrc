@@ -221,7 +221,7 @@ exclude-too-few-public-methods=
 ignored-parents=
 
 # Maximum number of arguments for function / method.
-max-args=8
+max-args=10
 
 # Maximum number of attributes for a class (see R0902).
 max-attributes=12
@@ -461,8 +461,8 @@ spelling-store-unknown-words=no
 [EXCEPTIONS]
 
 # Exceptions that will emit a warning when caught.
-overgeneral-exceptions=BaseException,
-                       Exception
+overgeneral-exceptions=builtins.BaseException,
+                       builtins.Exception
 
 
 [LOGGING]
