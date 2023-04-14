@@ -21,7 +21,7 @@ class SamplesCollector:
         self.max_samples = max_samples
         self.min_samples = min_samples
 
-    def get_samples_list(self, strategy: str) -> t.List[str]:
+    def get_samples_list(self, strategy: str) -> t.Optional[t.List[str]]:
         rng = np.random.default_rng(101)
 
         if strategy == "RNA-Seq":
@@ -43,3 +43,5 @@ class SamplesCollector:
 
         if len(collection) > self.max_samples:
             return list(rng.choice(collection, self.max_samples, False))
+
+        return None
