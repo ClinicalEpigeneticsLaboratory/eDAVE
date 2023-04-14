@@ -55,7 +55,7 @@ layout = dbc.Container(
                             disabled=True,
                             optionHeight=100,
                         ),
-                        dbc.FormText("Maximum number of samples categories is 5."),
+                        dbc.FormText("Maximum number of categories is 5."),
                     ],
                     xs=10,
                     sm=10,
@@ -337,7 +337,7 @@ def main_1d_browser(
     """
     if data_type and variable:
         if len(sample_types) > 5:
-            msg = "Exceeded maximum number of sample types [n>5]."
+            msg = "Exceeded maximum number of sample categories [n>5]."
             send_slack_msg("One dimensional browser", msg)
             logger.info(msg)
             return (
@@ -397,6 +397,6 @@ def main_1d_browser(
         send_slack_msg("One dimensional browser", log_info)
         logger.info(log_info)
 
-        return True, fig, True, msg, "Applicable only for > 1 sample types.", count, ""
+        return True, fig, True, msg, "Applicable only for > 1 categories.", count, ""
 
     return dash.no_update

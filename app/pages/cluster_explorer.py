@@ -55,7 +55,7 @@ layout = dbc.Container(
                             disabled=True,
                             optionHeight=100,
                         ),
-                        dbc.FormText("Maximum number of samples categories is 5."),
+                        dbc.FormText("Maximum number of categories is 5."),
                     ],
                     xs=10,
                     sm=10,
@@ -387,7 +387,7 @@ def main_multidim_browser(
             )
 
         if len(sample_types) > 5:
-            msg = "Exceeded maximum number of sample types [n > 5]."
+            msg = "Exceeded maximum number of categories [n > 5]."
             send_slack_msg("Multidimensional browser", msg)
             logger.info(msg)
 
