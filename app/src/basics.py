@@ -18,7 +18,7 @@ class FrameOperations:
 
     def load_1d(self, variable: str) -> t.Tuple[pd.DataFrame, str]:
         """
-        Method load frame of measurement, for one or many sample types.
+        Method loads frame of measurement, for one or many sample types.
         If variable is not in repository method returns empty frame.
         Additionally, the method returns a message describing the process.
 
