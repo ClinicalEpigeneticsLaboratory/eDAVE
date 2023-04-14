@@ -19,7 +19,7 @@ def response_multidim(variables: list, frame: pd.DataFrame) -> str:
     :return str:
     """
     common = set(variables).intersection(frame.columns)
-    msg = f"{len(common)}/{len(variables)} inputted variables present in selected sample types:"
+    msg = f"{len(common)}/{len(variables)} inputted variables present in the current dataset:"
     msg = msg + "\n" + ", ".join(common)
 
     return msg
