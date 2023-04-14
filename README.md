@@ -83,3 +83,9 @@ or specifically:
     make isort
     make pylint
     make bandit
+
+#### Tests
+To run unit tests open main eDAVE directory and type:
+
+    make tests_data_processing_pipeline # to run data processing pipeline tests
+    make tests_app # to run app tests
