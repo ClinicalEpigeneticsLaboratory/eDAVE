@@ -37,9 +37,14 @@ class Plot:
         :return str:
         """
         if self.data_type == "Methylation [450K/EPIC]":
-            return f"{self.y_axis}: β-value, scaling: {self.scaling_method}"
+            if self.scaling_method != "None":
+                return f"{self.y_axis} [{self.scaling_method}(β-value)]"
+            return f"{self.y_axis} [β-value]"
 
-        return f"{self.y_axis}: TPM, scaling: {self.scaling_method}"
+        if self.scaling_method != "None":
+            return f"{self.y_axis} [{self.scaling_method}(TPM)]"
+
+        return f"{self.y_axis} [TPM]"
 
     def boxplot(self, order: t.Optional[list[str]] = None) -> Figure:
         """
