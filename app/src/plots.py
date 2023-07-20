@@ -113,7 +113,7 @@ class Plot:
         )
         fig.update_layout(
             yaxis={"title": self.__yaxis_title()},
-            xaxis={"title": "", "showticklabels": "self.show_x_ticks"},
+            xaxis={"title": "", "showticklabels": self.show_x_ticks},
             font={"size": self.font_size},
             legend={"title": "", "orientation": "h", "y": -0.25},
             showlegend=self.show_legend,
