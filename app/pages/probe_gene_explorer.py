@@ -13,7 +13,7 @@ from dash import Input, Output, State, callback, dcc, html
 from src.basics import FrameOperations
 from src.plots import Plot
 from src.statistics import Stats
-from src.utils import load_config, send_slack_msg
+from src.utils import clean_gene_probe_id, load_config, send_slack_msg
 
 EmptyFig = {}
 config = load_config()
@@ -76,7 +76,6 @@ layout = dbc.Container(
                             },
                         ),
                         dbc.Tooltip(
-                            "Gene name is case sensitive. "
                             "Probe ID is a unique identifier from the appropriate [EPIC/450K] Illumina manifest.",
                             target="label-cpg-gene-1d-browser",
                             placement="top",
@@ -350,6 +349,7 @@ def main_1d_browser(
                 "",
             )
 
+        variable = clean_gene_probe_id(variable, data_type)
         loader = FrameOperations(data_type, sample_types)
         data, msg = loader.load_1d(variable)
 

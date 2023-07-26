@@ -111,3 +111,9 @@ def send_slack_msg(
 
     else:
         print("Slack notification turned off.")
+
+
+def clean_gene_probe_id(id_: str, data_type: str = None) -> str:
+    if data_type == "Expression [RNA-seq]":
+        return id_.strip().upper()
+    return id_.strip().lower()

@@ -14,7 +14,7 @@ from src.basics import FrameOperations
 from src.decomposition import DataDecomposition
 from src.plots import MultiDimPlot
 from src.statistics import ClusterAnalysis, Stats
-from src.utils import load_config, response_multidim, send_slack_msg
+from src.utils import clean_gene_probe_id, load_config, response_multidim, send_slack_msg
 
 EmptyFig = {}
 config = load_config()
@@ -289,7 +289,7 @@ def update_input_section(data_type):
     """
     if data_type == "Expression [RNA-seq]":
         genes = (
-            "Exemplary input (genes names are case sensitive) --> PAX3, SOX8, PARP9, AIM2, "
+            "Exemplary input --> PAX3, SOX8, PARP9, AIM2, "
             "MX1, TSPAN6, DPM1, SCYL3, NIPAL3, LAS1L"
         )
         return False, genes
@@ -363,6 +363,7 @@ def main_multidim_browser(
     """
     if sample_types and data_type and variables:
         variables = FrameOperations.clean_sequence(variables)
+        variables = [clean_gene_probe_id(var, data_type) for var in variables]
 
         if len(variables) < 5:
             msg = "Less than 5 inputted variables, use 1-D browser instead."

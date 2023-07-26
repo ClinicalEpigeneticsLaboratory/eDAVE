@@ -14,7 +14,7 @@ from src.basics import FrameOperations
 from src.plots import Plot
 from src.regression import Model
 from src.statistics import Stats
-from src.utils import load_config, send_slack_msg
+from src.utils import clean_gene_probe_id, load_config, send_slack_msg
 
 EmptyFig = {}
 
@@ -54,16 +54,6 @@ layout = dbc.Container(
                             "Gene name",
                             htmlFor="gene-met-exp-browser",
                             id="label-gene-1d-met-exp-browser",
-                            style={
-                                "color": "blue",
-                                "textDecoration": "underline",
-                                "cursor": "pointer",
-                            },
-                        ),
-                        dbc.Tooltip(
-                            "Gene name is case sensitive.",
-                            target="label-gene-1d-met-exp-browser",
-                            placement="top",
                         ),
                         dbc.Input(
                             id="gene-met-exp-browser",
@@ -406,6 +396,9 @@ def update_model(sample_type, gene_id, probe_id, degree, alpha, scaling_method, 
     """
     if sample_type and gene_id and probe_id:
         loader = FrameOperations("", sample_type)
+        gene_id, probe_id = clean_gene_probe_id(
+            gene_id, "Expression [RNA-seq]"
+        ), clean_gene_probe_id(probe_id)
         frame, msg = loader.load_met_exp_frame(gene_id, probe_id)
 
         if frame.empty:
