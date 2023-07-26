@@ -32,6 +32,7 @@ class FrameOperations:
             metadata = pd.read_pickle(join(self.basic_path, sample_type, "metadata.pkl"))
 
             if self.data_type == "Expression [RNA-seq]":
+                variable = variable.upper().strip()
                 if variable not in metadata["genes"]:
                     return (
                         pd.DataFrame(),
@@ -43,6 +44,7 @@ class FrameOperations:
                 )
 
             if self.data_type == "Methylation [450K/EPIC]":
+                variable = variable.strip()
                 if variable not in metadata["probes"]:
                     return (
                         pd.DataFrame(),
@@ -55,7 +57,6 @@ class FrameOperations:
 
             temporary_frame = temporary_frame.loc[variable, :].to_frame()
             temporary_frame["SampleType"] = sample_type
-
             frame.append(temporary_frame)
 
         frame = pd.concat(frame, axis=0)
@@ -76,14 +77,15 @@ class FrameOperations:
         :return pd.DataFrame, str:
         """
         frame = []
-        variables = set(variables)
 
         for sample_type in self.sample_types:
             if self.data_type == "Expression [RNA-seq]":
+                variables = {var.strip().upper() for var in variables}
                 temporary_frame = pd.read_parquet(
                     join(self.basic_path, sample_type, "RNA-Seq.parquet")
                 )
             else:
+                variables = {var.strip() for var in variables}
                 temporary_frame = pd.read_parquet(
                     join(self.basic_path, sample_type, "Methylation Array.parquet")
                 )
@@ -150,6 +152,8 @@ class FrameOperations:
         :return:
         """
         meta = pd.read_pickle(join(self.basic_path, self.sample_types, "metadata.pkl"))
+        gene = gene.strip().upper()
+        probe = probe.strip()
 
         if not meta["commonBetween"]:
             return pd.DataFrame(), "No common samples for this sample type."
