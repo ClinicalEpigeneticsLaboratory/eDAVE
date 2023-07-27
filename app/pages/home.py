@@ -56,7 +56,7 @@ card_4_content = [
     dbc.CardHeader("Tool"),
     dbc.CardBody(
         [
-            html.H5("Methylation-expression explorer", className="card-title"),
+            html.H5("Methylation-expression association explorer", className="card-title"),
             html.P(
                 "Analysis of association between CpG methylation and gene expression\
                  within a specific sample type.",

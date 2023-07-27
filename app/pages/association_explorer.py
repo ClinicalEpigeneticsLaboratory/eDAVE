@@ -26,7 +26,7 @@ available_sample_types = available_sample_types[
 
 layout = dbc.Container(
     [
-        dbc.Row([html.Br(), html.H3("Methylation-expression explorer"), html.Hr()]),
+        dbc.Row([html.Br(), html.H3("Methylation-expression association explorer"), html.Hr()]),
         dbc.Row(
             [
                 dbc.Col(
@@ -256,7 +256,7 @@ layout = dbc.Container(
                                 config={
                                     "toImageButtonOptions": {
                                         "format": "svg",
-                                        "filename": "regression_based_plot.svg",
+                                        "filename": "regression_based_plot",
                                         "height": 500,
                                         "width": 700,
                                         "scale": 2,
@@ -280,7 +280,7 @@ layout = dbc.Container(
                                     config={
                                         "toImageButtonOptions": {
                                             "format": "svg",
-                                            "filename": "bin_based_plot.svg",
+                                            "filename": "bin_based_plot",
                                             "height": 500,
                                             "width": 700,
                                             "scale": 2,

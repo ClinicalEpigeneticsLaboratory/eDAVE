@@ -42,6 +42,8 @@ class Plot:
             return f"{self.y_axis} [β-value]"
 
         if self.scaling_method != "None":
+            if self.scaling_method == "Standard scaling":
+                self.scaling_method = "scaling"
             return f"{self.y_axis} [{self.scaling_method}(TPM)]"
 
         return f"{self.y_axis} [TPM]"

@@ -174,7 +174,7 @@ layout = dbc.Container(
                                 config={
                                     "toImageButtonOptions": {
                                         "format": "svg",
-                                        "filename": "volcano_plot.svg",
+                                        "filename": "volcano_plot",
                                         "height": 500,
                                         "width": 700,
                                         "scale": 2,

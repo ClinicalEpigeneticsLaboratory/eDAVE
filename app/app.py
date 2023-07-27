@@ -33,10 +33,17 @@ else:
         external_scripts=[{"src": "//cdn.cookie-script.com/s/bb3fe642e6b1cbf070e2252fcfafc06b.js"}],
         use_pages=True,
     )
+
     server = app.server
 
     pages = [
-        dbc.ListGroupItem(page["name"], href=page["path"]) for page in dash.page_registry.values()
+        dbc.ListGroupItem("Home", href="/"),
+        dbc.ListGroupItem("Differential features explorer", href="/differential-features-explorer"),
+        dbc.ListGroupItem("Probe gene explorer", href="/probe-gene-explorer"),
+        dbc.ListGroupItem("Cluster explorer", href="/cluster-explorer"),
+        dbc.ListGroupItem("Association explorer", href="/association-explorer"),
+        dbc.ListGroupItem("Documentation", href="/documentation"),
+        dbc.ListGroupItem("Repository", href="/repository"),
     ]
 
     navbar = dbc.NavbarSimple(

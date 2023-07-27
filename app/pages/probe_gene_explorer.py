@@ -197,7 +197,7 @@ layout = dbc.Container(
                             config={
                                 "toImageButtonOptions": {
                                     "format": "svg",
-                                    "filename": "cluster_2_plot.svg",
+                                    "filename": "cluster_2_plot",
                                     "height": 500,
                                     "width": 700,
                                     "scale": 2,
