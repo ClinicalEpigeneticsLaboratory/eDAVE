@@ -36,14 +36,15 @@ class Plot:
         Method to set y axis title.
         :return str:
         """
+        if self.scaling_method == "Standard scaling":
+            self.scaling_method = "scaled"
+
         if self.data_type == "Methylation [450K/EPIC]":
             if self.scaling_method != "None":
                 return f"{self.y_axis} [{self.scaling_method}(β-value)]"
             return f"{self.y_axis} [β-value]"
 
         if self.scaling_method != "None":
-            if self.scaling_method == "Standard scaling":
-                self.scaling_method = "scaling"
             return f"{self.y_axis} [{self.scaling_method}(TPM)]"
 
         return f"{self.y_axis} [TPM]"

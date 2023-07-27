@@ -89,6 +89,13 @@ class Model:
 
         return predictions
 
+    def __yaxis_label(self, y_axis, scaling_method):
+        if scaling_method == "None":
+            return f"{y_axis} [TPM]"
+        if scaling_method == "Standard scaling":
+            scaling_method = "scaled"
+        return f"{y_axis} [{scaling_method}(TPM)]"
+
     def plot(
         self, x_axis: str, y_axis: str, predicted: pd.DataFrame, scaling_method: str
     ) -> go.Figure:
@@ -113,7 +120,7 @@ class Model:
             hover_data=[names],
             labels={
                 x_axis: f"{x_axis} [β-value]",
-                y_axis: f"{y_axis}: TPM, scaling: {scaling_method}",
+                y_axis: self.__yaxis_label(y_axis, scaling_method),
             },
             opacity=0.85,
         )
