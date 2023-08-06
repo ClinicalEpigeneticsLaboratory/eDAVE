@@ -88,7 +88,7 @@ This solution comprises all steps described in the path 1.
     docker build . -t edave # build an image
 
     # once the image is created you may start the container using the following command
-    sudo docker run -p 8000:8000 edave # run container
+    docker run -p 8000:8000 edave # run container
 
 ### Additional information
 #### Code quality
