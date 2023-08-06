@@ -1,11 +1,18 @@
-FROM python:3.8-slim
+FROM python:3.10-slim
 
-# prepare environment
-WORKDIR eDAVE
-COPY . .
+# update image
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y curl unzip
-RUN pip install poetry && poetry install
+RUN pip install poetry
+
+# add non root user
+RUN addgroup -gid 1001 non-root-group && adduser --disabled-password --gecos "" -gid 1001 -uid 1001 non-root-user
+USER non-root-user
+
+# prepare app
+WORKDIR eDAVE
+COPY . .
+RUN poetry install
 
 # prepare local data repository
 WORKDIR data-processing-pipeline
