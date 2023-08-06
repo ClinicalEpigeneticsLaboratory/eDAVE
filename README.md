@@ -71,7 +71,7 @@ be a relatively small number e.g. 100 (default). However, in the `production` mo
     cd data-processing-pipeline/
     poetry run python run.py
 
-#### Run dash app
+#### 3. Run dash app
 Please note that to run app in production mode set `debug: false` in `app/config.json` file. Please remember,
 that the app requires an existing local data repository from step 1.
 
