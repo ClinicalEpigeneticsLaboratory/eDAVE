@@ -4,8 +4,8 @@ all: black isort bandit tests_data_processing_pipeline tests_app pylint
 set_up:
 	@echo "Setting up project"
 	pip install poetry
-	poetry install
-	poetry run pre-commit install
+	git clone https://github.com/ClinicalEpigeneticsLaboratory/eDAVE.git
+	cd eDAVE && poetry install && poetry run pre-commit install
 
 black:
 	@echo "Code formatting"
