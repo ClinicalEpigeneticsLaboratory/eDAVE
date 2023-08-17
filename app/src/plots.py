@@ -182,9 +182,11 @@ class MultiDimPlot:
                 category_orders={self.factor: sorted(self.data[self.factor].unique())},
             )
             fig.update_layout(
+                legend={"title": "", "orientation": "h"},
                 font={"size": self.font_size},
                 xaxis={"showticklabels": False},
                 yaxis={"showticklabels": False},
+                height=650,
             )
 
         else:
@@ -203,12 +205,13 @@ class MultiDimPlot:
                 margin={"l": 0, "r": 0, "t": 0, "b": 0},
                 font={"size": self.font_size - 4},
                 scene_camera={"eye": {"x": 2, "y": 2, "z": 0.1}},
+                height=750,
                 scene={
                     "xaxis": {"showticklabels": False},
                     "yaxis": {"showticklabels": False},
                     "zaxis": {"showticklabels": False},
                 },
+                legend={"title": "", "x": 0, "y": 1},
             )
 
-        fig.update_layout(legend={"title": "", "orientation": "h", "y": -0.3})
         return fig
