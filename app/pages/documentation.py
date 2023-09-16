@@ -16,7 +16,7 @@ layout = dbc.Container(
 
     #### Sample(s) type(s)
 
-    We grouped samples deposited in Genomic Data Commons (GDC) into homogeneous groups,
+    We grouped samples deposited in the Genomic Data Commons (GDC) into homogeneous groups,
     named `categories` or `types`, using following strategy:
 
         sample category = <GDC sample_type> + _ + <GDC tissue or organ of origin> + _ + <GDC primary diagnosis>
@@ -37,7 +37,7 @@ layout = dbc.Container(
     with assumption that this sample size is large enough to be representative;
 
     3. if the number of samples in a particular `type` is < 10, we assume that this sample size is not large enough
-    to be representative, so this specific `type` is not achievable in our database.
+    to be representative, so this specific `type` is not available in our database.
 
     ---
 
@@ -56,7 +56,7 @@ layout = dbc.Container(
     #### CpG identifiers
 
     All CpGs targeted by 450K (n≈450.000) and EPIC (n≈850.000) microarrays have a unique identifier (e.g., cg22930808).
-    Manifests containing all of targeted CpGs along with genomic context for specific technology are available from:
+    Manifests containing all of targeted CpGs are available from:
 
     • [EPIC](https://support.illumina.com/downloads/infinium-methylationepic-v1-0-product-files.html)
 
@@ -68,7 +68,7 @@ layout = dbc.Container(
 
     #### Raw data processing pipelines
 
-    Raw data processing pipelines are in details described by GDC:
+    Raw data processing pipelines are in details described by the GDC:
 
     • [EPIC/450K](https://docs.gdc.cancer.gov/Data/Bioinformatics_Pipelines/Methylation_Pipeline/)
 
@@ -83,7 +83,7 @@ layout = dbc.Container(
 
     Process of DMPs/DEGs identification comprises several steps:
 
-    1. extraction of 10% the most variable features (CpGs or genes) in specific dataset
+    1. extraction of 10% the most variable features (CpGs or genes) in specific dataset,
     based on standard deviation;
 
     2. for each feature, test for normality (Shapiro-Wilk's test)
@@ -96,15 +96,15 @@ layout = dbc.Container(
         - if distributions are not normal – apply `Mann-Whitney-U test`;
 
 
-    4. Apply Benjamini-Hochberg procedure to control the false discovery rate;
+    4. Apply Benjamini-Hochberg procedure to control for the false discovery rate;
 
     5. Calculate `effect size`, expressed as:
 
         - |delta| = |mean(CpG methylation level in group A) - mean(CpG methylation level in group B)|;
         - FC = mean(gene expression level in group A) / mean(gene expression level in group B)
         - log2(FC) = log2(FC);
-        - Hedges` g = standardized mean difference, unlike the metrics described above, this one takes in to account
-        the pooled standard deviation and the size of both groups of samples;
+        - Hedges` g = standardized mean difference, unlike the metrics described above, Hedges` g is adjusted for
+        the pooled standard deviation and the sample size;
 
     ---
 
@@ -124,7 +124,7 @@ layout = dbc.Container(
         - if variance between groups are unequal and distributions are normal – apply `Games-Howell post-hoc test`;
         - if distributions are not normal - apply `pairwise Man-Whitney-U test with FDR correction`;
 
-    3. Calculate effect size expressed as: delta, fold-change and Hedges` g metrics (described in Module 1 section).
+    3. Calculate effect size expressed as: delta, fold-change and Hedges` g metrics (described previously in the Module 1 section).
 
     ---
 
@@ -174,7 +174,7 @@ layout = dbc.Container(
     ##### Module 4.2: Bin-based approach
 
     In the first step, distribution of the methylation level of a particular CpG is divided into n ∈ {2,3,4} sorted and equal-size bins.
-    Then expression levels are compared between bins using the same approach as described in Module 2.
+    Then expression levels are compared between bins using the same approach as described previously in the Module 2.
 
     ---
 
