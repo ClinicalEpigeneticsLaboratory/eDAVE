@@ -5,10 +5,6 @@ RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y curl unzip
 RUN pip install poetry
 
-# add non root user
-RUN addgroup -gid 1001 non-root-group && adduser --disabled-password --gecos "" -gid 1001 -uid 1001 non-root-user
-USER non-root-user
-
 # prepare app
 WORKDIR eDAVE
 COPY . .
