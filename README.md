@@ -70,7 +70,7 @@ Additionally, GDC API requires a maximum `FILES_LIMIT` parameter, to test purpos
 be a relatively small number e.g. 100 (default). However, in the `production` mode, it should be 100000.
 
     cd data-processing-pipeline/
-    poetry run python run.py # It takes around 12-24h to download all datasets
+    poetry run python run.py # Please be patient, usually it takes around 12-24h to download all datasets
 
 #### 3. Run dash app
 Please note that to run app in production mode set `debug: false` in `app/config.json` file. Please remember,
@@ -86,7 +86,7 @@ Alternatively, a user may want to run the app in Docker container.
 This solution comprises all steps described in the path 1.
 
     git clone https://github.com/ClinicalEpigeneticsLaboratory/eDAVE.git && cd eDAVE/
-    docker build . -t edave # build an image. It takes around 12-24h to download all datasets.
+    docker build . -t edave # build an image. Please be patient, usually it takes around 12-24h to download all datasets
 
     # once the image is created you may start the container using the following command
     docker run -p 8000:8000 edave # run container
