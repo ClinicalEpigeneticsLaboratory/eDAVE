@@ -25,7 +25,7 @@ jan.binkowski[at]pum.edu.pl
 
 #### Run eDAVE locally
 Because of technical limitations web-based eDAVE is providing access to only part of the data
-deposited in the GDC. To overcome this obstacle a user may run eDAVE locally. To do so a user
+deposited in the GDC. To overcome this obstacle a user may run eDAVE locally. To do so, You
 should follow one out of two alternative paths (described below) as well as open
 `data-processing-pipeline/config.json` and update the fields listed below.
 
@@ -38,6 +38,7 @@ should follow one out of two alternative paths (described below) as well as open
 ### Path 1: run app in poetry environment (long-path)
 #### 1. Prepare environment
 1.1 make sure that You have python >= 3.10 installed
+
 1.2 install [poetry](https://python-poetry.org/) dependency manager
 
        pip install poetry
@@ -69,11 +70,11 @@ Additionally, GDC API requires a maximum `FILES_LIMIT` parameter, to test purpos
 be a relatively small number e.g. 100 (default). However, in the `production` mode, it should be 100000.
 
     cd data-processing-pipeline/
-    poetry run python run.py
+    poetry run python run.py # It takes around 12-24h to download all datasets
 
 #### 3. Run dash app
 Please note that to run app in production mode set `debug: false` in `app/config.json` file. Please remember,
-that the app requires an existing local data repository from step 1.
+that the app requires an existing local data repository from step 2.
 
     cd app/
     poetry run python app.py  # development mode
@@ -85,7 +86,7 @@ Alternatively, a user may want to run the app in Docker container.
 This solution comprises all steps described in the path 1.
 
     git clone https://github.com/ClinicalEpigeneticsLaboratory/eDAVE.git && cd eDAVE/
-    docker build . -t edave # build an image
+    docker build . -t edave # build an image. It takes around 12-24h to download all datasets.
 
     # once the image is created you may start the container using the following command
     docker run -p 8000:8000 edave # run container
