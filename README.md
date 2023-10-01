@@ -87,6 +87,9 @@ This solution comprises all steps described in the path 1.
 
     git clone https://github.com/ClinicalEpigeneticsLaboratory/eDAVE.git && cd eDAVE/
     docker build . -t edave # build an image. Please be patient, usually it takes around 12-24h to download all datasets
+    
+    #  Optional: to view summary of image vulnerabilities and recommendations
+    #  docker scout quickview
 
     # once the image is created you may start the container using the following command
     docker run -p 8000:8000 edave # run container
