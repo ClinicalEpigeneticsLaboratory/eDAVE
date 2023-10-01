@@ -8,6 +8,10 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 env = dotenv_values()
+env = {
+    **{"SLACK_API_TOKEN": ""},
+    **env
+}
 
 
 def response_multidim(variables: list, frame: pd.DataFrame) -> str:
@@ -50,7 +54,7 @@ def load_config(path: str = "config.json") -> dict:
 
 
 def temp_file_path(
-    data_type: str, group_A: str, group_B: str, alpha: float, effect: float, base: str = "temp/"
+        data_type: str, group_A: str, group_B: str, alpha: float, effect: float, base: str = "temp/"
 ) -> str:
     """
     Function to generate path to temp file.
@@ -91,7 +95,7 @@ def load_news(path: str = "text.news") -> str:
 
 
 def send_slack_msg(
-    source: str, msg: str, channel: str = "edave", token=env["SLACK_API_TOKEN"]
+        source: str, msg: str, channel: str = "edave", token: str = env["SLACK_API_TOKEN"]
 ) -> None:
     """
     Function send notification via slack app.
