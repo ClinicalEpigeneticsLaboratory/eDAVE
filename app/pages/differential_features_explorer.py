@@ -95,7 +95,18 @@ layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.Label("Alpha (significance level)", htmlFor="alpha-dfeatures-browser"),
+                        html.Label(
+                            "Alpha (significance level)",
+                            htmlFor="alpha-dfeatures-browser",
+                            id="label-alpha-df-explorer",
+                            style="tooltip-style",
+                        ),
+                        dbc.Tooltip(
+                            "eDAVE uses raw p-value for normality and homoscedasticity assessment and FDR-corrected "
+                            "for DEG/DMPs identification.",
+                            target="label-alpha-df-explorer",
+                            placement="top",
+                        ),
                         dcc.Slider(
                             0.001,
                             0.1,
