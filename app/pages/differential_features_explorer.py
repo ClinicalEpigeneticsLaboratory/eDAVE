@@ -168,8 +168,8 @@ layout = dbc.Container(
                 [
                     html.Br(),
                     dbc.Row(
-                        dbc.Row(
-                            [
+                        [
+                            dbc.Col(
                                 dcc.Graph(
                                     id="plot-dfeatures-browser",
                                     config={
@@ -183,6 +183,13 @@ layout = dbc.Container(
                                         "displayModeBar": True,
                                     },
                                 ),
+                                xs=10,
+                                sm=10,
+                                md=5,
+                                lg=5,
+                                xl=5,
+                            ),
+                            dbc.Col(
                                 dcc.Graph(
                                     id="cnt-plot-dfeatures-browser",
                                     config={
@@ -196,8 +203,13 @@ layout = dbc.Container(
                                         "displayModeBar": True,
                                     },
                                 ),
-                            ]
-                        ),
+                                xs=10,
+                                sm=10,
+                                md=5,
+                                lg=5,
+                                xl=5,
+                            ),
+                        ]
                     ),
                     html.Br(),
                     dbc.Row(
