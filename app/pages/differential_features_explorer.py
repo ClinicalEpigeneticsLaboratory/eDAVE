@@ -169,19 +169,34 @@ layout = dbc.Container(
                     html.Br(),
                     dbc.Row(
                         dbc.Row(
-                            dcc.Graph(
-                                id="plot-dfeatures-browser",
-                                config={
-                                    "toImageButtonOptions": {
-                                        "format": "svg",
-                                        "filename": "volcano_plot",
-                                        "height": 500,
-                                        "width": 700,
-                                        "scale": 2,
+                            [
+                                dcc.Graph(
+                                    id="plot-dfeatures-browser",
+                                    config={
+                                        "toImageButtonOptions": {
+                                            "format": "svg",
+                                            "filename": "volcano_plot",
+                                            "height": 500,
+                                            "width": 700,
+                                            "scale": 2,
+                                        },
+                                        "displayModeBar": True,
                                     },
-                                    "displayModeBar": True,
-                                },
-                            )
+                                ),
+                                dcc.Graph(
+                                    id="cnt-plot-dfeatures-browser",
+                                    config={
+                                        "toImageButtonOptions": {
+                                            "format": "svg",
+                                            "filename": "volcano_plot",
+                                            "height": 500,
+                                            "width": 700,
+                                            "scale": 2,
+                                        },
+                                        "displayModeBar": True,
+                                    },
+                                ),
+                            ]
                         ),
                     ),
                     html.Br(),
@@ -306,6 +321,7 @@ def return_statistic_frame(
 
 @app.long_callback(
     Output("plot-dfeatures-browser", "figure"),
+    Output("cnt-plot-dfeatures-browser", "figure"),
     Output("result-section-dfeatures-browser", "is_open"),
     Output("msg-dfeatures-browser", "children"),
     Output("msg-section-dfeatures-browser", "is_open"),
@@ -368,12 +384,13 @@ def main_dfeatures_browser(
             plot = Plot(results, "delta", "-log10(FDR)", None, None)
             fig = plot.volcanoplot(x_border=effect_size, y_border=-np.log10(alpha))
 
+        cnt_fig = plot.barplot()
         count = Stats(sample_frame.to_frame(), "SampleType").get_factor_count
 
         log_info = f"Input: {data_type} - {group_A} - {group_B}"
         send_slack_msg("Differential features browser", log_info)
         logger.info(log_info)
 
-        return fig, True, "Status: done.", True, "", count
+        return fig, cnt_fig, True, "Status: done.", True, "", count
 
     return dash.no_update

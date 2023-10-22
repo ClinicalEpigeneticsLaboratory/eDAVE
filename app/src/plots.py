@@ -153,6 +153,14 @@ class Plot:
 
         return fig
 
+    def barplot(self) -> Figure:
+        data = self.data["DEG/DMP"].value_counts()
+
+        fig = px.bar(data)
+        fig.update_layout(font={"size": self.font_size})
+
+        return fig
+
 
 class MultiDimPlot:
     def __init__(self, data: pd.DataFrame, factor: str, n_dimensions: int):
