@@ -254,13 +254,13 @@ def test_meta_samples_collection_1() -> None:
     for stype, collection in collections.items():
         temp_sample_sheet = sample_sheet[sample_sheet.SAMPLE_GROUP_ID == stype]
 
-        observed_met_samples = set(collection.get_samples_list("Methylation Array"))
-        observed_exp_samples = set(collection.get_samples_list("RNA-Seq"))
+        all_met_samples = set(collection.get_samples_list("Methylation Array"))
+        all_exp_samples = set(collection.get_samples_list("RNA-Seq"))
 
-        expected_exp_samples = set(
+        exp_samples = set(
             temp_sample_sheet[temp_sample_sheet.experimental_strategy == "RNA-Seq"]["case_id"]
         )
-        expected_met_samples = set(
+        met_samples = set(
             temp_sample_sheet[temp_sample_sheet.experimental_strategy == "Methylation Array"][
                 "case_id"
             ]
@@ -269,11 +269,11 @@ def test_meta_samples_collection_1() -> None:
         assert len(expected_exp_samples) <= 50, "Wrong number of met samples in final sample sheet"
         assert len(expected_met_samples) <= 50, "Wrong number of exp samples in final sample sheet"
 
-        assert observed_exp_samples.issubset(
-            expected_exp_samples
+        assert exp_samples.issubset(
+            all_exp_samples
         ), "Cleaned sample sheet exp files should be a subset of all Exp files."
-        assert observed_met_samples.issubset(
-            expected_met_samples
+        assert met_samples.issubset(
+            all_met_samples
         ), "Cleaned sample sheet met files should be a subset of all Met files."
 
 
