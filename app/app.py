@@ -42,6 +42,7 @@ else:
         dbc.ListGroupItem("Probe gene explorer", href="/probe-gene-explorer"),
         dbc.ListGroupItem("Cluster explorer", href="/cluster-explorer"),
         dbc.ListGroupItem("Association explorer", href="/association-explorer"),
+        dbc.ListGroupItem("Downloader", href="/download"),
         dbc.ListGroupItem("Documentation", href="/documentation"),
         dbc.ListGroupItem("Repository", href="/repository"),
     ]
@@ -78,7 +79,7 @@ else:
                 color="primary",
             ),
         ],
-        style={"bottom": "0", "width": "98%", "position": "fixed"},
+        className="footer-custom"
     )
 
     app.layout = dbc.Container([navbar, dash.page_container, footer], fluid=True)

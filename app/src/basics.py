@@ -10,11 +10,31 @@ config = load_config()
 
 
 class FrameOperations:
-    def __init__(self, data_type: str, sample_types: t.Collection[str]):
+    def __init__(self, data_type: str, sample_types: t.Union[t.Collection[str], str]):
         self.data_type = data_type
         self.sample_types = sample_types
         self.basic_path = config["base_path"]
-        self.frame = None
+
+    def load_whole_dataset(self) -> pd.DataFrame:
+        """
+        Method to load whole, single dataset.
+
+        :return pd.DataFrame:
+        """
+
+        if not isinstance(self.sample_types, str):
+            raise Exception("Applicable only to single sample type.")
+
+        if self.data_type == "Expression [RNA-seq]":
+            frame = pd.read_parquet(
+                join(self.basic_path, self.sample_types, "RNA-Seq.parquet")
+            )
+        else:
+            frame = pd.read_parquet(
+                join(self.basic_path, self.sample_types, "Methylation Array.parquet")
+            )
+
+        return frame
 
     def load_1d(self, variable: str) -> t.Tuple[pd.DataFrame, str]:
         """
@@ -42,7 +62,7 @@ class FrameOperations:
                     join(self.basic_path, sample_type, "RNA-Seq.parquet")
                 )
 
-            if self.data_type == "Methylation [450K/EPIC]":
+            else:  # self.data_type == "Methylation [450K/EPIC]"
                 if variable not in metadata["probes"]:
                     return (
                         pd.DataFrame(),
@@ -82,7 +102,7 @@ class FrameOperations:
                 temporary_frame = pd.read_parquet(
                     join(self.basic_path, sample_type, "RNA-Seq.parquet")
                 )
-            else:
+            else:  # self.data_type == "Methylation [450K/EPIC]"
                 temporary_frame = pd.read_parquet(
                     join(self.basic_path, sample_type, "Methylation Array.parquet")
                 )
@@ -212,18 +232,23 @@ class FrameOperations:
         :param method:
         :return pd.Series:
         """
-        if method == "Log10":
-            return values.apply(np.log10)
+        match method:
+            case "Log10":
+                values += 1
+                return values.apply(np.log10)
 
-        if method == "Log2":
-            return values.apply(np.log2)
+            case "Log2":
+                values += 1
+                return values.apply(np.log2)
 
-        if method == "Ln":
-            return values.apply(np.log)
+            case "Ln":
+                values += 1
+                return values.apply(np.log)
 
-        if method == "Standard scaling":
-            mean = np.mean(values)
-            std = np.std(values)
-            return (values - mean) / std
+            case "Standard scaling":
+                mean = np.mean(values)
+                std = np.std(values)
+                return (values - mean) / std
 
-        return values
+            case _:
+                return values

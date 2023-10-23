@@ -180,7 +180,6 @@ layout = dbc.Container(
 
     """
         ),
-        dbc.Row(style={"height": "15vh"}),
     ],
-    fluid=True,
+    fluid=True, className="main-container"
 )

@@ -95,7 +95,18 @@ layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.Label("Alpha (significance level)", htmlFor="alpha-dfeatures-browser"),
+                        html.Label(
+                            "Alpha (significance level)",
+                            htmlFor="alpha-dfeatures-browser",
+                            id="label-alpha-df-explorer",
+                            className="tooltip-style",
+                        ),
+                        dbc.Tooltip(
+                            "eDAVE uses raw p-value for normality and homoscedasticity assessment and FDR-corrected "
+                            "for DEG/DMPs identification.",
+                            target="label-alpha-df-explorer",
+                            placement="top",
+                        ),
                         dcc.Slider(
                             0.001,
                             0.1,
@@ -135,7 +146,7 @@ layout = dbc.Container(
                     lg=4,
                     xl=4,
                 ),
-                dbc.Col([html.Br(), dbc.Button("Submit", id="submit-dfeatures-browser")]),
+                dbc.Col([html.Br(), dbc.Button("Submit", id="submit-dfeatures-browser", className="button-interact")]),
             ],
         ),
         html.Br(),
@@ -168,21 +179,48 @@ layout = dbc.Container(
                 [
                     html.Br(),
                     dbc.Row(
-                        dbc.Row(
-                            dcc.Graph(
-                                id="plot-dfeatures-browser",
-                                config={
-                                    "toImageButtonOptions": {
-                                        "format": "svg",
-                                        "filename": "volcano_plot",
-                                        "height": 500,
-                                        "width": 700,
-                                        "scale": 2,
+                        [
+                            dbc.Col(
+                                dcc.Graph(
+                                    id="plot-dfeatures-browser",
+                                    config={
+                                        "toImageButtonOptions": {
+                                            "format": "svg",
+                                            "filename": "volcano_plot",
+                                            "height": 500,
+                                            "width": 700,
+                                            "scale": 2,
+                                        },
+                                        "displayModeBar": True,
                                     },
-                                    "displayModeBar": True,
-                                },
-                            )
-                        ),
+                                ),
+                                xs=11,
+                                sm=11,
+                                md=6,
+                                lg=6,
+                                xl=6,
+                            ),
+                            dbc.Col(
+                                dcc.Graph(
+                                    id="cnt-plot-dfeatures-browser",
+                                    config={
+                                        "toImageButtonOptions": {
+                                            "format": "svg",
+                                            "filename": "volcano_plot",
+                                            "height": 500,
+                                            "width": 700,
+                                            "scale": 2,
+                                        },
+                                        "displayModeBar": True,
+                                    },
+                                ),
+                                xs=11,
+                                sm=11,
+                                md=6,
+                                lg=6,
+                                xl=6,
+                            ),
+                        ]
                     ),
                     html.Br(),
                     dbc.Row(
@@ -209,9 +247,8 @@ layout = dbc.Container(
                 is_open=False,
             ),
         ),
-        dbc.Row(style={"height": "15vh"}),
     ],
-    fluid=True,
+    fluid=True, className="main-container"
 )
 
 
@@ -288,7 +325,7 @@ def return_statistic_frame(
     data_type: str, group_A: str, group_B: str, alpha: float, effect: float, n_clicks: int
 ) -> pd.DataFrame:
     """
-    Function sends frame with statistics to the layout.
+    Function sends frame with statistics to a user.
 
     :param data_type:
     :param group_A:
@@ -301,11 +338,14 @@ def return_statistic_frame(
     path = temp_file_path(data_type, group_A, group_B, alpha, effect)
     frame = pd.read_parquet(path)
 
+    frame = frame.rename(columns={"-log10(p-value)": "negative log10(p-value)",
+                                  "-log10(FDR)": "negative log10(FDR)"})
     return dcc.send_data_frame(frame.to_csv, "summary_table.csv")
 
 
 @app.long_callback(
     Output("plot-dfeatures-browser", "figure"),
+    Output("cnt-plot-dfeatures-browser", "figure"),
     Output("result-section-dfeatures-browser", "is_open"),
     Output("msg-dfeatures-browser", "children"),
     Output("msg-section-dfeatures-browser", "is_open"),
@@ -368,12 +408,13 @@ def main_dfeatures_browser(
             plot = Plot(results, "delta", "-log10(FDR)", None, None)
             fig = plot.volcanoplot(x_border=effect_size, y_border=-np.log10(alpha))
 
+        cnt_fig = plot.barplot()
         count = Stats(sample_frame.to_frame(), "SampleType").get_factor_count
 
         log_info = f"Input: {data_type} - {group_A} - {group_B}"
         send_slack_msg("Differential features browser", log_info)
         logger.info(log_info)
 
-        return fig, True, "Status: done.", True, "", count
+        return fig, cnt_fig, True, "Status: done.", True, "", count
 
     return dash.no_update
