@@ -156,8 +156,11 @@ class Plot:
     def barplot(self) -> Figure:
         data = self.data["DEG/DMP"].value_counts()
 
-        fig = px.bar(data)
-        fig.update_layout(font={"size": self.font_size})
+        fig = px.bar(
+            data,
+            labels={"value": "Count", "index": "DEG/DMP"},
+        )
+        fig.update_layout(font={"size": self.font_size}, showlegend=False)
 
         return fig
 
