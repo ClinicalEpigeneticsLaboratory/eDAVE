@@ -224,19 +224,19 @@ def test_manifests_files() -> None:
     assert manifests_files, "Can`t find manifests files."
 
     for source in manifests_files:
-        observed_files = set(pd.read_table(source)["id"])
+        manifest_files = set(pd.read_table(source)["id"])
 
         experimental_strategy = Path(source).parent.name
         sample_group = Path(source).parent.parent.name
 
-        expected_files = sample_sheet[
+        observed_files = sample_sheet[
             (sample_sheet[config["SAMPLE_GROUP_ID"]] == sample_group)
             & (sample_sheet["experimental_strategy"] == experimental_strategy)
         ]
 
-        expected_files = set(expected_files.index)
+        observed_files = set(observed_files.index)
         assert observed_files.issubset(
-            expected_files
+            manifest_files
         ), "Non consistent manifests files with sample sheet in terms of files id."
 
 
