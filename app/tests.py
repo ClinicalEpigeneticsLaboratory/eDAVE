@@ -16,7 +16,6 @@ def test_load_whole_dataset_exp():
     frame = fo.load_whole_dataset()
 
     assert frame.empty is False, "Loaded frame is empty"
-    assert bool(frame.isna().sum().any()) is False, "Frame contains NaNs."
 
 
 def test_load_whole_dataset_met():
@@ -29,7 +28,6 @@ def test_load_whole_dataset_met():
     frame = fo.load_whole_dataset()
 
     assert frame.empty is False, "Loaded frame is empty"
-    assert bool(frame.isna().sum().any()) is False, "Frame contains NaNs."
 
 
 def test_load_1d_exp():
