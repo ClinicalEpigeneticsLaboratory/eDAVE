@@ -139,7 +139,7 @@ layout = dbc.Container(
                     lg=5,
                     xl=5,
                 ),
-                dbc.Col(dbc.Button("Submit", id="submit-multidim-browser")),
+                dbc.Col(dbc.Button("Submit", id="submit-multidim-browser", className="button-interact")),
             ]
         ),
         html.Br(),
@@ -239,9 +239,8 @@ layout = dbc.Container(
                 is_open=False,
             ),
         ),
-        dbc.Row(style={"height": "15vh"}),
     ],
-    fluid=True,
+    fluid=True, className="main-container"
 )
 
 

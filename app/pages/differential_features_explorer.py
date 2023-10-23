@@ -99,7 +99,7 @@ layout = dbc.Container(
                             "Alpha (significance level)",
                             htmlFor="alpha-dfeatures-browser",
                             id="label-alpha-df-explorer",
-                            style="tooltip-style",
+                            className="tooltip-style",
                         ),
                         dbc.Tooltip(
                             "eDAVE uses raw p-value for normality and homoscedasticity assessment and FDR-corrected "
@@ -146,7 +146,7 @@ layout = dbc.Container(
                     lg=4,
                     xl=4,
                 ),
-                dbc.Col([html.Br(), dbc.Button("Submit", id="submit-dfeatures-browser")]),
+                dbc.Col([html.Br(), dbc.Button("Submit", id="submit-dfeatures-browser", className="button-interact")]),
             ],
         ),
         html.Br(),
@@ -247,9 +247,8 @@ layout = dbc.Container(
                 is_open=False,
             ),
         ),
-        dbc.Row(style={"height": "15vh"}),
     ],
-    fluid=True,
+    fluid=True, className="main-container"
 )
 
 
@@ -326,7 +325,7 @@ def return_statistic_frame(
     data_type: str, group_A: str, group_B: str, alpha: float, effect: float, n_clicks: int
 ) -> pd.DataFrame:
     """
-    Function sends frame with statistics to the layout.
+    Function sends frame with statistics to a user.
 
     :param data_type:
     :param group_A:
@@ -339,6 +338,8 @@ def return_statistic_frame(
     path = temp_file_path(data_type, group_A, group_B, alpha, effect)
     frame = pd.read_parquet(path)
 
+    frame = frame.rename(columns={"-log10(p-value)": "negative log10(p-value)",
+                                  "-log10(FDR)": "negative log10(FDR)"})
     return dcc.send_data_frame(frame.to_csv, "summary_table.csv")
 
 
