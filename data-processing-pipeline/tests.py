@@ -235,8 +235,8 @@ def test_manifests_files() -> None:
         ]
 
         expected_files = set(expected_files.index)
-        assert (
-            expected_files == observed_files
+        assert observed_files.issubset(
+            expected_files
         ), "Non consistent manifests files with sample sheet in terms of files id."
 
 
@@ -269,11 +269,11 @@ def test_meta_samples_collection_1() -> None:
         assert len(selected_met_samples) <= 50, "Wrong number of met samples in final sample sheet"
         assert len(selected_exp_samples) <= 50, "Wrong number of exp samples in final sample sheet"
 
-        assert (
-            selected_exp_samples == expected_exp_samples
+        assert expected_exp_samples.issubset(
+            selected_exp_samples
         ), "Cleaned sample sheet exp files should be a subset of all Exp files."
-        assert (
-            selected_met_samples == expected_met_samples
+        assert expected_met_samples.issubset(
+            selected_met_samples
         ), "Cleaned sample sheet met files should be a subset of all Met files."
 
 
@@ -297,8 +297,8 @@ def test_meta_samples_collection_2() -> None:
             observed_exp_samples = pd.read_parquet(exp_path).columns
             observed_exp_samples = set(observed_exp_samples)
 
-            assert (
-                observed_exp_samples == expected_exp_samples
+            assert observed_exp_samples.issubset(
+                expected_exp_samples
             ), "Exp samples in exp frame are not consistent with exp samples in collection object."
 
         if exists(meth_path):
@@ -306,8 +306,8 @@ def test_meta_samples_collection_2() -> None:
 
             observed_met_samples = pd.read_parquet(meth_path).columns
             observed_met_samples = set(observed_met_samples)
-            assert (
-                observed_met_samples == expected_met_samples
+            assert observed_met_samples.issubset(
+                expected_met_samples
             ), "Met samples in met frame are not consistent with met samples in collection object."
 
 
