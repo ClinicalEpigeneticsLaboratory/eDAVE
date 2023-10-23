@@ -10,7 +10,7 @@ def test_load_whole_dataset_exp():
     fo = FrameOperations(data_type="Expression [RNA-seq]", sample_types=None)
     with open(join(fo.basic_path, "global_metadata_file.pkl"), "rb") as file:
         file = pickle.load(file)
-        st = file["Expression_files_present"][0]
+        st = file["Expression_files_present"][0]  # load only first file
 
     fo.sample_types = st
     frame = fo.load_whole_dataset()
@@ -23,7 +23,7 @@ def test_load_whole_dataset_met():
     fo = FrameOperations(data_type="Methylation [450K/EPIC]", sample_types=None)
     with open(join(fo.basic_path, "global_metadata_file.pkl"), "rb") as file:
         file = pickle.load(file)
-        st = file["Expression_files_present"][0]
+        st = file["Expression_files_present"][0]  # load only first file
 
     fo.sample_types = st
     frame = fo.load_whole_dataset()
@@ -36,7 +36,7 @@ def test_load_1d_exp():
     fo = FrameOperations(data_type="Expression [RNA-seq]", sample_types=None)
     with open(join(fo.basic_path, "global_metadata_file.pkl"), "rb") as file:
         file = pickle.load(file)
-        st = file["Expression_files_present"][:3]
+        st = file["Expression_files_present"][:3]  # load only 3 files
 
     fo.sample_types = st
     frame, status = fo.load_1d("TP53")
@@ -52,7 +52,7 @@ def test_load_1d_met():
     fo = FrameOperations(data_type="Methylation [450K/EPIC]", sample_types=None)
     with open(join(fo.basic_path, "global_metadata_file.pkl"), "rb") as file:
         file = pickle.load(file)
-        st = file["Methylation_files_present"][:3]
+        st = file["Methylation_files_present"][:3]  # load only 3 files
 
     fo.sample_types = st
     frame, status = fo.load_1d("cg07779434")
@@ -68,7 +68,7 @@ def test_load_1d_negative():
     fo = FrameOperations(data_type="Methylation [450K/EPIC]", sample_types=None)
     with open(join(fo.basic_path, "global_metadata_file.pkl"), "rb") as file:
         file = pickle.load(file)
-        st = file["Expression_files_present"][:3]
+        st = file["Expression_files_present"][:3]  # load only 3 files
 
     fo.sample_types = st
     frame, _ = fo.load_1d("XXX")
@@ -79,7 +79,7 @@ def test_load_many_exp():
     fo = FrameOperations(data_type="Expression [RNA-seq]", sample_types=None)
     with open(join(fo.basic_path, "global_metadata_file.pkl"), "rb") as file:
         file = pickle.load(file)
-        st = file["Expression_files_present"][:3]
+        st = file["Expression_files_present"][:3]  # load only 3 files
 
     fo.sample_types = st
 
@@ -97,7 +97,7 @@ def test_load_many_met():
     fo = FrameOperations(data_type="Methylation [450K/EPIC]", sample_types=None)
     with open(join(fo.basic_path, "global_metadata_file.pkl"), "rb") as file:
         file = pickle.load(file)
-        st = file["Expression_files_present"][:3]
+        st = file["Expression_files_present"][:3]  # load only 3 files
 
     fo.sample_types = st
 
@@ -112,7 +112,7 @@ def test_load_many_mvf_exp():
     fo = FrameOperations(data_type="Expression [RNA-seq]", sample_types=None)
     with open(join(fo.basic_path, "global_metadata_file.pkl"), "rb") as file:
         file = pickle.load(file)
-        st = file["Expression_files_present"][:3]
+        st = file["Expression_files_present"][:3]  # load only 3 files
 
     fo.sample_types = st
 
@@ -129,7 +129,7 @@ def test_load_many_mvf_met():
     fo = FrameOperations(data_type="Methylation [450K/EPIC]", sample_types=None)
     with open(join(fo.basic_path, "global_metadata_file.pkl"), "rb") as file:
         file = pickle.load(file)
-        st = file["Methylation_files_present"][:3]
+        st = file["Methylation_files_present"][:3]  # load only 3 files
 
     fo.sample_types = st
 
