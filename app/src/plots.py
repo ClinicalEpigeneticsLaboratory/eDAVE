@@ -155,6 +155,7 @@ class Plot:
 
     def barplot(self) -> Figure:
         data = self.data["DEG/DMP"].value_counts()
+        data.index = data.index.astype(str)
 
         fig = px.bar(
             data,
