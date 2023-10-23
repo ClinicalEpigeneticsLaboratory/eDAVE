@@ -6,6 +6,32 @@ import pandas as pd
 from src.basics import FrameOperations
 
 
+def test_load_whole_dataset_exp():
+    fo = FrameOperations(data_type="Expression [RNA-seq]", sample_types=None)
+    with open(join(fo.basic_path, "global_metadata_file.pkl"), "rb") as file:
+        file = pickle.load(file)
+        st = file["Expression_files_present"][0]
+
+    fo.sample_types = st
+    frame = fo.load_whole_dataset()
+
+    assert frame.empty is False, "Loaded frame is empty"
+    assert bool(frame.isna().sum().any()) is False, "Frame contains NaNs."
+
+
+def test_load_whole_dataset_met():
+    fo = FrameOperations(data_type="Methylation [450K/EPIC]", sample_types=None)
+    with open(join(fo.basic_path, "global_metadata_file.pkl"), "rb") as file:
+        file = pickle.load(file)
+        st = file["Expression_files_present"][0]
+
+    fo.sample_types = st
+    frame = fo.load_whole_dataset()
+
+    assert frame.empty is False, "Loaded frame is empty"
+    assert bool(frame.isna().sum().any()) is False, "Frame contains NaNs."
+
+
 def test_load_1d_exp():
     fo = FrameOperations(data_type="Expression [RNA-seq]", sample_types=None)
     with open(join(fo.basic_path, "global_metadata_file.pkl"), "rb") as file:

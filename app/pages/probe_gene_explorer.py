@@ -69,11 +69,7 @@ layout = dbc.Container(
                             "Probe ID/Gene",
                             htmlFor="variable-1d-browser",
                             id="label-cpg-gene-1d-browser",
-                            style={
-                                "color": "blue",
-                                "textDecoration": "underline",
-                                "cursor": "pointer",
-                            },
+                            className="tooltip-style",
                         ),
                         dbc.Tooltip(
                             "Probe ID is a unique identifier from the appropriate [EPIC/450K] Illumina manifest.",
@@ -136,7 +132,18 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        html.Label("Alpha (significance level)", htmlFor="alpha-type-1d-browser"),
+                        html.Label(
+                            "Alpha (significance level)",
+                            htmlFor="alpha-type-1d-browser",
+                            id="label-alpha-1d-browser",
+                            className="tooltip-style",
+                        ),
+                        dbc.Tooltip(
+                            "eDAVE uses raw p-value for normality and homoscedasticity assessment and FDR-corrected "
+                            "for DEG/DMPs identification.",
+                            target="label-alpha-1d-browser",
+                            placement="top",
+                        ),
                         dcc.Slider(
                             0.001,
                             0.1,
@@ -154,7 +161,7 @@ layout = dbc.Container(
                     xl=4,
                 ),
                 dbc.Col(
-                    [html.Br(), dbc.Button("Submit", id="submit-1d-browser")],
+                    [html.Br(), dbc.Button("Submit", id="submit-1d-browser", className="button-interact")],
                     xs=10,
                     sm=10,
                     md=6,
@@ -239,9 +246,8 @@ layout = dbc.Container(
                 is_open=False,
             ),
         ),
-        dbc.Row(style={"height": "15vh"}),
     ],
-    fluid=True,
+    fluid=True, className="main-container"
 )
 
 

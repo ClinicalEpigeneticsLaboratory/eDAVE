@@ -59,7 +59,7 @@ layout = dbc.Container(
             [
                 dbc.Col("Current sample sheet: "),
                 html.Br(),
-                dbc.Col(dbc.Button("download CSV", id="download-sample-sheet-button")),
+                dbc.Col(dbc.Button("download CSV", id="download-sample-sheet-button", className="button-interact")),
                 dcc.Download(id="download-sample-sheet-frame"),
             ]
         ),
@@ -117,9 +117,8 @@ layout = dbc.Container(
                 ),
             ]
         ),
-        dbc.Row(style={"height": "10vh"}),
     ],
-    fluid=True,
+    fluid=True, className="main-container"
 )
 
 

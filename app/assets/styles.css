@@ -1,0 +1,38 @@
+.html, .body, .main-container  {
+    min-height: 100vh;
+}
+.tooltip-style {
+    color: blue;
+    textDecoration: underline;
+    cursor: pointer;
+}
+.button-interact:hover {
+    box-shadow: 0 0 11px darkslategrey;
+    background-color: #c92e33
+}
+.button-home-style{
+    position: relative;
+    margin: 5%;
+    bottom: 5%;
+    width: 90%;
+}
+.card-style-custom{
+    min-height: 250px;
+    margin-right: 5%;
+    margin-bottom: 5%;
+}
+.card-style-custom:hover{
+    box-shadow: 0 0 11px darkslategrey;
+}
+.text-align {
+    text-align: center;
+}
+.text-align-padding {
+    text-align: center;
+    padding: 10px;
+}
+.footer-custom {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+}
