@@ -18,74 +18,79 @@ global_metadata = pd.read_pickle(config["global_metadata"])
 
 app = dash.get_app()
 
-layout = dbc.Container([
-    dbc.Row([html.Br(), html.H3("Differential features (DEGs/DMPs) explorer"), html.Hr()]),
-    dbc.Row(
-        [
-            dbc.Col(
-                [
-                    html.Label("Data type", htmlFor="data-type-downloader"),
-                    dcc.Dropdown(
-                        id="data-type-downloader",
-                        options=["Methylation [450K/EPIC]", "Expression [RNA-seq]"],
-                        clearable=True,
-                        multi=False,
-                    ),
-                ],
-                xs=10,
-                sm=10,
-                md=5,
-                lg=5,
-                xl=5,
-            ),
-            dbc.Col(
-                [
-                    html.Label("Category", htmlFor="category-downloader"),
-                    dcc.Dropdown(
-                        id="category-downloader",
-                        options=[],
-                        clearable=True,
-                        multi=False,
-                        disabled=True,
-                        placeholder="Firstly select a data type",
-                        optionHeight=100,
-                    ),
-                    dbc.FormText("Select category to download."),
-                ],
-                xs=10,
-                sm=10,
-                md=5,
-                lg=5,
-                xl=5,
-            ),
-            dbc.Col(
-                [html.Br(),
-                 dbc.Button(
-                     "Download dataset",
-                     id="download-button-downloader",
-                     color="danger",
-                     className="button-interact"
-                 ),
-                 dcc.Download(id="download-dataset-downloader")
-                 ]
-            ),
-            dbc.Row(
+layout = dbc.Container(
+    [
+        dbc.Row([html.Br(), html.H3("Datasets explorer"), html.Hr()]),
+        dbc.Row(
+            [
                 dbc.Col(
-                    dls.Hash(
-                        html.Div(id="progress-downloader"),
-                        color="#FF0000",
-                        debounce=30,
-                        speed_multiplier=2,
-                        size=100,
-                        fullscreen=True,
-                        show_initially=False,
+                    [
+                        html.Label("Data type", htmlFor="data-type-downloader"),
+                        dcc.Dropdown(
+                            id="data-type-downloader",
+                            options=["Methylation [450K/EPIC]", "Expression [RNA-seq]"],
+                            clearable=True,
+                            multi=False,
+                        ),
+                    ],
+                    xs=10,
+                    sm=10,
+                    md=5,
+                    lg=5,
+                    xl=5,
+                ),
+                dbc.Col(
+                    [
+                        html.Label("Category", htmlFor="category-downloader"),
+                        dcc.Dropdown(
+                            id="category-downloader",
+                            options=[],
+                            clearable=True,
+                            multi=False,
+                            disabled=True,
+                            placeholder="Firstly select a data type",
+                            optionHeight=100,
+                        ),
+                        dbc.FormText("Select category to download."),
+                    ],
+                    xs=10,
+                    sm=10,
+                    md=5,
+                    lg=5,
+                    xl=5,
+                ),
+                dbc.Col(
+                    [
+                        html.Br(),
+                        dbc.Button(
+                            "Download dataset",
+                            id="download-button-downloader",
+                            color="danger",
+                            className="button-interact",
+                        ),
+                        dcc.Download(id="download-dataset-downloader"),
+                    ]
+                ),
+                dbc.Row(
+                    dbc.Col(
+                        dls.Hash(
+                            html.Div(id="progress-downloader"),
+                            color="#FF0000",
+                            debounce=30,
+                            speed_multiplier=2,
+                            size=100,
+                            fullscreen=True,
+                            show_initially=False,
+                        )
                     )
-                )
-            ),
-        ]
-    ),
-    html.Br(),
-], fluid=True, className="main-container")
+                ),
+            ]
+        ),
+        html.Br(),
+    ],
+    fluid=True,
+    className="main-container",
+)
 
 
 @callback(
@@ -96,7 +101,7 @@ layout = dbc.Container([
     prevent_initial_call=True,
 )
 def update_groups_options(
-        data_type: str,
+    data_type: str,
 ) -> t.Tuple[bool, t.List[str], str]:
     """
     Function to update sample type options list based on selected data type.
