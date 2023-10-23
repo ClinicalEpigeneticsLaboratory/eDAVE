@@ -146,7 +146,14 @@ layout = dbc.Container(
                     lg=4,
                     xl=4,
                 ),
-                dbc.Col([html.Br(), dbc.Button("Submit", id="submit-dfeatures-browser", className="button-interact")]),
+                dbc.Col(
+                    [
+                        html.Br(),
+                        dbc.Button(
+                            "Submit", id="submit-dfeatures-browser", className="button-interact"
+                        ),
+                    ]
+                ),
             ],
         ),
         html.Br(),
@@ -248,7 +255,8 @@ layout = dbc.Container(
             ),
         ),
     ],
-    fluid=True, className="main-container"
+    fluid=True,
+    className="main-container",
 )
 
 
@@ -338,8 +346,9 @@ def return_statistic_frame(
     path = temp_file_path(data_type, group_A, group_B, alpha, effect)
     frame = pd.read_parquet(path)
 
-    frame = frame.rename(columns={"-log10(p-value)": "negative log10(p-value)",
-                                  "-log10(FDR)": "negative log10(FDR)"})
+    frame = frame.rename(
+        columns={"-log10(p-value)": "negative log10(p-value)", "-log10(FDR)": "negative log10(FDR)"}
+    )
     return dcc.send_data_frame(frame.to_csv, "summary_table.csv")
 
 

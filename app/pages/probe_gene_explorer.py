@@ -161,7 +161,10 @@ layout = dbc.Container(
                     xl=4,
                 ),
                 dbc.Col(
-                    [html.Br(), dbc.Button("Submit", id="submit-1d-browser", className="button-interact")],
+                    [
+                        html.Br(),
+                        dbc.Button("Submit", id="submit-1d-browser", className="button-interact"),
+                    ],
                     xs=12,
                     sm=12,
                     md=6,
@@ -247,7 +250,8 @@ layout = dbc.Container(
             ),
         ),
     ],
-    fluid=True, className="main-container"
+    fluid=True,
+    className="main-container",
 )
 
 
