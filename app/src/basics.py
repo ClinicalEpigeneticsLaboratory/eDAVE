@@ -26,9 +26,7 @@ class FrameOperations:
             raise Exception("Applicable only to single sample type.")
 
         if self.data_type == "Expression [RNA-seq]":
-            frame = pd.read_parquet(
-                join(self.basic_path, self.sample_types, "RNA-Seq.parquet")
-            )
+            frame = pd.read_parquet(join(self.basic_path, self.sample_types, "RNA-Seq.parquet"))
         else:
             frame = pd.read_parquet(
                 join(self.basic_path, self.sample_types, "Methylation Array.parquet")
@@ -232,23 +230,21 @@ class FrameOperations:
         :param method:
         :return pd.Series:
         """
-        match method:
-            case "Log10":
-                values += 1
-                return values.apply(np.log10)
+        if method == "Log10":
+            values += 1
+            return values.apply(np.log10)
 
-            case "Log2":
-                values += 1
-                return values.apply(np.log2)
+        if method == "Log2":
+            values += 1
+            return values.apply(np.log2)
 
-            case "Ln":
-                values += 1
-                return values.apply(np.log)
+        if method == "Ln":
+            values += 1
+            return values.apply(np.log)
 
-            case "Standard scaling":
-                mean = np.mean(values)
-                std = np.std(values)
-                return (values - mean) / std
+        if method == "Standard scaling":
+            mean = np.mean(values)
+            std = np.std(values)
+            return (values - mean) / std
 
-            case _:
-                return values
+        return values
