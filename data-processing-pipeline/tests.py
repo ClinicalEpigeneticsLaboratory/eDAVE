@@ -266,8 +266,8 @@ def test_meta_samples_collection_1() -> None:
             ]
         )
 
-        assert len(expected_exp_samples) <= 50, "Wrong number of met samples in final sample sheet"
-        assert len(expected_met_samples) <= 50, "Wrong number of exp samples in final sample sheet"
+        assert len(exp_samples) <= 50, "Wrong number of met samples in final sample sheet"
+        assert len(met_samples) <= 50, "Wrong number of exp samples in final sample sheet"
 
         assert exp_samples.issubset(
             all_exp_samples
