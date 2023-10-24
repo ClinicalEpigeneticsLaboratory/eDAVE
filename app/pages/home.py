@@ -136,7 +136,6 @@ layout = dbc.Container(
             ),
             justify="center",
         ),
-        dbc.Row(html.Br()),
         dbc.Row(
             dbc.Col(
                 dcc.Markdown(
