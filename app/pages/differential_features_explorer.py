@@ -417,7 +417,7 @@ def main_dfeatures_browser(
             plot = Plot(results, "delta", "-log10(FDR)", None, None)
             fig = plot.volcanoplot(x_border=effect_size, y_border=-np.log10(alpha))
 
-        cnt_fig = plot.barplot()
+        cnt_fig = plot.pieplot()
         count = Stats(sample_frame.to_frame(), "SampleType").get_factor_count
 
         log_info = f"Input: {data_type} - {group_A} - {group_B}"

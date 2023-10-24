@@ -20,7 +20,7 @@ app = dash.get_app()
 
 layout = dbc.Container(
     [
-        dbc.Row([html.Br(), html.H3("Datasets explorer"), html.Hr()]),
+        dbc.Row([html.Br(), html.H3("Data explorer"), html.Hr()]),
         dbc.Row(
             [
                 dbc.Col(

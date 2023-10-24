@@ -27,10 +27,6 @@
 .text-align {
     text-align: center;
 }
-.text-align-padding {
-    text-align: center;
-    padding: 10px;
-}
 .footer-custom {
     position: sticky;
     bottom: 0;

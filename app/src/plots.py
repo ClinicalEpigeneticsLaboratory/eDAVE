@@ -153,15 +153,17 @@ class Plot:
 
         return fig
 
-    def barplot(self) -> Figure:
+    def pieplot(self) -> Figure:
         data = self.data["DEG/DMP"].value_counts()
         data.index = data.index.astype(str)
 
-        fig = px.bar(
-            data,
+        fig = px.pie(
+            values=data.values,
+            names=data.index,
+            color_discrete_map={"True": "red", "False": "blue"},
             labels={"value": "Count", "index": "DEG/DMP"},
         )
-        fig.update_layout(font={"size": self.font_size}, showlegend=False)
+        fig.update_layout(font={"size": self.font_size}, legend={"title": "DEG/DMP"})
 
         return fig
 
