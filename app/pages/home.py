@@ -148,6 +148,7 @@ layout = dbc.Container(
                     repository.
     
                     If you want to report a bug or request a new feature, please use [GitHub](https://github.com/ClinicalEpigeneticsLaboratory/eDAVE/issues).
+                    
                     Contact: [Jan Bińkowski](mailto:jan.binkowski@pum.edu.pl)
                     
                     ----
