@@ -142,12 +142,14 @@ layout = dbc.Container(
                 dcc.Markdown(
                     """
                     ----
+                    
                     This application was designed to enable user-friendly analysis and visualization of
                     methylomics and transcriptomics datasets deposited in the [Genomic Data Commons](https://gdc.cancer.gov/) 
                     repository.
     
-                    If you want to report a bug or request a new feature, please use [GitHub](https://github.com/ClinicalEpigeneticsLaboratory/eDAVE/issues)
+                    If you want to report a bug or request a new feature, please use [GitHub](https://github.com/ClinicalEpigeneticsLaboratory/eDAVE/issues).
                     Contact: [Jan Bińkowski](mailto:jan.binkowski@pum.edu.pl)
+                    
                     ----
                     """,
                     style={"text-align": "center"},
