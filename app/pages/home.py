@@ -12,12 +12,12 @@ card_1_content = [
     dbc.CardBody(
         [
             html.H5(
-                "Differential features (DEGs/DMPs) explorer", className="card-title text-align"
+                "Differential features (DEGs/DMPs) explorer", className="card-title text-align "
             ),
             html.P(
                 "Identification of differentially expressed genes (DEGs) or differentially methylated positions (DMPs) \
                  between groups of samples.",
-                className="card-text text-align",
+                className="card-text text-align card-text",
             ),
             dbc.Button(
                 "Go",
@@ -36,7 +36,7 @@ card_2_content = [
             html.P(
                 "One-dimensional visualisation and statistical analysis of gene expression or CpG \
                 methylation across various samples types.",
-                className="card-text text-align",
+                className="card-text text-align card-text",
             ),
             dbc.Button(
                 "Go", href="/probe-gene-explorer", className="button-home-style button-interact"
@@ -53,7 +53,7 @@ card_3_content = [
             html.P(
                 "Multidimensional visualisation and cluster analysis of genes expression or CpGs \
                 methylation across various samples types.",
-                className="card-text text-align",
+                className="card-text text-align card-text",
             ),
             dbc.Button(
                 "Go", href="/cluster-explorer", className="button-home-style button-interact"
@@ -72,7 +72,7 @@ card_4_content = [
             html.P(
                 "Analysis of association between CpG methylation and gene expression\
                  within a specific sample type.",
-                className="card-text text-align",
+                className="card-text text-align card-text",
             ),
             dbc.Button(
                 "Go", href="/association-explorer", className="button-home-style button-interact"
@@ -88,7 +88,7 @@ card_5_content = [
             html.H5("About repository", className="card-title text-align"),
             html.P(
                 "Details about repository, number of samples, types of measurement technologies, last update etc.",
-                className="card-text text-align",
+                className="card-text text-align card-text",
             ),
             dbc.Button(
                 "Read more",
@@ -107,7 +107,7 @@ card_6_content = [
             html.H5("Documentation", className="card-title text-align"),
             html.P(
                 "More information about eDAVE, materials, methods and assumptions.",
-                className="card-text text-align",
+                className="card-text text-align card-text",
             ),
             dbc.Button(
                 "Read more",

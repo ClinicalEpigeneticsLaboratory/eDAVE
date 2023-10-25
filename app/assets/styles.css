@@ -27,6 +27,10 @@
 .text-align {
     text-align: center;
 }
+.card-text {
+    text-align: center;
+    min-height: 75px;
+}
 .footer-custom {
     position: sticky;
     bottom: 0;
