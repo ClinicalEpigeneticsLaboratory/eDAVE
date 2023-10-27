@@ -191,7 +191,7 @@ layout = dbc.Container(
         dbc.Row(
             dbc.Collapse(
                 dbc.Card(
-                    dbc.CardBody(html.P(id="msg-1d-browser", className="card-text")),
+                    dbc.CardBody(html.P(id="msg-1d-browser")),
                     color="danger",
                     outline=True,
                 ),
