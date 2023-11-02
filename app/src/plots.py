@@ -143,6 +143,7 @@ class Plot:
             hover_data=[names, self.data.FC, self.data.delta, self.data["Hedge`s g"]],
             color="DEG/DMP",
             color_discrete_map={True: "red", False: "blue"},
+            category_orders={"DEG/DMP": [True, False]}
         )
 
         fig.update_layout(font={"size": self.font_size})
@@ -160,6 +161,7 @@ class Plot:
         fig = px.pie(
             values=data.values,
             names=data.index,
+            category_orders={"DEG/DMP": [True, False]},
             color_discrete_map={"True": "red", "False": "blue"},
             labels={"value": "Count", "index": "DEG/DMP"},
         )
