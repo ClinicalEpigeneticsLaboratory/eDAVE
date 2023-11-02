@@ -33,11 +33,11 @@ layout = dbc.Container(
     1. large files transfer via GDC-API is slow, therefore we created fast accessible local data
     repository. This local database is periodically updated but sometimes may be behind origin GDC database;
 
-    2. if number of samples in specific `type` is > 50, we use 50 randomly selected samples
+    2. if number of samples in specific `category` is > 50, we use 50 randomly selected samples
     with assumption that this sample size is large enough to be representative;
 
-    3. if the number of samples in a particular `type` is < 10, we assume that this sample size is not large enough
-    to be representative, so this specific `type` is not available in our database.
+    3. if the number of samples in a particular `category` is < 5, we assume that this sample size is not large enough
+    to be representative, so this `category` is not available in our database.
 
     ---
 
@@ -56,13 +56,14 @@ layout = dbc.Container(
     #### CpG identifiers
 
     All CpGs targeted by 450K (n≈450.000) and EPIC (n≈850.000) microarrays have a unique identifier (e.g., cg22930808).
-    Manifests containing all of targeted CpGs are available from:
+    Manifests containing descriptions of targeted CpGs are available from:
 
     • [EPIC](https://support.illumina.com/downloads/infinium-methylationepic-v1-0-product-files.html)
 
     • [450K](https://emea.support.illumina.com/downloads/infinium_humanmethylation450_product_files.html)
 
-    **Importantly**, some probes (CpG) may not pass quality control and will not be available for analysis in certain datasets.
+    **Importantly**, data sets may vary in terms of quality, therefore data sets may differ in number of available to 
+    analysis probes (CpGs) .
 
     ---
 
@@ -79,20 +80,19 @@ layout = dbc.Container(
     #### Module 1: Differential features browser
 
     Differential features browser was designed to identify `differentially expressed genes (DEGs)` or
-    `differentially methylated positions (DMPs)` between different types of samples.
+    `differentially methylated positions (DMPs)` between two categories of samples.
 
     Process of DMPs/DEGs identification comprises several steps:
 
-    1. extraction of 10% the most variable features (CpGs or genes) in specific dataset,
-    based on standard deviation;
+    1. extraction of 10% the most variable features (CpGs or genes) in specific dataset;
 
     2. for each feature, test for normality (Shapiro-Wilk's test)
     and homoscedasticity (Levene's test) at predefined significance level
     (alpha);
 
     3. Based on results from step 2:
-        - if variance between groups are equal and distributions are normal – apply `t-test`;
-        - if variance between groups are unequal and distributions are normal – apply `Welch's t-test`;
+        - if variance between groups is equal and distributions are normal – apply `t-test`;
+        - if variance between groups is unequal and distributions are normal – apply `Welch's t-test`;
         - if distributions are not normal – apply `Mann-Whitney-U test`;
 
 
@@ -102,17 +102,16 @@ layout = dbc.Container(
 
         - |delta| = |mean(CpG methylation level in group A) - mean(CpG methylation level in group B)|;
         - FC = mean(gene expression level in group A) / mean(gene expression level in group B)
-        - log2(FC) = log2(FC);
+        - log2(FC) = log2 transformed FC;
         - Hedges` g = standardized mean difference, unlike the metrics described above, Hedges` g is adjusted for
-        the pooled standard deviation and the sample size;
+        pooled standard deviation and sample size;
 
     ---
 
     #### Module 2: One-dimensional browser
 
     One-dimensional browser was designed to compare sole variable (CpG
-    methylation level or gene expression level) between multiple
-    samples types.
+    methylation level or gene expression level) between multiple categories of samples.
 
     Process of DMP/DEG identification between multiple types of samples comprises several steps:
 
@@ -120,31 +119,28 @@ layout = dbc.Container(
     at predefined significance level (alpha);
 
     2. Based on results from step 1:
-        - if variance between groups are equal and distributions are normal - apply `Tukey-HSD post-hoc test`;
-        - if variance between groups are unequal and distributions are normal – apply `Games-Howell post-hoc test`;
+        - if variance between groups is equal and distributions are normal - apply `Tukey-HSD post-hoc test`;
+        - if variance between groups is unequal and distributions are normal – apply `Games-Howell post-hoc test`;
         - if distributions are not normal - apply `pairwise Man-Whitney-U test with FDR correction`;
 
-    3. Calculate effect size expressed as: delta, fold-change and Hedges` g metrics (described previously in the Module 1 section).
+    3. Calculate effect size expressed as: delta, fold-change and Hedges` g metrics.
 
     ---
 
     #### Module 3: Multi-dimensional browser
 
     Multi-dimensional browser was designed to identify clusters of
-    samples within multidimensional datasets using unsupervised clustering and
-    decomposition algorithms.
+    samples within multidimensional data sets using decomposition methods followed by
+    unsupervised clustering algorithms.
 
     Procedure of clusters identification comprises:
 
-    1. Re-scale dataset (nxm) congaing n-number of samples and m-number of features (genes or CpGs)
-    to unit variance and mean zero;
+    1. Standardization to unit variance and mean zero;
 
-    2. Apply PCA (principal component analysis) or t-SNE (t-distributed
-    stochastic neighbor embedding) decomposition algorithm on the scaled
-    dataset;
+    2. Decomposition using PCA (principal component analysis) or t-SNE (t-distributed
+    stochastic neighbor embedding) algorithms;
 
-    3. Iteratively, for each predefined number of clusters ∈ <2, 10> apply
-    Ward's algorithm and calculate Calinski-Harabasz metric;
+    3. Searching, for optimal number of clusters ∈ <2, 10> using Ward's algorithm and Calinski-Harabasz metric;
 
     4. Finally, an optimal number of clusters is defined as a number
     maximizing Calinski-Harabasz metric (the metric is higher when clusters are dense and well separated).
@@ -165,16 +161,17 @@ layout = dbc.Container(
 
     or non-linear model based on data transformed using n-degree polynomial transformation (n > 1):
 
-        expression level ~ Intercept + methylation level^1 + methylation level^2 + methylation level^n
+        expression level ~ Intercept + methylation level^1 + methylation level^2 + ... + methylation level^n
 
-    Please note in case of model estimated using polynomial-transformed dataset **R2 coefficient may be strongly
+    Please note that in case of model estimated using polynomial-transformed dataset **R2 coefficient may be strongly
     inflated**, therefore we recommend to interpret adjusted R2 or AIC/BIC metrics.
 
 
     ##### Module 4.2: Bin-based approach
 
-    In the first step, distribution of the methylation level of a particular CpG is divided into n ∈ {2,3,4} sorted and equal-size bins.
-    Then expression levels are compared between bins using the same approach as described previously in the Module 2.
+    In the first step, distribution of the methylation level of a selected CpG is divided into n ∈ {2,3,4} sorted and 
+    equal-size bins. Then expression levels are compared between these bins using the same approach as described 
+    previously in the Module 2.
 
     ---
 
