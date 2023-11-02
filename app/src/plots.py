@@ -158,12 +158,12 @@ class Plot:
         return fig
 
     def pieplot(self) -> Figure:
-        data = self.data["DEG/DMP"].value_counts()
-        data.index = data.index.astype(str)
+        data = self.data["DEG/DMP"].value_counts().reset_index()
+        data["DEG/DMP"] = data["DEG/DMP"].astype(str)
 
         fig = px.pie(
-            values=data.values,
-            names=data.index,
+            values=data.count,
+            names=data["DEG/DMP"],
             category_orders={"DEG/DMP": ["True", "False"]},
             color_discrete_map={"True": "red", "False": "blue"},
             labels={"value": "Count", "index": "DEG/DMP"},
