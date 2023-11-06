@@ -390,6 +390,7 @@ def main_dfeatures_browser(
             send_slack_msg("Differential features browser", msg)
             return (
                 EmptyFig,
+                EmptyFig,
                 False,
                 msg,
                 True,
