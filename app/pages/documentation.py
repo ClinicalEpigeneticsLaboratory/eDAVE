@@ -103,7 +103,7 @@ layout = dbc.Container(
         - |delta| = |mean(CpG methylation level in group A) - mean(CpG methylation level in group B)|;
         - FC = mean(gene expression level in group A) / mean(gene expression level in group B)
         - log2(FC) = log2 transformed FC;
-        - Hedges` g = standardized mean difference, unlike the metrics described above, Hedges` g is adjusted for
+        - Hedges'g = standardized mean difference, unlike the metrics described above, Hedges'g is adjusted for
         pooled standard deviation and sample size;
 
     ---
